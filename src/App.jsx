@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+// TODO Separate into components
+// TODO Create random number
+// TODO Make first number guessing sequence
+
 function App() {
-  const [count, setCount] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState({
     name: "Traveler",
     level: 0,
     subLevel: 0,
   });
   const [number, setNumber] = useState(0);
-
-  useEffect(() => {
-    console.log(player);
-  }, [player]);
 
   const gameText = [
     {
@@ -193,12 +193,26 @@ function App() {
     },
   ];
 
+  function toggleIsPlaying() {
+    if (!isPlaying) setIsPlaying(true);
+    else setIsPlaying(false);
+  }
+
+  function handleChange(name) {
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, name: name };
+    });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, level: 1, subLevel: 1 };
+    });
+  }
+
   function handleClick(item) {
-    if (player.level === 0) {
-      setPlayer((currentPlayer) => {
-        return { ...currentPlayer, level: 1, subLevel: 1 };
-      });
-    } else if (item.endLevel) {
+    if (item.endLevel) {
       setPlayer((currentPlayer) => {
         return { ...currentPlayer, level: item.level + 1, subLevel: 1 };
       });
@@ -211,36 +225,49 @@ function App() {
 
   return (
     <div className="container">
-      {player.level === 0 ? (
+      {!isPlaying ? (
         <div className="intro-container">
-          <div>NUMBER QUEST</div>
-          <button onClick={() => handleClick()}>Begin</button>
+          NUMBER QUEST
+          <button onClick={() => toggleIsPlaying()}>Begin</button>
         </div>
       ) : (
-        <div className="game-container">
-          <div className="game-image">
-            Artwork for level {player.level} subLevel {player.subLevel}
-          </div>
+        <>
+          {player.level === 0 ? (
+            <div className="intro-container">
+              What is your Name?
+              <form onSubmit={(e) => handleSubmit(e)}>
+                <input
+                  onChange={(e) => handleChange(e.target.value)}
+                  value={player.name}
+                />
+                <button>Accept Quest</button>
+              </form>
+            </div>
+          ) : (
+            <div className="game-container">
+              <div className="game-image">
+                Artwork for level {player.level} subLevel {player.subLevel}
+              </div>
 
-          {gameText.map((item) => {
-            if (
-              item.level === player.level &&
-              item.subLevel === player.subLevel
-            ) {
-              return (
-                <div key={crypto.randomUUID()} className="game-text">
-                  <p>{item.text1}</p>
-                  <p>{item.text2}</p>
-                  <button onClick={() => handleClick(item)}>
-                    {item.action}
-                  </button>
-                  <p>Level: {player.level}</p>
-                  <p>subLevel: {player.subLevel}</p>
-                </div>
-              );
-            }
-          })}
-        </div>
+              {gameText.map((item) => {
+                if (
+                  item.level === player.level &&
+                  item.subLevel === player.subLevel
+                ) {
+                  return (
+                    <div key={crypto.randomUUID()} className="game-text">
+                      <p>{item.text1}</p>
+                      <p>{item.text2}</p>
+                      <button onClick={() => handleClick(item)}>
+                        {item.action}
+                      </button>
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
