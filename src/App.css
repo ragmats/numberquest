@@ -23,6 +23,7 @@
 
 .game-container {
   display: flex;
+  flex-direction: row-reverse;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -32,11 +33,13 @@
 .game-image {
   border: 1px solid blue;
   display: flex;
+  flex-direction: column;
   height: 100svh;
   aspect-ratio: 1/1;
   justify-content: center;
   align-items: center;
   background-color: dimgray;
+  gap: 1em;
 }
 
 .game-text {
@@ -49,4 +52,20 @@
   height: 100%;
   gap: 1em;
   padding: 2em;
+}
+
+.number-buttons-container {
+  /* border: 1px solid red; */
+  display: flex;
+  gap: 1em;
+}
+
+.number-button {
+  padding: 1em;
+}
+
+.logbook {
+  /* border: 1px solid red; */
+  display: flex;
+  gap: 1em;
 }

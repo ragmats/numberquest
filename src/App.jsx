@@ -4,6 +4,7 @@ import "./App.css";
 // TODO Separate into components
 // TODO Create random number
 // TODO Make first number guessing sequence
+// TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -11,10 +12,22 @@ function App() {
     name: "Traveler",
     level: 0,
     subLevel: 0,
+    guess: "",
+    guesses: [],
+    lives: 3,
   });
-  const [number, setNumber] = useState(0);
+  const [fellow, setFellow] = useState({
+    number: getRandomNumber(10),
+    response: "",
+  });
 
-  const gameText = [
+  useEffect(() => {
+    console.log("player guesses: ", player.guesses);
+  }, [player.guesses]);
+
+  const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
+  const gameLevels = [
     {
       level: 1,
       subLevel: 1,
@@ -44,7 +57,7 @@ function App() {
     {
       level: 1,
       subLevel: "lose",
-      text1: `"The fellow smiles and looks at you darkly. "Sorry, ${player.name}, it was ${number}."`,
+      text1: `"The fellow smiles and looks at you darkly. "Sorry, ${player.name}, it was ${fellow.number}."`,
       text2:
         "The fellow's eyes turn black. You suddenly feel heavy and very tired. The world around you begins to fade.",
       action: "Be gone, forever",
@@ -79,7 +92,7 @@ function App() {
     {
       level: 2,
       subLevel: "lose",
-      text1: `"The fellow clenches his fists as if holding something back. "So sorry, ${player.name}... my number was ${number}."`,
+      text1: `"The fellow clenches his fists as if holding something back. "So sorry, ${player.name}... my number was ${fellow.number}."`,
       text2:
         "A slow forming smirk reveals the depair in his voice to be false. The fellow opens his arms and pulls you into the irresistible darkness and silence.",
       action: "Let go of life and light",
@@ -116,7 +129,7 @@ function App() {
     {
       level: 3,
       subLevel: "lose",
-      text1: `"The fellow shivers with a mixture of relief, pain, and joy. "This is it, dear ${player.name}... my number was ${number}."`,
+      text1: `"The fellow shivers with a mixture of relief, pain, and joy. "This is it, dear ${player.name}... my number was ${fellow.number}."`,
       text2:
         "His form begins to grow adn the blacks if his cloak become blacker, until the blackness shrouds anything and everything.",
       action: "Beocme one with the darkness",
@@ -174,8 +187,10 @@ function App() {
       level: 4,
       subLevel: "win",
       text1: `The beast cries out with the scream of ${
-        number - 1
-      } tortured voice(s). "No, what have you done? You were supposed to be my ${number}!`,
+        fellow.number - 1
+      } tortured voice(s). "No, what have you done? You were supposed to be my ${
+        fellow.number
+      }!`,
       text2:
         "Suddenly, the beast bursts into black flames. You meet eyes one last time before it is swallowed completely by the darkness",
       action: "Be remembered as a hero",
@@ -184,14 +199,18 @@ function App() {
     {
       level: 4,
       subLevel: "lose",
-      text1: `The beast picks you up over its great horns. "You are mine! You shall become my ${number}!`,
+      text1: `The beast picks you up over its great horns. "You are mine! You shall become my ${fellow.number}!`,
       text2: `As the beast widens its toothy maw, you hear a symphony of ${
-        number - 1
+        fellow.number - 1
       } tortured voices soon to be joined with yours.`,
       action: "Slide into the darkness, forever.",
       image: "path to image",
     },
   ];
+
+  function getRandomNumber(max) {
+    return Math.floor(Math.random() * max + 1);
+  }
 
   function toggleIsPlaying() {
     if (!isPlaying) setIsPlaying(true);
@@ -206,21 +225,141 @@ function App() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setPlayer((currentPlayer) => {
-      return { ...currentPlayer, level: 1, subLevel: 1 };
-    });
+    advancePlayerLevel();
   }
 
-  function handleClick(item) {
-    if (item.endLevel) {
+  function advancePlayer() {
+    // Get the current level
+    const currentGameLevel = gameLevels.find(
+      (level) =>
+        level.level === player.level && level.subLevel === player.subLevel
+    );
+    console.log("currentGameLevel: ", currentGameLevel);
+    // If current level is a win, advance level
+    // Otherwise, just advance sublevel
+    if (currentGameLevel.subLevel === "win") advancePlayerLevel();
+    else advancePlayerSubLevel(currentGameLevel);
+  }
+
+  function advancePlayerSubLevel(level) {
+    console.log("level: ", level);
+    console.log("level.endLevel: ", level.endLevel);
+
+    if (level.endLevel) {
       setPlayer((currentPlayer) => {
-        return { ...currentPlayer, level: item.level + 1, subLevel: 1 };
+        return { ...currentPlayer, subLevel: "win" };
       });
     } else {
       setPlayer((currentPlayer) => {
-        return { ...currentPlayer, subLevel: item.subLevel + 1 };
+        return { ...currentPlayer, subLevel: player.subLevel + 1 };
       });
     }
+  }
+
+  function advancePlayerLevel() {
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, level: player.level + 1, subLevel: 1 };
+    });
+    retoreLives();
+    clearGuesses();
+  }
+
+  function inputDigit(digit) {
+    const newNumber = parseInt(`${player.guess}${digit}`);
+    if (newNumber < 1 || newNumber > 10) {
+      respond(`No, ${player.name}! It MUST be from 1-10...`);
+    } else {
+      clearFellowResponse();
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, guess: newNumber };
+      });
+    }
+  }
+
+  function respond(response) {
+    setFellow((currentFellow) => {
+      return {
+        ...currentFellow,
+        response: response,
+      };
+    });
+  }
+
+  function addToGuesses() {
+    setPlayer((currentPlayer) => {
+      return {
+        ...currentPlayer,
+        guesses: [...player.guesses, player.guess],
+      };
+    });
+  }
+
+  function clearGuess() {
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, guess: "" };
+    });
+  }
+
+  function clearGuesses() {
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, guesses: [] };
+    });
+  }
+
+  function clearFellowResponse() {
+    setFellow((currentFellow) => {
+      return { ...currentFellow, response: null };
+    });
+  }
+
+  function loseGame() {
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, subLevel: "lose" };
+    });
+  }
+
+  function loseALife() {
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, lives: player.lives - 1 };
+    });
+  }
+
+  function retoreLives() {
+    setPlayer((currentPlayer) => {
+      return { ...currentPlayer, lives: 3 };
+    });
+  }
+
+  function checkGuess() {
+    console.log("checking guess");
+    // If guess is right, advance to win level
+    // If no, send a fellow response, remove a life, and add
+    if (!player.guess) respond(`Won't you even try, ${player.name}?`);
+    else if (player.guess === fellow.number) {
+      console.log("Correct guess!");
+      advancePlayer();
+    } else {
+      console.log("Incorrect Guess!");
+      // End game if player is on last life
+      if (player.lives - 1 === 0) loseGame();
+      else {
+        // Player loses a life but is still in the game
+        loseALife();
+        // Send fellow response
+        // If guess is too low...
+        if (player.guess < fellow.number) {
+          console.log("number was too low");
+          respond(`Regretfully, no. Try higher, ${player.name}`);
+        } else {
+          console.log("number was too high");
+          respond(`That's not it, ${player.name}. Perhaps lower?`);
+        }
+        // Add to player guesses
+        addToGuesses();
+      }
+    }
+    // Clear player's incorrect guess
+    clearGuess();
   }
 
   return (
@@ -231,6 +370,7 @@ function App() {
           <button onClick={() => toggleIsPlaying()}>Begin</button>
         </div>
       ) : (
+        // Player Start, Enter Name
         <>
           {player.level === 0 ? (
             <div className="intro-container">
@@ -244,23 +384,94 @@ function App() {
               </form>
             </div>
           ) : (
+            // Game Start
             <div className="game-container">
               <div className="game-image">
-                Artwork for level {player.level} subLevel {player.subLevel}
+                <p>Artwork.</p>
+                <p>
+                  Player level {player.level}, Player subLevel {player.subLevel}
+                </p>
+                <p>Number: {fellow.number}</p>
+                <p>Fellow Response: {fellow.response}</p>
               </div>
 
-              {gameText.map((item) => {
+              {gameLevels.map((level) => {
                 if (
-                  item.level === player.level &&
-                  item.subLevel === player.subLevel
+                  level.level === player.level &&
+                  level.subLevel === player.subLevel
                 ) {
                   return (
                     <div key={crypto.randomUUID()} className="game-text">
-                      <p>{item.text1}</p>
-                      <p>{item.text2}</p>
-                      <button onClick={() => handleClick(item)}>
-                        {item.action}
-                      </button>
+                      <p>{level.text1}</p>
+                      <p>{level.text2}</p>
+                      <p>
+                        Game level {level.level}, Game subLevel {level.subLevel}
+                      </p>
+                      {level.endLevel ? (
+                        // Guessing interface here
+                        // Display number buttons
+                        // Display guess
+                        // Display guesses with > or < indicators
+                        <>
+                          <div className="number-buttons-container">
+                            {numberButtons.map((numberButton) => {
+                              return (
+                                <div key={crypto.randomUUID()}>
+                                  <button
+                                    className="number-button"
+                                    onClick={() => inputDigit(numberButton)}
+                                  >
+                                    {numberButton}
+                                  </button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <button onClick={() => checkGuess(level)}>
+                            {level.action}
+                          </button>
+                          {player.guess ? (
+                            <>
+                              <button
+                                onClick={() => {
+                                  clearGuess(level);
+                                  clearFellowResponse();
+                                }}
+                              >
+                                Clear
+                              </button>
+                              <p>{player.guess}</p>
+                            </>
+                          ) : null}
+                          {fellow.response ? (
+                            <p>{fellow.response}</p>
+                          ) : (
+                            <p>{player.lives} guess(es) remain...</p>
+                          )}
+                          {player.guesses.length > 0 ? (
+                            <div className="logbook">
+                              {player.guesses.map((guess) => {
+                                if (guess > fellow.number)
+                                  return (
+                                    <p
+                                      key={crypto.randomUUID()}
+                                    >{`# < ${guess}`}</p>
+                                  );
+                                return (
+                                  <p
+                                    key={crypto.randomUUID()}
+                                  >{`# > ${guess}`}</p>
+                                );
+                              })}
+                            </div>
+                          ) : null}
+                        </>
+                      ) : (
+                        // Non-guessing interface here
+                        <button onClick={() => advancePlayer()}>
+                          {level.action}
+                        </button>
+                      )}
                     </div>
                   );
                 }
