@@ -28,6 +28,16 @@ function App() {
     response: "",
     health: 100,
   });
+  const [announcer, setAnnouncer] = useState({
+    reaction: "",
+    description: "",
+    suggestion: "",
+    hasAnnouncement: false,
+  });
+
+  useEffect(() => {
+    console.log(announcer);
+  }, [announcer]);
 
   useEffect(() => {
     if (!isPlaying) {
@@ -47,6 +57,22 @@ function App() {
       return { ...currentFellow, number: getRandomNumber(fellow.max) };
     });
   }, [fellow.max]);
+
+  useEffect(() => {
+    if (
+      announcer.reaction !== "" ||
+      announcer.description !== "" ||
+      announcer.suggestion !== ""
+    ) {
+      setAnnouncer((currentAnnouncer) => {
+        return { ...currentAnnouncer, hasAnnouncement: true };
+      });
+    } else {
+      setAnnouncer((currentAnnouncer) => {
+        return { ...currentAnnouncer, hasAnnouncement: false };
+      });
+    }
+  }, [announcer.reaction, announcer.description, announcer.suggestion]);
 
   const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
@@ -147,7 +173,7 @@ function App() {
       subLevel: "win",
       text1:
         "The fellow suddenly fades away, right before your eyes, as if by some black magic.",
-      text2: `His voice can be heard at an ominous distance, a mere echo in the sky:”`,
+      text2: `His voice can be heard at an ominous distance, a mere echo in the sky:`,
       text3: `“Now you have done it.”`,
       action: "Cross the bridge",
       image: "path to image",
@@ -207,7 +233,7 @@ function App() {
       text1:
         "The beast is quick! As if teleporting, you instantly see it raising a razor sharp claw.",
       text2: `Quickly, ${player.name}, it must have a weak spot!`,
-      text3: `From 1 - ${fellow.max}, you must find it!`,
+      text3: `From 1-${fellow.max}, you must find it!`,
       action: "Fight!", // Initiate health bars & fight sequence
       image: "path to image",
       endLevel: true,
@@ -318,29 +344,93 @@ function App() {
   function inputDigit(digit) {
     const newNumber = parseInt(`${player.guess}${digit}`);
     if (newNumber < 1 || newNumber > fellow.max) {
-      respond(
-        `“No, ${player.name}! It must be from 1-${fellow.max}... IT MUST!”`
-      );
+      if (player.level === 4) {
+        clearAnnouncer();
+        respond(
+          "suggestion",
+          `You can only find its weak spot from 1-${fellow.max}.`,
+          `You are out of range, ${player.name}. Keep it from 1-${fellow.max}.`,
+          `Aim from 1-${fellow.max} only, ${player.name}.`
+        );
+      } else {
+        respond(
+          "fellow",
+          `“No, ${player.name}! It must be from 1-${fellow.max}... IT MUST!”`,
+          `“Keep it from 1-${fellow.max}, ${player.name}.”`,
+          `“Would that be from 1-${fellow.max}? No, it would not.”`
+        );
+      }
     } else {
+      if (player.level === 4) {
+        if (!player.guess) {
+          clearAnnouncer();
+          respond(
+            "suggestion",
+            `Aim true, ${player.name}!`,
+            `Is that the beast's weak spot, ${player.name}?`,
+            `Be certain before you strike.`
+          );
+        }
+      } else {
+        if (!player.guess) {
+          respond(
+            "fellow",
+            `“Are you certain about that, ${player.name}?”`,
+            `“Could it be that simple, ${player.name}?”`,
+            `“Are you sure?”`
+          );
+        }
+      }
       setPlayer((currentPlayer) => {
         return { ...currentPlayer, guess: newNumber };
       });
-      respond(
-        `“Are you certain about that, ${player.name}?”`,
-        `“Could it be that simple, ${player.name}?”`,
-        `“Are you sure?”`
-      );
     }
   }
 
-  function respond(...responses) {
+  // function respond(...responses) {
+  //   const randomIndex = Math.floor(Math.random() * responses.length);
+  //   setFellow((currentFellow) => {
+  //     return {
+  //       ...currentFellow,
+  //       response: responses[randomIndex],
+  //     };
+  //   });
+  // }
+
+  // Response type (fellow, reaction, desscription, or suggestion)
+  function respond(type, ...responses) {
     const randomIndex = Math.floor(Math.random() * responses.length);
-    setFellow((currentFellow) => {
-      return {
-        ...currentFellow,
-        response: responses[randomIndex],
-      };
-    });
+    if (type === "fellow") {
+      setFellow((currentFellow) => {
+        return {
+          ...currentFellow,
+          response: responses[randomIndex],
+        };
+      });
+    } else if (type === "reaction") {
+      setAnnouncer((currentAnnouncer) => {
+        return {
+          ...currentAnnouncer,
+          reaction: responses[randomIndex],
+        };
+      });
+    } else if (type === "description") {
+      setAnnouncer((currentAnnouncer) => {
+        return {
+          ...currentAnnouncer,
+          description: responses[randomIndex],
+        };
+      });
+    } else if (type === "suggestion") {
+      setAnnouncer((currentAnnouncer) => {
+        return {
+          ...currentAnnouncer,
+          suggestion: responses[randomIndex],
+        };
+      });
+    } else {
+      console.log("No response set for type: ", type);
+    }
   }
 
   function clearResponse() {
@@ -350,6 +440,34 @@ function App() {
         response: "",
       };
     });
+  }
+
+  function clearAnnouncer(...types) {
+    // console.log("types: ", types);
+    const validTypes = ["reaction", "description", "suggestion"];
+    if (types.length === 0) {
+      console.log("Clearing Announcer (all)");
+      setAnnouncer((currentAnnouncer) => {
+        return {
+          ...currentAnnouncer,
+          reaction: "",
+          description: "",
+          suggestion: "",
+        };
+      });
+    } else {
+      types.forEach((type) => {
+        if (validTypes.includes(type)) {
+          console.log("Clearing Announcer type: ", type);
+          setAnnouncer((currentAnnouncer) => {
+            return {
+              ...currentAnnouncer,
+              [type]: "test",
+            };
+          });
+        } else console.log("Invalid Announcer type, nothing cleared.");
+      });
+    }
   }
 
   function addToGuesses() {
@@ -408,13 +526,13 @@ function App() {
     console.log({ damage });
     if (victim === "player")
       setPlayer((currentPlayer) => {
-        respond("Whip crack went his whippy tail!");
+        respond("reaction", "Whip crack went his whippy tail!");
         // TODO Add all the different responses based on damage here
         return { ...currentPlayer, health: player.health - damage };
       });
     else if (victim === "beast") {
       // TODO Add all the different responses based on damage here
-      respond("The beast is stunned!");
+      respond("reaction", "The beast is stunned!");
       setFellow((currentFellow) => {
         return { ...currentFellow, health: fellow.health - damage };
       });
@@ -426,49 +544,37 @@ function App() {
   }
 
   function checkGuess() {
-    // If guess is right, advance to win level
-    // If no, send a fellow response, remove a life, and add
-    if (!player.guess)
-      if (player.level === 4) {
+    // Player is on last level
+    if (player.level === 4) {
+      // Repond if there is no guess
+      if (!player.guess) {
         respond(
+          "suggestion",
           `There is no time to waste, ${player.name}, you are under attack!`,
           `Quit messing around and fight for your life!`,
           `Continue to do nothing and meet your end surely, ${player.name}!`
         );
+      } else if (player.guess === fellow.number) {
+        // Player, on last level, guesses the right number
+        clearAnnouncer();
+        advancePlayer();
       } else {
-        respond(
-          `“Won’t you even try, ${player.name}?”`,
-          `“You can do much better than that, ${player.name}?”`,
-          `“Do you refuse to guess, ${player.name}?”`
-        );
-      }
-    else if (player.guess === fellow.number) {
-      clearResponse();
-      advancePlayer();
-    } else {
-      // If player dies and isn't on the last level (lives not health)
-      if (player.lives - 1 === 0 && player.level !== 4) {
-        clearResponse();
-        loseGame();
-      } else if (player.level === 4) {
+        // Player, on last level, guessed the wrong number
+        clearAnnouncer();
         // Player is on last level in beast fight (health not lives)
         const victim = rollVictim();
         const damage = rollDamage();
         if (victim === "player" && player.health - damage < 1) {
-          clearResponse();
           loseGame();
         } else if (victim === "beast" && fellow.health - damage < 1) {
-          clearResponse();
           advancePlayer();
         }
         damageVictim(victim, damage);
-      } else {
-        // Player loses a life but is still in the game
-        loseALife();
-        // Send fellow response
-        // If guess is too low...
+
         if (player.guesses.includes(player.guess)) {
+          // Respond if player already made the guess
           respond(
+            "fellow",
             `“Haven’t you already tried that, ${player.name}"”`,
             `“Why guess the same number again, ${player.name}? You now have one less guess.”`,
             `“Stop repeating yourself, ${player.name}... it will not end well.”`,
@@ -477,32 +583,84 @@ function App() {
             `“I don’t recommend wasting any more guesses, ${player.name}."”`
           );
         } else if (player.guess < fellow.number) {
-          if (player.level === 4) {
-            respond(
-              `Its weak spot is higher, ${player.name}!`,
-              `Higher, ${player.name}, aim higher!`,
-              `Go for its weak spot! Aim higher!`
-            );
-          }
+          // Respond to player's too-low guess
+          respond(
+            "suggestion",
+            `Its weak spot is higher, ${player.name}!`,
+            `Higher, ${player.name}, aim higher!`,
+            `Go for its weak spot! Aim higher!`
+          );
         } else {
-          if (player.level === 4) {
-            respond(
-              `Aim lower, ${player.name}!`,
-              `Hit its weak spot, ${player.name}! Look lower!`,
-              `No, ${player.name}, hit it lower!`
-            );
-          } else {
-            respond(
-              `“That’s not it, ${player.name}. Perhaps lower?”`,
-              `“Good try, ${player.name}. It’s lower.”`,
-              `“No, but lower...”`
-            );
-          }
+          // Respond to player's too-high guess
+          respond(
+            "suggestion",
+            `Aim lower, ${player.name}!`,
+            `Hit its weak spot, ${player.name}! Look lower!`,
+            `Hit it lower!`
+          );
         }
         // Add to player guesses
         addToGuesses();
       }
     }
+
+    // Player is NOT on last level
+    if (player.level !== 4) {
+      if (!player.guess)
+        respond(
+          "fellow",
+          `“Won’t you even try, ${player.name}?”`,
+          `“You can do much better than that, ${player.name}?”`,
+          `“Do you refuse to guess, ${player.name}?”`
+        );
+      else if (player.guess === fellow.number) {
+        clearResponse();
+        clearAnnouncer();
+        advancePlayer();
+      } else {
+        // If player loses last life
+        if (player.lives - 1 === 0) {
+          clearResponse();
+          loseGame();
+        } else {
+          // Player loses a life but is still in the game
+          loseALife();
+          // Send fellow response
+          // If guess is too low...
+          if (player.guesses.includes(player.guess)) {
+            // Respond if player already made the guess
+            respond(
+              "fellow",
+              `“Haven’t you already tried that, ${player.name}"”`,
+              `“Why guess the same number again, ${player.name}? You now have one less guess.”`,
+              `“Stop repeating yourself, ${player.name}... it will not end well.”`,
+              `“Why would it be any different this time? Oh well...”`,
+              `“I suggest you guess something new.”`,
+              `“I don’t recommend wasting any more guesses, ${player.name}."”`
+            );
+          } else if (player.guess < fellow.number) {
+            // Respond to player's too-low guess
+            respond(
+              "fellow",
+              `“Regretfully, no. Try higher, ${player.name}”`,
+              `“No, ${player.name}. Think higher.”`,
+              `“Try something higher.”`
+            );
+          } else {
+            // Respond to player's too-high guess
+            respond(
+              "fellow",
+              `“That’s not it, ${player.name}. Perhaps lower?”`,
+              `“Good try, ${player.name}. It’s lower.”`,
+              `“No, but lower...”`
+            );
+          }
+          // Add to player guesses
+          addToGuesses();
+        }
+      }
+    }
+
     // Clear player's incorrect guess
     clearGuess();
   }
@@ -532,7 +690,7 @@ function App() {
             // Game Start
             <div className="game-container">
               <div className="game-image">
-                {player.level === 4 ? (
+                {player.level === 4 && player.subLevel === 5 ? (
                   <div className="fellow-health">Health: {fellow.health}</div>
                 ) : null}
                 <p>Artwork.</p>
@@ -556,8 +714,24 @@ function App() {
                       className="game-text-container"
                     >
                       <div className="game-text">
-                        {fellow.response ? (
-                          <p>{fellow.response}</p>
+                        {fellow.response || announcer.hasAnnouncement ? (
+                          <>
+                            {player.level === 4 ? (
+                              <>
+                                {announcer.reaction ? (
+                                  <p>{announcer.reaction}</p>
+                                ) : null}
+                                {announcer.description ? (
+                                  <p>{announcer.description}</p>
+                                ) : null}
+                                {announcer.suggestion ? (
+                                  <p>{announcer.suggestion}</p>
+                                ) : null}
+                              </>
+                            ) : (
+                              <p>{fellow.response}</p>
+                            )}
+                          </>
                         ) : (
                           <>
                             <p>{level.text1}</p>
@@ -599,15 +773,18 @@ function App() {
                             <button
                               onClick={() => {
                                 clearGuess(level);
+                                clearAnnouncer();
                                 if (player.guess) {
                                   if (player.level === 4) {
                                     respond(
-                                      `Try again, ${player.name}. Focus!`,
-                                      `Aim for its weak splot, ${player.name}.!`,
-                                      `You're still alive... strike now!`
+                                      "suggestion",
+                                      `All is clear now, ${player.name}. Focus your aim!`,
+                                      `The way is clear, ${player.name}! Find your target!`,
+                                      `Clear your mind and strike!`
                                     );
                                   } else {
                                     respond(
+                                      "fellow",
                                       `“That’s it, ${player.name}. Clear your mind.”`,
                                       `“Clear your mind of everything, ${player.name}.”`,
                                       `“Yes, let your mind go blank.”`
@@ -615,12 +792,14 @@ function App() {
                                   }
                                 } else if (player.level === 4) {
                                   respond(
+                                    "suggestion",
                                     `It's clear enough. Strike the beast!`,
                                     `How clear must it be, ${player.name}? Attack!`,
                                     `Forget clarity! Fight for your life!`
                                   );
                                 } else {
                                   respond(
+                                    "fellow",
                                     `“Could it be any clearer?”`,
                                     `“But it’s so clear already, ${player.name}?”`,
                                     `“${player.name}, what are you trying to do?”`
@@ -633,6 +812,7 @@ function App() {
                           </div>
                           <div className="logbook">
                             <p>Logbook</p>
+                            {fellow.max ? <p>Range: 1-{fellow.max}</p> : null}
                             {player.level === 4 ? (
                               <div className="player-health">
                                 Health: {player.health}
