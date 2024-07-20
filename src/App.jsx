@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+// TODO Lay out a logbook/journal during guessing so the content doesn't move around as it updates
 // TODO Separate into components
 // TODO Create random number
 // TODO Make first number guessing sequence
 // TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
+// TODO Add random responses
+// TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
 
 function App() {
+  const startingLives = 3;
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState({
     name: "Traveler",
@@ -14,16 +18,35 @@ function App() {
     subLevel: 0,
     guess: "",
     guesses: [],
-    lives: 3,
+    lives: startingLives,
+    health: 100,
+    damage: 1,
   });
   const [fellow, setFellow] = useState({
-    number: getRandomNumber(10),
+    number: 0,
+    max: 0,
     response: "",
+    health: 100,
   });
 
   useEffect(() => {
-    console.log("player guesses: ", player.guesses);
-  }, [player.guesses]);
+    if (!isPlaying) {
+      // Reset player to defaults
+      resetDefaults();
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    retoreLives();
+    clearGuesses();
+    increaseMax();
+  }, [player.level]);
+
+  useEffect(() => {
+    setFellow((currentFellow) => {
+      return { ...currentFellow, number: getRandomNumber(fellow.max) };
+    });
+  }, [fellow.max]);
 
   const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
@@ -31,7 +54,7 @@ function App() {
     {
       level: 1,
       subLevel: 1,
-      text1: "Along a path, you meet a young fellow dressed in black.",
+      text1: "Along a path, you meet a young fellow in a black cloak.",
       text2: "He looks friendly enough... or does he?",
       action: "Approach",
       image: "path to image",
@@ -41,7 +64,7 @@ function App() {
       level: 1,
       subLevel: 2,
       text1: "With a curious smirk, he says to you:",
-      text2: `"Greetings, ${player.name}! I'm thinking of a number from 1-10. Can you guess it?"`,
+      text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it?”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -50,17 +73,17 @@ function App() {
       level: 1,
       subLevel: "win",
       text1: "With an almost surprised look, the fellow says:",
-      text2: `"Very impressive, ${player.name}! ...You may pass.`,
-      action: "Pass along the path",
+      text2: `“Very impressive, ${player.name}! You may pass...”`,
+      action: "Walk the path",
       image: "path to image",
     },
     {
       level: 1,
       subLevel: "lose",
-      text1: `"The fellow smiles and looks at you darkly. "Sorry, ${player.name}, it was ${fellow.number}."`,
+      text1: `The fellow smiles and looks at you darkly. “Sorry, ${player.name}, it was ${fellow.number}.”`,
       text2:
-        "The fellow's eyes turn black. You suddenly feel heavy and very tired. The world around you begins to fade.",
-      action: "Be gone, forever",
+        "His eyes turn black. You suddenly feel heavy and very tired. The world around you begins to fade.",
+      action: "Leave this world forever",
       image: "path to image",
     },
     {
@@ -76,7 +99,7 @@ function App() {
       level: 2,
       subLevel: 2,
       text1: "With a respectful bow, he says to you:",
-      text2: `"Hello again, ${player.name}! Now what number am I thinking of?"`,
+      text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of?”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -84,26 +107,28 @@ function App() {
     {
       level: 2,
       subLevel: "win",
-      text1: "With a glimpse of annoyance masked by charm, the fellow says: ",
-      text2: `"You win again, ${player.name}! Go ahead... if you must.`,
+      text1: "With a glimpse of annoyance masked by charm, the fellow says:",
+      text2: `“You win again, ${player.name}! Go ahead... if you must.”`,
       action: "Step into the forest",
       image: "path to image",
     },
     {
       level: 2,
       subLevel: "lose",
-      text1: `"The fellow clenches his fists as if holding something back. "So sorry, ${player.name}... my number was ${fellow.number}."`,
+      text1: `The fellow clenches his fists as if holding something back. “So sorry, ${player.name}... my number was ${fellow.number}.”`,
       text2:
-        "A slow forming smirk reveals the depair in his voice to be false. The fellow opens his arms and pulls you into the irresistible darkness and silence.",
+        "A slow, deliberate smirk betrays the pretense of despair in his voice.",
+      text3:
+        "The fellow opens his arms and pulls you into the irresistible darkness and silence.",
       action: "Let go of life and light",
       image: "path to image",
     },
     {
       level: 3,
       subLevel: 1,
-      text1:
-        "You reach a long, worn bridge, the only way forward. At the bridge's mouth, you spy the shape of your old friend.",
-      text2: "He has been wating for you.",
+      text1: "You reach a long, worn bridge, the only way forward.",
+      text2: "At the bridge’s mouth, you spy the shape of your old friend.",
+      text3: "It appears he has been wating for you.",
       action: "Approach",
       image: "path to image",
       endLevel: false,
@@ -112,7 +137,7 @@ function App() {
       level: 3,
       subLevel: 2,
       text1: "With only seriousness now, he asks you darkly:",
-      text2: `"What is my number, ${player.name}?`,
+      text2: `“1-${fellow.max}, ${player.name}... what is my number?”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -121,25 +146,28 @@ function App() {
       level: 3,
       subLevel: "win",
       text1:
-        "The fellow suddenly fades away, right there before you, as if by some black magic.",
-      text2: `His voice can be heard in the distance: "Now you have done it"`,
+        "The fellow suddenly fades away, right before your eyes, as if by some black magic.",
+      text2: `His voice can be heard at an ominous distance, a mere echo in the sky:”`,
+      text3: `“Now you have done it.”`,
       action: "Cross the bridge",
       image: "path to image",
     },
     {
       level: 3,
       subLevel: "lose",
-      text1: `"The fellow shivers with a mixture of relief, pain, and joy. "This is it, dear ${player.name}... my number was ${fellow.number}."`,
+      text1: `"The fellow shivers with a mixture of relief, pain, and joy. His eyes roll back. “This is it, dear ${player.name}... my number was ${fellow.number}.”`,
       text2:
-        "His form begins to grow adn the blacks if his cloak become blacker, until the blackness shrouds anything and everything.",
-      action: "Beocme one with the darkness",
+        "His form begins to grow and the blacks of his cloak become blacker and wider until shrouding anything and everything.",
+      text3: "Especially you.",
+      action: "Become one with darkness",
       image: "path to image",
     },
     {
       level: 4,
       subLevel: 1,
       text1: "Wait... is it not the end?",
-      text2: "Beyond the bridge is a cave. You hesitantly approach.",
+      text2: "Beyond the bridge is a cave.",
+      text2: "You hesitantly approach.",
       action: "Step inside",
       image: "path to image",
       endLevel: false,
@@ -156,9 +184,9 @@ function App() {
     {
       level: 4,
       subLevel: 3,
-      text1:
-        "The form moves suddenly. It jerks and moans. You think you can make out your name, almost whimpered.",
-      text2: "It is becoming something much larger...",
+      text1: "The form moves suddenly. It jerks and moans.",
+      text2: "You think you can make out your name, almost a whimper.",
+      text3: "It is becoming something much larger...",
       action: "Turn back and run",
       image: "path to image",
       endLevel: false,
@@ -167,7 +195,7 @@ function App() {
       level: 4,
       subLevel: 4,
       text1:
-        "You see that it has sharp, twisted numbers growing out of its body.",
+        "In a shimmer of light, you can see it has sharp, twisted numbers growing out of its body.",
       text2: "It locks its black eyes on you and roars!",
       action: "Try desperately to escape",
       image: "path to image",
@@ -177,8 +205,9 @@ function App() {
       level: 4,
       subLevel: 5,
       text1:
-        "The beast is too quick! In a flash, you see it raising a razor sharp claw.",
-      text2: "Quickly, it must have a weak spot. You must find it!",
+        "The beast is quick! As if teleporting, you instantly see it raising a razor sharp claw.",
+      text2: `Quickly, ${player.name}, it must have a weak spot!`,
+      text3: `From 1 - ${fellow.max}, you must find it!`,
       action: "Fight!", // Initiate health bars & fight sequence
       image: "path to image",
       endLevel: true,
@@ -186,27 +215,44 @@ function App() {
     {
       level: 4,
       subLevel: "win",
-      text1: `The beast cries out with the scream of ${
-        fellow.number - 1
-      } tortured voice(s). "No, what have you done? You were supposed to be my ${
-        fellow.number
-      }!`,
-      text2:
-        "Suddenly, the beast bursts into black flames. You meet eyes one last time before it is swallowed completely by the darkness",
-      action: "Be remembered as a hero",
+      text1: `The beast cries out like the tears of ${
+        fellow.number - 1 // TODO singular/plural
+      } terrified brother(s), and roars: “No, no! What have you done, ${
+        player.name // TODO singular/plural
+      }? You were supposed to be my precious number ${fellow.number}!”`,
+      text2: `Suddenly, the beast bursts into black flames. The surrounding air feels both hot and cold. You meet its eyes and glimpse the fleeting expression of a lost child. The beast reaches out a trembling finger, whispers your name... “${player.name}...” and is instantly swallowed whole by the darkness, leaving only the empty black cloak to collapse and crumple onto the ground.`,
+      text3: "You pick it up. It still feels warm. You ponder.",
+      action: "Put on the cloak",
       image: "path to image",
     },
     {
       level: 4,
       subLevel: "lose",
-      text1: `The beast picks you up over its great horns. "You are mine! You shall become my ${fellow.number}!`,
-      text2: `As the beast widens its toothy maw, you hear a symphony of ${
-        fellow.number - 1
-      } tortured voices soon to be joined with yours.`,
-      action: "Slide into the darkness, forever.",
+      text1: `The beast picks you up above its great numbered horns.`,
+      text2: `“You are mine! You shall become my number ${fellow.number}!”`,
+      text3: `As the beast widens its toothy maw, you hear a single/symphony of ${
+        fellow.number - 1 // TODO singular/plural
+      } tortured voice(s) soon to be joined with your own.`, // TODO singular/plural
+      action: "To the pit",
       image: "path to image",
     },
   ];
+
+  function resetDefaults() {
+    setPlayer((currentPlayer) => {
+      return {
+        ...currentPlayer,
+        level: 0,
+        subLevel: 0,
+        guess: "",
+        guesses: [],
+        lives: startingLives,
+      };
+    });
+    setFellow((currentFellow) => {
+      return { ...currentFellow, number: 0, max: 0, response: "" };
+    });
+  }
 
   function getRandomNumber(max) {
     return Math.floor(Math.random() * max + 1);
@@ -228,23 +274,30 @@ function App() {
     advancePlayerLevel();
   }
 
+  function increaseMax() {
+    let max = fellow.max;
+    if (player.level === 1) max = 10;
+    else if (player.level === 2) max = 25;
+    else max = max * 2;
+    setFellow((currentFellow) => {
+      return { ...currentFellow, max: max };
+    });
+  }
+
   function advancePlayer() {
     // Get the current level
     const currentGameLevel = gameLevels.find(
       (level) =>
         level.level === player.level && level.subLevel === player.subLevel
     );
-    console.log("currentGameLevel: ", currentGameLevel);
     // If current level is a win, advance level
     // Otherwise, just advance sublevel
     if (currentGameLevel.subLevel === "win") advancePlayerLevel();
+    else if (currentGameLevel.subLevel === "lose") endGame();
     else advancePlayerSubLevel(currentGameLevel);
   }
 
   function advancePlayerSubLevel(level) {
-    console.log("level: ", level);
-    console.log("level.endLevel: ", level.endLevel);
-
     if (level.endLevel) {
       setPlayer((currentPlayer) => {
         return { ...currentPlayer, subLevel: "win" };
@@ -260,27 +313,41 @@ function App() {
     setPlayer((currentPlayer) => {
       return { ...currentPlayer, level: player.level + 1, subLevel: 1 };
     });
-    retoreLives();
-    clearGuesses();
   }
 
   function inputDigit(digit) {
     const newNumber = parseInt(`${player.guess}${digit}`);
-    if (newNumber < 1 || newNumber > 10) {
-      respond(`No, ${player.name}! It MUST be from 1-10...`);
+    if (newNumber < 1 || newNumber > fellow.max) {
+      respond(
+        `“No, ${player.name}! It must be from 1-${fellow.max}... IT MUST!”`
+      );
     } else {
-      clearFellowResponse();
       setPlayer((currentPlayer) => {
         return { ...currentPlayer, guess: newNumber };
       });
+      respond(
+        `“Are you certain about that, ${player.name}?”`,
+        `“Could it be that simple, ${player.name}?”`,
+        `“Are you sure?”`
+      );
     }
   }
 
-  function respond(response) {
+  function respond(...responses) {
+    const randomIndex = Math.floor(Math.random() * responses.length);
     setFellow((currentFellow) => {
       return {
         ...currentFellow,
-        response: response,
+        response: responses[randomIndex],
+      };
+    });
+  }
+
+  function clearResponse() {
+    setFellow((currentFellow) => {
+      return {
+        ...currentFellow,
+        response: "",
       };
     });
   }
@@ -306,12 +373,6 @@ function App() {
     });
   }
 
-  function clearFellowResponse() {
-    setFellow((currentFellow) => {
-      return { ...currentFellow, response: null };
-    });
-  }
-
   function loseGame() {
     setPlayer((currentPlayer) => {
       return { ...currentPlayer, subLevel: "lose" };
@@ -326,33 +387,117 @@ function App() {
 
   function retoreLives() {
     setPlayer((currentPlayer) => {
-      return { ...currentPlayer, lives: 3 };
+      return { ...currentPlayer, lives: startingLives + player.level };
     });
   }
 
+  function rollVictim() {
+    // Return either "player" or "beast" to be attacked
+    console.log("need to figure out victim");
+    return "player";
+  }
+
+  function rollDamage() {
+    // roll 20 to decide what happens in the attack
+    console.log("need to figure out damage");
+    return 1;
+  }
+
+  function damageVictim(victim, damage) {
+    console.log({ victim });
+    console.log({ damage });
+    if (victim === "player")
+      setPlayer((currentPlayer) => {
+        respond("Whip crack went his whippy tail!");
+        // TODO Add all the different responses based on damage here
+        return { ...currentPlayer, health: player.health - damage };
+      });
+    else if (victim === "beast") {
+      // TODO Add all the different responses based on damage here
+      respond("The beast is stunned!");
+      setFellow((currentFellow) => {
+        return { ...currentFellow, health: fellow.health - damage };
+      });
+    }
+  }
+
+  function endGame() {
+    toggleIsPlaying();
+  }
+
   function checkGuess() {
-    console.log("checking guess");
     // If guess is right, advance to win level
     // If no, send a fellow response, remove a life, and add
-    if (!player.guess) respond(`Won't you even try, ${player.name}?`);
+    if (!player.guess)
+      if (player.level === 4) {
+        respond(
+          `There is no time to waste, ${player.name}, you are under attack!`,
+          `Quit messing around and fight for your life!`,
+          `Continue to do nothing and meet your end surely, ${player.name}!`
+        );
+      } else {
+        respond(
+          `“Won’t you even try, ${player.name}?”`,
+          `“You can do much better than that, ${player.name}?”`,
+          `“Do you refuse to guess, ${player.name}?”`
+        );
+      }
     else if (player.guess === fellow.number) {
-      console.log("Correct guess!");
+      clearResponse();
       advancePlayer();
     } else {
-      console.log("Incorrect Guess!");
-      // End game if player is on last life
-      if (player.lives - 1 === 0) loseGame();
-      else {
+      // If player dies and isn't on the last level (lives not health)
+      if (player.lives - 1 === 0 && player.level !== 4) {
+        clearResponse();
+        loseGame();
+      } else if (player.level === 4) {
+        // Player is on last level in beast fight (health not lives)
+        const victim = rollVictim();
+        const damage = rollDamage();
+        if (victim === "player" && player.health - damage < 1) {
+          clearResponse();
+          loseGame();
+        } else if (victim === "beast" && fellow.health - damage < 1) {
+          clearResponse();
+          advancePlayer();
+        }
+        damageVictim(victim, damage);
+      } else {
         // Player loses a life but is still in the game
         loseALife();
         // Send fellow response
         // If guess is too low...
-        if (player.guess < fellow.number) {
-          console.log("number was too low");
-          respond(`Regretfully, no. Try higher, ${player.name}`);
+        if (player.guesses.includes(player.guess)) {
+          respond(
+            `“Haven’t you already tried that, ${player.name}"”`,
+            `“Why guess the same number again, ${player.name}? You now have one less guess.”`,
+            `“Stop repeating yourself, ${player.name}... it will not end well.”`,
+            `“Why would it be any different this time? Oh well...”`,
+            `“I suggest you guess something new.”`,
+            `“I don’t recommend wasting any more guesses, ${player.name}."”`
+          );
+        } else if (player.guess < fellow.number) {
+          if (player.level === 4) {
+            respond(
+              `Its weak spot is higher, ${player.name}!`,
+              `Higher, ${player.name}, aim higher!`,
+              `Go for its weak spot! Aim higher!`
+            );
+          }
         } else {
-          console.log("number was too high");
-          respond(`That's not it, ${player.name}. Perhaps lower?`);
+          if (player.level === 4) {
+            respond(
+              `Aim lower, ${player.name}!`,
+              `Hit its weak spot, ${player.name}! Look lower!`,
+              `No, ${player.name}, hit it lower!`
+            );
+          } else {
+            respond(
+              `“That’s not it, ${player.name}. Perhaps lower?”`,
+              `“Good try, ${player.name}. It’s lower.”`,
+              `“No, but lower...”`
+            );
+          }
         }
         // Add to player guesses
         addToGuesses();
@@ -387,11 +532,16 @@ function App() {
             // Game Start
             <div className="game-container">
               <div className="game-image">
+                {player.level === 4 ? (
+                  <div className="fellow-health">Health: {fellow.health}</div>
+                ) : null}
                 <p>Artwork.</p>
                 <p>
                   Player level {player.level}, Player subLevel {player.subLevel}
                 </p>
-                <p>Number: {fellow.number}</p>
+                <p>
+                  Number: {fellow.number}, Max: {fellow.max}
+                </p>
                 <p>Fellow Response: {fellow.response}</p>
               </div>
 
@@ -401,25 +551,40 @@ function App() {
                   level.subLevel === player.subLevel
                 ) {
                   return (
-                    <div key={crypto.randomUUID()} className="game-text">
-                      <p>{level.text1}</p>
-                      <p>{level.text2}</p>
-                      <p>
+                    <div
+                      key={crypto.randomUUID()}
+                      className="game-text-container"
+                    >
+                      <div className="game-text">
+                        {fellow.response ? (
+                          <p>{fellow.response}</p>
+                        ) : (
+                          <>
+                            <p>{level.text1}</p>
+                            <p>{level.text2}</p>
+                            {level.text3 ? <p>{level.text3}</p> : null}
+                          </>
+                        )}
+                      </div>
+                      {/* <p>
                         Game level {level.level}, Game subLevel {level.subLevel}
-                      </p>
+                      </p> */}
                       {level.endLevel ? (
                         // Guessing interface here
                         // Display number buttons
                         // Display guess
                         // Display guesses with > or < indicators
                         <>
-                          <div className="number-buttons-container">
+                          <div className="your-guess">{player.guess}</div>
+                          <div className="number-btns-container">
                             {numberButtons.map((numberButton) => {
                               return (
                                 <div key={crypto.randomUUID()}>
                                   <button
-                                    className="number-button"
-                                    onClick={() => inputDigit(numberButton)}
+                                    className="number-btn"
+                                    onClick={() => {
+                                      inputDigit(numberButton);
+                                    }}
                                   >
                                     {numberButton}
                                   </button>
@@ -427,44 +592,78 @@ function App() {
                               );
                             })}
                           </div>
-                          <button onClick={() => checkGuess(level)}>
-                            {level.action}
-                          </button>
-                          {player.guess ? (
-                            <>
-                              <button
-                                onClick={() => {
-                                  clearGuess(level);
-                                  clearFellowResponse();
-                                }}
-                              >
-                                Clear
-                              </button>
-                              <p>{player.guess}</p>
-                            </>
-                          ) : null}
-                          {fellow.response ? (
-                            <p>{fellow.response}</p>
-                          ) : (
-                            <p>{player.lives} guess(es) remain...</p>
-                          )}
-                          {player.guesses.length > 0 ? (
-                            <div className="logbook">
-                              {player.guesses.map((guess) => {
-                                if (guess > fellow.number)
-                                  return (
-                                    <p
-                                      key={crypto.randomUUID()}
-                                    >{`# < ${guess}`}</p>
+                          <div className="guess-btns">
+                            <button onClick={() => checkGuess(level)}>
+                              {level.action}
+                            </button>
+                            <button
+                              onClick={() => {
+                                clearGuess(level);
+                                if (player.guess) {
+                                  if (player.level === 4) {
+                                    respond(
+                                      `Try again, ${player.name}. Focus!`,
+                                      `Aim for its weak splot, ${player.name}.!`,
+                                      `You're still alive... strike now!`
+                                    );
+                                  } else {
+                                    respond(
+                                      `“That’s it, ${player.name}. Clear your mind.”`,
+                                      `“Clear your mind of everything, ${player.name}.”`,
+                                      `“Yes, let your mind go blank.”`
+                                    );
+                                  }
+                                } else if (player.level === 4) {
+                                  respond(
+                                    `It's clear enough. Strike the beast!`,
+                                    `How clear must it be, ${player.name}? Attack!`,
+                                    `Forget clarity! Fight for your life!`
                                   );
-                                return (
-                                  <p
-                                    key={crypto.randomUUID()}
-                                  >{`# > ${guess}`}</p>
-                                );
-                              })}
+                                } else {
+                                  respond(
+                                    `“Could it be any clearer?”`,
+                                    `“But it’s so clear already, ${player.name}?”`,
+                                    `“${player.name}, what are you trying to do?”`
+                                  );
+                                }
+                              }}
+                            >
+                              Clear
+                            </button>
+                          </div>
+                          <div className="logbook">
+                            <p>Logbook</p>
+                            {player.level === 4 ? (
+                              <div className="player-health">
+                                Health: {player.health}
+                              </div>
+                            ) : (
+                              <>
+                                {/* TODO singular/plural */}
+                                <p>{player.lives} guess(es) remain</p>
+                              </>
+                            )}
+
+                            <div className="guesses">
+                              {player.guesses.length > 0 ? (
+                                <>
+                                  {player.guesses.map((guess) => {
+                                    if (guess > fellow.number)
+                                      return (
+                                        <p
+                                          key={crypto.randomUUID()}
+                                        >{`# < ${guess}`}</p>
+                                      );
+                                    return (
+                                      <p
+                                        key={crypto.randomUUID()}
+                                      >{`# > ${guess}`}</p>
+                                    );
+                                  })}
+                                </>
+                              ) : null}
                             </div>
-                          ) : null}
+                          </div>
                         </>
                       ) : (
                         // Non-guessing interface here

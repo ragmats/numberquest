@@ -42,7 +42,7 @@
   gap: 1em;
 }
 
-.game-text {
+.game-text-container {
   border: 1px solid green;
   display: flex;
   flex-direction: column;
@@ -52,20 +52,79 @@
   height: 100%;
   gap: 1em;
   padding: 2em;
+  text-align: center;
 }
 
-.number-buttons-container {
+.game-text {
+  /* border: 1px solid green; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: 3em;
+  gap: 1em;
+}
+
+.number-btns-container {
   /* border: 1px solid red; */
   display: flex;
   gap: 1em;
 }
 
-.number-button {
-  padding: 1em;
+.number-btn {
+  height: 40px;
+  aspect-ratio: 1/1;
+}
+
+.guess-btns {
+  display: flex;
+  gap: 1em;
 }
 
 .logbook {
   /* border: 1px solid red; */
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 150px;
+  width: 500px;
+  display: flex;
   gap: 1em;
+  padding: 1em;
+}
+
+.guesses {
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  height: 20px;
+  gap: 0.75em;
+}
+
+.your-guess {
+  /* border: 1px solid red; */
+  height: 100px;
+  /* width: 100px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  padding: 0;
+  font-size: 3em;
+  font-weight: 600;
+  color: red;
+}
+
+.player-health {
+  border: 1px solid red;
+  color: red;
+  background-color: white;
+}
+
+.fellow-health {
+  border: 1px solid red;
+  color: red;
+  background-color: white;
 }
