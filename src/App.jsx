@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-// TODO Lay out a logbook/journal during guessing so the content doesn't move around as it updates
 // TODO Separate into components
-// TODO Create random number
-// TODO Make first number guessing sequence
 // TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
-// TODO Add random responses
+// TODO Add more random responses - proof and improve all text
 // TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
+// TODO Consider making the final blow (either death or win) visible in some way - as is, it just jumps to the final screen
+// TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
 
 function App() {
   const startingLives = 3;
@@ -34,10 +33,16 @@ function App() {
     suggestion: "",
     hasAnnouncement: false,
   });
+  const [isLastLevel, setIsLastLevel] = useState(false);
 
   useEffect(() => {
     console.log(announcer);
   }, [announcer]);
+
+  useEffect(() => {
+    if (player.level === 4) setIsLastLevel(true);
+    else setIsLastLevel(false);
+  }, [player.level]);
 
   useEffect(() => {
     if (!isPlaying) {
@@ -191,9 +196,9 @@ function App() {
     {
       level: 4,
       subLevel: 1,
-      text1: "Wait... is it not the end?",
+      text1: "Wait... is this not the end?",
       text2: "Beyond the bridge is a cave.",
-      text2: "You hesitantly approach.",
+      text3: "You hesitantly approach.",
       action: "Step inside",
       image: "path to image",
       endLevel: false,
@@ -318,8 +323,13 @@ function App() {
     );
     // If current level is a win, advance level
     // Otherwise, just advance sublevel
-    if (currentGameLevel.subLevel === "win") advancePlayerLevel();
-    else if (currentGameLevel.subLevel === "lose") endGame();
+    if (currentGameLevel.subLevel === "win" && !isLastLevel)
+      advancePlayerLevel();
+    else if (
+      currentGameLevel.subLevel === "lose" ||
+      currentGameLevel.subLevel === "win"
+    )
+      endGame();
     else advancePlayerSubLevel(currentGameLevel);
   }
 
@@ -344,7 +354,7 @@ function App() {
   function inputDigit(digit) {
     const newNumber = parseInt(`${player.guess}${digit}`);
     if (newNumber < 1 || newNumber > fellow.max) {
-      if (player.level === 4) {
+      if (isLastLevel) {
         clearAnnouncer();
         respond(
           "suggestion",
@@ -361,7 +371,7 @@ function App() {
         );
       }
     } else {
-      if (player.level === 4) {
+      if (isLastLevel) {
         if (!player.guess) {
           clearAnnouncer();
           respond(
@@ -511,32 +521,148 @@ function App() {
 
   function rollVictim() {
     // Return either "player" or "beast" to be attacked
-    console.log("need to figure out victim");
-    return "player";
+    const roll = Math.floor(Math.random() * 2);
+    if (roll === 0) return "player";
+    return "beast";
   }
 
-  function rollDamage() {
+  function roll20() {
     // roll 20 to decide what happens in the attack
-    console.log("need to figure out damage");
-    return 1;
+    const roll = Math.floor(Math.random() * 20 + 1);
+    return roll;
   }
 
-  function damageVictim(victim, damage) {
+  function damageVictim(victim, roll) {
     console.log({ victim });
-    console.log({ damage });
-    if (victim === "player")
-      setPlayer((currentPlayer) => {
-        respond("reaction", "Whip crack went his whippy tail!");
-        // TODO Add all the different responses based on damage here
-        return { ...currentPlayer, health: player.health - damage };
-      });
-    else if (victim === "beast") {
-      // TODO Add all the different responses based on damage here
-      respond("reaction", "The beast is stunned!");
+    let damage;
+    if (victim === "beast") {
+      switch (roll) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+          damage = 0;
+          respond("reaction", "The beast is too quick!");
+          respond("description", `You swing your fist wildly but miss!`);
+          break;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+          damage = 5;
+          respond("reaction", "The beast takes a hit but its armor is strong!");
+          respond("description", `You jab the beast for ${damage} damage!`);
+          break;
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+          damage = 10;
+          respond("reaction", "The beast is hit!");
+          respond("description", `You throw a rock for ${damage} damage!`);
+          break;
+        case 16:
+        case 17:
+          damage = 15;
+          respond("reaction", "The beast gets knocked down!");
+          respond("description", `You slam the beast for ${damage} damage!`);
+          break;
+        case 18:
+        case 19:
+          damage = 20;
+          respond("reaction", "The beast falls over...");
+          respond(
+            "description",
+            `You kick it in the horn for ${damage} damage!`
+          );
+          break;
+        case 20:
+          damage = 30;
+          respond("reaction", "The beast is stunned!");
+          respond(
+            "description",
+            `You deliver a decisive critical hit for ${damage} damage!`
+          );
+          break;
+        default:
+          damage = 1;
+          respond("reaction", "The beast is tickled.");
+          respond("description", `You poke the beast for ${damage} damage!`);
+      }
       setFellow((currentFellow) => {
         return { ...currentFellow, health: fellow.health - damage };
       });
+    } else if (victim === "player") {
+      switch (roll) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+          damage = 0;
+          respond("reaction", "You jump to the side!");
+          respond("description", `The beast swipes and misses!`);
+          break;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+          damage = 5;
+          respond("reaction", "The beast lands a swipe to your shoulder!");
+          respond("description", `You take ${damage} damage!`);
+          break;
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+          damage = 10;
+          respond("reaction", "The beast roars so loud it shakes your soul!");
+          respond(
+            "description",
+            `You gain your senses after taking ${damage} damage!`
+          );
+          break;
+        case 16:
+        case 17:
+          damage = 15;
+          respond("reaction", "The beast leaps!");
+          respond(
+            "description",
+            `You turn as he claws your back for ${damage} damage!`
+          );
+          break;
+        case 18:
+        case 19:
+          damage = 20;
+          respond("reaction", "You lose your footing.");
+          respond(
+            "description",
+            `The beast takes a swipe for ${damage} damage!`
+          );
+          break;
+        case 20:
+          damage = 30;
+          respond("reaction", "The beast strikes with BOTH claws!");
+          respond(
+            "description",
+            `You take a critical hit for ${damage} damage!`
+          );
+          break;
+        default:
+          damage = 1;
+          respond("reaction", "You get hurt, but not bad.");
+          respond("description", `The beast gets you for ${damage} damage!`);
+      }
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, health: player.health - damage };
+      });
     }
+    return damage;
   }
 
   function endGame() {
@@ -545,7 +671,7 @@ function App() {
 
   function checkGuess() {
     // Player is on last level
-    if (player.level === 4) {
+    if (isLastLevel) {
       // Repond if there is no guess
       if (!player.guess) {
         respond(
@@ -563,41 +689,45 @@ function App() {
         clearAnnouncer();
         // Player is on last level in beast fight (health not lives)
         const victim = rollVictim();
-        const damage = rollDamage();
+        const roll = roll20();
+        const damage = damageVictim(victim, roll);
+
         if (victim === "player" && player.health - damage < 1) {
+          clearAnnouncer();
           loseGame();
         } else if (victim === "beast" && fellow.health - damage < 1) {
+          clearAnnouncer();
           advancePlayer();
-        }
-        damageVictim(victim, damage);
-
-        if (player.guesses.includes(player.guess)) {
-          // Respond if player already made the guess
-          respond(
-            "fellow",
-            `“Haven’t you already tried that, ${player.name}"”`,
-            `“Why guess the same number again, ${player.name}? You now have one less guess.”`,
-            `“Stop repeating yourself, ${player.name}... it will not end well.”`,
-            `“Why would it be any different this time? Oh well...”`,
-            `“I suggest you guess something new.”`,
-            `“I don’t recommend wasting any more guesses, ${player.name}."”`
-          );
-        } else if (player.guess < fellow.number) {
-          // Respond to player's too-low guess
-          respond(
-            "suggestion",
-            `Its weak spot is higher, ${player.name}!`,
-            `Higher, ${player.name}, aim higher!`,
-            `Go for its weak spot! Aim higher!`
-          );
         } else {
-          // Respond to player's too-high guess
-          respond(
-            "suggestion",
-            `Aim lower, ${player.name}!`,
-            `Hit its weak spot, ${player.name}! Look lower!`,
-            `Hit it lower!`
-          );
+          if (player.guesses.includes(player.guess)) {
+            // Respond if player already made the guess
+            console.log("player.subLevel: ", player.subLevel);
+            respond(
+              "suggestion",
+              `No use striking the same armored spot! Find his weak spot!`,
+              `Why repeat your failures, ${player.name}? Do you not see the beast before you?`,
+              `Try something new, ${player.name}!`,
+              `Do you not remember already trying that?`,
+              `You already hit him there to little effect. Hit him where it counts!`,
+              `${player.name}, didn't you already try that? You must find his weak spot!`
+            );
+          } else if (player.guess < fellow.number) {
+            // Respond to player's too-low guess
+            respond(
+              "suggestion",
+              `Its weak spot is higher, ${player.name}!`,
+              `Higher, ${player.name}, aim higher!`,
+              `Go for its weak spot! Aim higher!`
+            );
+          } else {
+            // Respond to player's too-high guess
+            respond(
+              "suggestion",
+              `Aim lower, ${player.name}!`,
+              `Hit its weak spot, ${player.name}! Look lower!`,
+              `Hit it lower!`
+            );
+          }
         }
         // Add to player guesses
         addToGuesses();
@@ -605,7 +735,7 @@ function App() {
     }
 
     // Player is NOT on last level
-    if (player.level !== 4) {
+    if (!isLastLevel) {
       if (!player.guess)
         respond(
           "fellow",
@@ -636,7 +766,7 @@ function App() {
               `“Stop repeating yourself, ${player.name}... it will not end well.”`,
               `“Why would it be any different this time? Oh well...”`,
               `“I suggest you guess something new.”`,
-              `“I don’t recommend wasting any more guesses, ${player.name}."”`
+              `“I don’t recommend wasting any more guesses, ${player.name}.”`
             );
           } else if (player.guess < fellow.number) {
             // Respond to player's too-low guess
@@ -690,7 +820,7 @@ function App() {
             // Game Start
             <div className="game-container">
               <div className="game-image">
-                {player.level === 4 && player.subLevel === 5 ? (
+                {isLastLevel && player.subLevel === 5 ? (
                   <div className="fellow-health">Health: {fellow.health}</div>
                 ) : null}
                 <p>Artwork.</p>
@@ -716,7 +846,7 @@ function App() {
                       <div className="game-text">
                         {fellow.response || announcer.hasAnnouncement ? (
                           <>
-                            {player.level === 4 ? (
+                            {isLastLevel ? (
                               <>
                                 {announcer.reaction ? (
                                   <p>{announcer.reaction}</p>
@@ -767,15 +897,12 @@ function App() {
                             })}
                           </div>
                           <div className="guess-btns">
-                            <button onClick={() => checkGuess(level)}>
-                              {level.action}
-                            </button>
                             <button
                               onClick={() => {
                                 clearGuess(level);
                                 clearAnnouncer();
                                 if (player.guess) {
-                                  if (player.level === 4) {
+                                  if (isLastLevel) {
                                     respond(
                                       "suggestion",
                                       `All is clear now, ${player.name}. Focus your aim!`,
@@ -790,7 +917,7 @@ function App() {
                                       `“Yes, let your mind go blank.”`
                                     );
                                   }
-                                } else if (player.level === 4) {
+                                } else if (isLastLevel) {
                                   respond(
                                     "suggestion",
                                     `It's clear enough. Strike the beast!`,
@@ -809,11 +936,14 @@ function App() {
                             >
                               Clear
                             </button>
+                            <button onClick={() => checkGuess(level)}>
+                              {level.action}
+                            </button>
                           </div>
                           <div className="logbook">
                             <p>Logbook</p>
                             {fellow.max ? <p>Range: 1-{fellow.max}</p> : null}
-                            {player.level === 4 ? (
+                            {isLastLevel ? (
                               <div className="player-health">
                                 Health: {player.health}
                               </div>
