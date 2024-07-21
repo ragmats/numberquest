@@ -5,8 +5,9 @@ import "./App.css";
 // TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
 // TODO Add more random responses - proof and improve all text
 // TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
-// TODO Consider making the final blow (either death or win) visible in some way - as is, it just jumps to the final screen
+// TODO Consider making the final blow (either death or win) visible in some way - as is, it just jumps to the final screen. "The beast is done!"
 // TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
+// TODO test and balance damage of final battle. Add a heal mechanic?
 
 function App() {
   const startingLives = 3;
@@ -95,7 +96,7 @@ function App() {
       level: 1,
       subLevel: 2,
       text1: "With a curious smirk, he says to you:",
-      text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it?”`,
+      text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it? I'll give you ${player.lives} tries.”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -130,7 +131,7 @@ function App() {
       level: 2,
       subLevel: 2,
       text1: "With a respectful bow, he says to you:",
-      text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of?”`,
+      text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of? How about ${player.lives} tries this time?”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -167,8 +168,9 @@ function App() {
     {
       level: 3,
       subLevel: 2,
-      text1: "With only seriousness now, he asks you darkly:",
-      text2: `“1-${fellow.max}, ${player.name}... what is my number?”`,
+      text1: "Serious now, he asks you directly:",
+      text2: `“What's my number, ${player.name}? From 1-${fellow.max}... ${player.lives} tries...”`,
+      text3: `His voice deepens. “The darkness awaits...”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -246,7 +248,7 @@ function App() {
     {
       level: 4,
       subLevel: "win",
-      text1: `The beast cries out like the tears of ${
+      text1: `The beast cries out with the tears of ${
         fellow.number - 1 // TODO singular/plural
       } terrified brother(s), and roars: “No, no! What have you done, ${
         player.name // TODO singular/plural
