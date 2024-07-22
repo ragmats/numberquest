@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+// TODO After fight is pressed, when either the player or beast dies, before final win/lose screen, show a pre-win/lose screen that gives final announcement and has continue button.
+// TODO Consider making the final blow (either death or win) visible in some way - as is, it just jumps to the final screen. "The beast is done!"
+//! TODO Working, but need to show health bars on these pre-win/lose screens
+// TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Separate into components
+// TODO Add hearts for guesses (lives)
+// TODO Make logbook a hover/click button that opens a modal.
 // TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
 // TODO Add more random responses - proof and improve all text
 // TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
-// TODO Consider making the final blow (either death or win) visible in some way - as is, it just jumps to the final screen. "The beast is done!"
-// TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
 // TODO test and balance damage of final battle. Add a heal mechanic?
+// TODO add intro text on name screen. Play old game and make sure certain text matches.
+// TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
 
 function App() {
   const startingLives = 3;
@@ -19,14 +25,16 @@ function App() {
     guess: "",
     guesses: [],
     lives: startingLives,
-    health: 100,
+    health: 30,
     damage: 1,
+    isDead: false,
   });
   const [fellow, setFellow] = useState({
     number: 0,
     max: 0,
     response: "",
-    health: 100,
+    health: 30,
+    isDead: false,
   });
   const [announcer, setAnnouncer] = useState({
     reaction: "",
@@ -35,10 +43,6 @@ function App() {
     hasAnnouncement: false,
   });
   const [isLastLevel, setIsLastLevel] = useState(false);
-
-  useEffect(() => {
-    console.log(announcer);
-  }, [announcer]);
 
   useEffect(() => {
     if (player.level === 4) setIsLastLevel(true);
@@ -80,6 +84,16 @@ function App() {
     }
   }, [announcer.reaction, announcer.description, announcer.suggestion]);
 
+  useEffect(() => {
+    if (fellow.isDead) {
+      clearAnnouncer();
+      advancePlayer();
+    } else if (player.isDead) {
+      clearAnnouncer();
+      loseGame();
+    }
+  }, [player.isDead, fellow.isDead]);
+
   const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
   const gameLevels = [
@@ -96,7 +110,7 @@ function App() {
       level: 1,
       subLevel: 2,
       text1: "With a curious smirk, he says to you:",
-      text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it? I'll give you ${player.lives} tries.”`,
+      text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it? I’ll give you ${player.lives} tries.”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -108,6 +122,7 @@ function App() {
       text2: `“Very impressive, ${player.name}! You may pass...”`,
       action: "Walk the path",
       image: "path to image",
+      endLevel: false,
     },
     {
       level: 1,
@@ -117,6 +132,7 @@ function App() {
         "His eyes turn black. You suddenly feel heavy and very tired. The world around you begins to fade.",
       action: "Leave this world forever",
       image: "path to image",
+      endLevel: false,
     },
     {
       level: 2,
@@ -143,6 +159,7 @@ function App() {
       text2: `“You win again, ${player.name}! Go ahead... if you must.”`,
       action: "Step into the forest",
       image: "path to image",
+      endLevel: false,
     },
     {
       level: 2,
@@ -154,6 +171,7 @@ function App() {
         "The fellow opens his arms and pulls you into the irresistible darkness and silence.",
       action: "Let go of life and light",
       image: "path to image",
+      endLevel: false,
     },
     {
       level: 3,
@@ -169,7 +187,7 @@ function App() {
       level: 3,
       subLevel: 2,
       text1: "Serious now, he asks you directly:",
-      text2: `“What's my number, ${player.name}? From 1-${fellow.max}... ${player.lives} tries...”`,
+      text2: `“What’s my number, ${player.name}? From 1-${fellow.max}... ${player.lives} tries...”`,
       text3: `His voice deepens. “The darkness awaits...”`,
       action: "Guess",
       image: "path to image",
@@ -184,6 +202,7 @@ function App() {
       text3: `“Now you have done it.”`,
       action: "Cross the bridge",
       image: "path to image",
+      endLevel: false,
     },
     {
       level: 3,
@@ -194,6 +213,7 @@ function App() {
       text3: "Especially you.",
       action: "Become one with darkness",
       image: "path to image",
+      endLevel: false,
     },
     {
       level: 4,
@@ -247,6 +267,36 @@ function App() {
     },
     {
       level: 4,
+      subLevel: "preWinLucky",
+      text1: `(Get final Announcer’s reaction)`,
+      text2: `Perhaps you have been anointed with luck by some holy numerical force. As you did not find the beast’s weak spot, he is fallen still, fetal and trembling, revealing a glowing red ${fellow.number} at the nape of his neck.`,
+      text3: `You pick up a nearby stick just in case and walk toward the pathetic creature.`,
+      action: `Poke the ${fellow.number}`,
+      image: "path to image",
+      endLevel: false,
+    },
+    {
+      level: 4,
+      subLevel: "preWinOneShot",
+      text1: `(Get damage from final Announcer’s reaction. This is what your measely damage would have been. "This could have been your fate.")`,
+      text2: `Instead, you saw it all as if on high and one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
+      text3: `All of the beast’s feocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick,`,
+      action: "Nudge the beast to be sure",
+      image: "path to image",
+      endLevel: false,
+    },
+    {
+      level: 4,
+      subLevel: "preLose",
+      text1: `(Get final Announcer’s reaction)`,
+      text2: `You collaspe to the ground, as if your body has turned to liquid. Is this death? You remember having a dream about this once.`,
+      text3: `If only you had aimed higher, or lower... does it even matter now? You hear stone crushing beneath the beast’s cloven hooves inches from your throbbing ears.`,
+      action: "Try to lift your head",
+      image: "path to image",
+      endLevel: false,
+    },
+    {
+      level: 4,
       subLevel: "win",
       text1: `The beast cries out with the tears of ${
         fellow.number - 1 // TODO singular/plural
@@ -257,6 +307,7 @@ function App() {
       text3: "You pick it up. It still feels warm. You ponder.",
       action: "Put on the cloak",
       image: "path to image",
+      endLevel: false,
     },
     {
       level: 4,
@@ -268,6 +319,7 @@ function App() {
       } tortured voice(s) soon to be joined with your own.`, // TODO singular/plural
       action: "To the pit",
       image: "path to image",
+      endLevel: false,
     },
   ];
 
@@ -323,27 +375,78 @@ function App() {
       (level) =>
         level.level === player.level && level.subLevel === player.subLevel
     );
-    // If current level is a win, advance level
-    // Otherwise, just advance sublevel
     if (currentGameLevel.subLevel === "win" && !isLastLevel)
+      // If current level is a win and not the last level, advance level
       advancePlayerLevel();
     else if (
-      currentGameLevel.subLevel === "lose" ||
-      currentGameLevel.subLevel === "win"
-    )
+      isLastLevel &&
+      (currentGameLevel.subLevel === "win" ||
+        currentGameLevel.subLevel === "lose")
+    ) {
+      // Is last level and player has either won or lost, so the game is over
       endGame();
-    else advancePlayerSubLevel(currentGameLevel);
+    } else {
+      // Otherwise, just advance subLevel
+      advancePlayerSubLevel(currentGameLevel);
+    }
   }
 
   function advancePlayerSubLevel(level) {
-    if (level.endLevel) {
-      setPlayer((currentPlayer) => {
-        return { ...currentPlayer, subLevel: "win" };
-      });
+    if (isLastLevel) {
+      // Advance when on the last level
+      console.log(player);
+      console.log("we are on the last level");
+      if (level.endLevel) {
+        console.log("we are on an endLevel");
+        // During the guess phase of the last level
+        if (player.guess === fellow.number) {
+          // Player guesses the right number
+          console.log("number matches, advancing to preWinOneShit");
+          setPlayer((currentPlayer) => {
+            return { ...currentPlayer, subLevel: "preWinOneShot" };
+          });
+        } else {
+          // Player did not guess the right number
+          if (fellow.isDead) {
+            // Player kills the beast
+            setPlayer((currentPlayer) => {
+              return { ...currentPlayer, subLevel: "preWinLucky" };
+            });
+          } else if (player.isDead) {
+            // The beast kills the player
+            loseGame();
+          }
+        }
+      } else if (
+        level.subLevel === "preWinOneShot" ||
+        level.subLevel === "preWinLucky"
+      ) {
+        // Player is on one of the preWin screens
+        setPlayer((currentPlayer) => {
+          return { ...currentPlayer, subLevel: "win" };
+        });
+      } else if (level.subLevel === "preLose") {
+        // Player is on preLose screen
+        setPlayer((currentPlayer) => {
+          return { ...currentPlayer, subLevel: "lose" };
+        });
+      } else {
+        // Player is on all other last-level screens, heading toward the fight
+        setPlayer((currentPlayer) => {
+          return { ...currentPlayer, subLevel: player.subLevel + 1 };
+        });
+      }
     } else {
-      setPlayer((currentPlayer) => {
-        return { ...currentPlayer, subLevel: player.subLevel + 1 };
-      });
+      // Advance when not on the last level
+      if (level.endLevel) {
+        setPlayer((currentPlayer) => {
+          return { ...currentPlayer, subLevel: "win" };
+        });
+      } else {
+        setPlayer((currentPlayer) => {
+          return { ...currentPlayer, subLevel: player.subLevel + 1 };
+        });
+      }
     }
   }
 
@@ -379,7 +482,7 @@ function App() {
           respond(
             "suggestion",
             `Aim true, ${player.name}!`,
-            `Is that the beast's weak spot, ${player.name}?`,
+            `Is that the beast’s weak spot, ${player.name}?`,
             `Be certain before you strike.`
           );
         }
@@ -455,10 +558,8 @@ function App() {
   }
 
   function clearAnnouncer(...types) {
-    // console.log("types: ", types);
     const validTypes = ["reaction", "description", "suggestion"];
     if (types.length === 0) {
-      console.log("Clearing Announcer (all)");
       setAnnouncer((currentAnnouncer) => {
         return {
           ...currentAnnouncer,
@@ -470,7 +571,6 @@ function App() {
     } else {
       types.forEach((type) => {
         if (validTypes.includes(type)) {
-          console.log("Clearing Announcer type: ", type);
           setAnnouncer((currentAnnouncer) => {
             return {
               ...currentAnnouncer,
@@ -504,9 +604,17 @@ function App() {
   }
 
   function loseGame() {
-    setPlayer((currentPlayer) => {
-      return { ...currentPlayer, subLevel: "lose" };
-    });
+    if (player.isDead) {
+      // Player has died ont he last level
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, subLevel: "preLose" };
+      });
+    } else {
+      // Player has died on any other level
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, subLevel: "lose" };
+      });
+    }
   }
 
   function loseALife() {
@@ -535,7 +643,6 @@ function App() {
   }
 
   function damageVictim(victim, roll) {
-    console.log({ victim });
     let damage;
     if (victim === "beast") {
       switch (roll) {
@@ -667,15 +774,27 @@ function App() {
     return damage;
   }
 
+  function toggleDeath(victim) {
+    if (victim === "player") {
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, isDead: true };
+      });
+    } else if (victim === "beast") {
+      setFellow((currentFellow) => {
+        return { ...currentFellow, isDead: true };
+      });
+    }
+  }
+
   function endGame() {
     toggleIsPlaying();
   }
 
   function checkGuess() {
-    // Player is on last level
     if (isLastLevel) {
-      // Repond if there is no guess
+      // Player is on last level
       if (!player.guess) {
+        // Repond if there is no guess
         respond(
           "suggestion",
           `There is no time to waste, ${player.name}, you are under attack!`,
@@ -688,22 +807,17 @@ function App() {
         advancePlayer();
       } else {
         // Player, on last level, guessed the wrong number
-        clearAnnouncer();
-        // Player is on last level in beast fight (health not lives)
         const victim = rollVictim();
         const roll = roll20();
         const damage = damageVictim(victim, roll);
 
-        if (victim === "player" && player.health - damage < 1) {
-          clearAnnouncer();
-          loseGame();
-        } else if (victim === "beast" && fellow.health - damage < 1) {
-          clearAnnouncer();
-          advancePlayer();
+        if (player.health - damage < 1 || fellow.health - damage < 1) {
+          // If there is a killing blow
+          toggleDeath(victim);
         } else {
+          // There is no killing blow
           if (player.guesses.includes(player.guess)) {
             // Respond if player already made the guess
-            console.log("player.subLevel: ", player.subLevel);
             respond(
               "suggestion",
               `No use striking the same armored spot! Find his weak spot!`,
@@ -711,7 +825,7 @@ function App() {
               `Try something new, ${player.name}!`,
               `Do you not remember already trying that?`,
               `You already hit him there to little effect. Hit him where it counts!`,
-              `${player.name}, didn't you already try that? You must find his weak spot!`
+              `${player.name}, didn’t you already try that? You must find his weak spot!`
             );
           } else if (player.guess < fellow.number) {
             // Respond to player's too-low guess
@@ -922,7 +1036,7 @@ function App() {
                                 } else if (isLastLevel) {
                                   respond(
                                     "suggestion",
-                                    `It's clear enough. Strike the beast!`,
+                                    `It’s clear enough. Strike the beast!`,
                                     `How clear must it be, ${player.name}? Attack!`,
                                     `Forget clarity! Fight for your life!`
                                   );
