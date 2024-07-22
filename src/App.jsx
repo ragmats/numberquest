@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { Children, useEffect, useState } from "react";
 import "./App.css";
 
-// TODO After fight is pressed, when either the player or beast dies, before final win/lose screen, show a pre-win/lose screen that gives final announcement and has continue button.
-// TODO Consider making the final blow (either death or win) visible in some way - as is, it just jumps to the final screen. "The beast is done!"
-//! TODO Working, but need to show health bars on these pre-win/lose screens
-// TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
-// TODO Separate into components
+// TODO Add final acnnouncer reaction to pre=screens.
 // TODO Add hearts for guesses (lives)
+// TODO Separate into components
+// TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Make logbook a hover/click button that opens a modal.
 // TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
 // TODO Add more random responses - proof and improve all text
@@ -17,6 +15,10 @@ import "./App.css";
 
 function App() {
   const startingLives = 3;
+  const playerStartingHealth = 30;
+  const fellowStartingHealth = 30;
+  const playerStartingDamage = 1;
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState({
     name: "Traveler",
@@ -43,11 +45,24 @@ function App() {
     hasAnnouncement: false,
   });
   const [isLastLevel, setIsLastLevel] = useState(false);
+  const [isPreEndLevel, setIsPreEndLevel] = useState(false);
 
   useEffect(() => {
     if (player.level === 4) setIsLastLevel(true);
     else setIsLastLevel(false);
   }, [player.level]);
+
+  useEffect(() => {
+    if (
+      player.subLevel === "preWinLucky" ||
+      player.subLevel === "preWinOneShot" ||
+      player.subLevel === "preLose"
+    ) {
+      setIsPreEndLevel(true);
+    } else {
+      setIsPreEndLevel(false);
+    }
+  }, [player.subLevel]);
 
   useEffect(() => {
     if (!isPlaying) {
@@ -86,9 +101,19 @@ function App() {
 
   useEffect(() => {
     if (fellow.isDead) {
+      console.log("The beast is dead");
+      // Set health to 0
+      setFellow((currentFellow) => {
+        return { ...currentFellow, health: 0 };
+      });
       clearAnnouncer();
       advancePlayer();
     } else if (player.isDead) {
+      console.log("The player is dead");
+      // Set health to 0
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, health: 0 };
+      });
       clearAnnouncer();
       loseGame();
     }
@@ -270,8 +295,8 @@ function App() {
       subLevel: "preWinLucky",
       text1: `(Get final Announcer’s reaction)`,
       text2: `Perhaps you have been anointed with luck by some holy numerical force. As you did not find the beast’s weak spot, he is fallen still, fetal and trembling, revealing a glowing red ${fellow.number} at the nape of his neck.`,
-      text3: `You pick up a nearby stick just in case and walk toward the pathetic creature.`,
-      action: `Poke the ${fellow.number}`,
+      text3: `You pick up a nearby stick and walk toward the pathetic creature.`,
+      action: `Poke the glowing red ${fellow.number}`,
       image: "path to image",
       endLevel: false,
     },
@@ -332,10 +357,20 @@ function App() {
         guess: "",
         guesses: [],
         lives: startingLives,
+        health: playerStartingHealth,
+        damage: playerStartingDamage,
+        isDead: false,
       };
     });
     setFellow((currentFellow) => {
-      return { ...currentFellow, number: 0, max: 0, response: "" };
+      return {
+        ...currentFellow,
+        number: 0,
+        max: 0,
+        response: "",
+        health: fellowStartingHealth,
+        isDead: false,
+      };
     });
   }
 
@@ -394,14 +429,13 @@ function App() {
   function advancePlayerSubLevel(level) {
     if (isLastLevel) {
       // Advance when on the last level
-      console.log(player);
-      console.log("we are on the last level");
       if (level.endLevel) {
-        console.log("we are on an endLevel");
+        console.log("player.guess: ", player.guess);
+        console.log("fellow.number: ", fellow.number);
         // During the guess phase of the last level
         if (player.guess === fellow.number) {
+          console.log("number matches");
           // Player guesses the right number
-          console.log("number matches, advancing to preWinOneShit");
           setPlayer((currentPlayer) => {
             return { ...currentPlayer, subLevel: "preWinOneShot" };
           });
@@ -409,6 +443,7 @@ function App() {
           // Player did not guess the right number
           if (fellow.isDead) {
             // Player kills the beast
+            console.log("this is firing even when the number is guessed."); //!TODO
             setPlayer((currentPlayer) => {
               return { ...currentPlayer, subLevel: "preWinLucky" };
             });
@@ -803,8 +838,9 @@ function App() {
         );
       } else if (player.guess === fellow.number) {
         // Player, on last level, guesses the right number
-        clearAnnouncer();
-        advancePlayer();
+        toggleDeath("beast");
+        // clearAnnouncer();
+        // advancePlayer();
       } else {
         // Player, on last level, guessed the wrong number
         const victim = rollVictim();
@@ -907,8 +943,12 @@ function App() {
       }
     }
 
-    // Clear player's incorrect guess
-    clearGuess();
+    // Clear player's incorrect guesss, retaining the final level guess if correct
+    if (!isLastLevel) clearGuess();
+    else if (isLastLevel && player.guess !== fellow.number) {
+      console.log("hello from hell");
+      clearGuess();
+    }
   }
 
   return (
@@ -936,7 +976,7 @@ function App() {
             // Game Start
             <div className="game-container">
               <div className="game-image">
-                {isLastLevel && player.subLevel === 5 ? (
+                {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
                   <div className="fellow-health">Health: {fellow.health}</div>
                 ) : null}
                 <p>Artwork.</p>
@@ -986,9 +1026,14 @@ function App() {
                           </>
                         )}
                       </div>
-                      {/* <p>
-                        Game level {level.level}, Game subLevel {level.subLevel}
-                      </p> */}
+                      {isLastLevel &&
+                      (level.endLevel || isPreEndLevel) &&
+                      player.subLevel !== "win" &&
+                      player.subLevel !== "lose" ? (
+                        <div className="player-health">
+                          Health: {player.health}
+                        </div>
+                      ) : null}
                       {level.endLevel ? (
                         // Guessing interface here
                         // Display number buttons
@@ -1052,23 +1097,19 @@ function App() {
                             >
                               Clear
                             </button>
-                            <button onClick={() => checkGuess(level)}>
+                            <button onClick={() => checkGuess()}>
                               {level.action}
                             </button>
                           </div>
                           <div className="logbook">
                             <p>Logbook</p>
                             {fellow.max ? <p>Range: 1-{fellow.max}</p> : null}
-                            {isLastLevel ? (
-                              <div className="player-health">
-                                Health: {player.health}
-                              </div>
-                            ) : (
+                            {!isLastLevel ? (
                               <>
                                 {/* TODO singular/plural */}
                                 <p>{player.lives} guess(es) remain</p>
                               </>
-                            )}
+                            ) : null}
 
                             <div className="guesses">
                               {player.guesses.length > 0 ? (
