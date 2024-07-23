@@ -30,6 +30,12 @@
   height: 100%;
 }
 
+@media (orientation: portrait) {
+  .game-container {
+    flex-direction: column;
+  }
+}
+
 .game-image {
   border: 1px solid blue;
   display: flex;
@@ -53,6 +59,7 @@
   gap: 1em;
   padding: 2em;
   text-align: center;
+  position: relative;
 }
 
 .game-text {
@@ -101,6 +108,19 @@
   justify-content: center;
   height: 20px;
   gap: 0.75em;
+}
+
+.hearts-container {
+  /* border: 1px solid red; */
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0.5em;
+}
+
+.heart {
+  height: 50px;
 }
 
 .your-guess {

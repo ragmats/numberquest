@@ -1,9 +1,14 @@
 import { Children, useEffect, useState } from "react";
 import "./App.css";
 
+// ! TODO Put logbook into a modal...
+// ! TODO Track battle hits and running health totals were tracked in the logbook)
+// TODO Make page roughly responsive so it is acceptable in mobile mode
+// TODO Get on GitHub pages so Daniel can demo
 // TODO Revise variations to the final fight text
 // TODO Add variations to all the text
-// TODO Add hearts for guesses (lives)
+// TODO Add hearts for guesses (lives) - should be at top left until it becomes a battle boss bar. Should it be hearts even during the boss battle?
+// TODO Make Logbook a button/icon that opens a modal.
 // TODO Separate into components
 // TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Make logbook a hover/click button that opens a modal.
@@ -322,7 +327,7 @@ function App() {
       level: 4,
       subLevel: "preWinOneShot",
       text1: `A singular strike!`,
-      text2: `You saw it as if on high and one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
+      text2: `You saw it as if on high, and then one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
       text3: `All of the beast’s feocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
       action: "Nudge the beast to be sure",
       image: "path to image",
@@ -360,7 +365,7 @@ function App() {
       text3: `As the beast widens its toothy maw, you hear a single/symphony of ${
         fellow.number - 1 // TODO singular/plural
       } tortured voice(s) soon to be joined with your own.`, // TODO singular/plural
-      action: "Back to the pit",
+      action: "To the pit",
       image: "path to image",
       endLevel: false,
     },
@@ -432,9 +437,8 @@ function App() {
       // If current level is a win and not the last level, advance level
       advancePlayerLevel();
     else if (
-      isLastLevel &&
-      (currentGameLevel.subLevel === "win" ||
-        currentGameLevel.subLevel === "lose")
+      (isLastLevel && currentGameLevel.subLevel === "win") ||
+      currentGameLevel.subLevel === "lose"
     ) {
       // Is last level and player has either won or lost, so the game is over
       endGame();
@@ -759,7 +763,7 @@ function App() {
           respond(
             "description",
             `You throw a rock for ${damage} damage.`,
-            `You kick dirt in his mouth for ${damage} damage.`,
+            `You kick dirt in his eyes for ${damage} damage.`,
             `You throw your shoe at him for ${damage} damage.`
           );
           break;
@@ -1263,6 +1267,20 @@ function App() {
                               <>
                                 {/* TODO singular/plural */}
                                 <p>{player.lives} guess(es) remain</p>
+                                <div className="hearts-container">
+                                  {Array.from({ length: player.lives }).map(
+                                    (_, index) => {
+                                      return (
+                                        <img
+                                          key={index}
+                                          alt="Player health heart container"
+                                          className="heart"
+                                          src="/img/heart.png"
+                                        />
+                                      );
+                                    }
+                                  )}
+                                </div>
                               </>
                             ) : null}
 
