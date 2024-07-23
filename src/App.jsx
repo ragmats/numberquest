@@ -1,7 +1,8 @@
 import { Children, useEffect, useState } from "react";
 import "./App.css";
 
-// TODO Add final acnnouncer reaction to pre=screens.
+// TODO Revise variations to the final fight text
+// TODO Add variations to all the text
 // TODO Add hearts for guesses (lives)
 // TODO Separate into components
 // TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
@@ -15,8 +16,8 @@ import "./App.css";
 
 function App() {
   const startingLives = 3;
-  const playerStartingHealth = 30;
-  const fellowStartingHealth = 30;
+  const playerStartingHealth = 100;
+  const fellowStartingHealth = 100;
   const playerStartingDamage = 1;
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -42,10 +43,15 @@ function App() {
     reaction: "",
     description: "",
     suggestion: "",
+    lastDescription: "",
     hasAnnouncement: false,
   });
   const [isLastLevel, setIsLastLevel] = useState(false);
   const [isPreEndLevel, setIsPreEndLevel] = useState(false);
+
+  useEffect(() => {
+    console.log(announcer.lastDescription);
+  }, [announcer.lastDescription]);
 
   useEffect(() => {
     if (player.level === 4) setIsLastLevel(true);
@@ -98,6 +104,18 @@ function App() {
       });
     }
   }, [announcer.reaction, announcer.description, announcer.suggestion]);
+
+  // Saves most recent announcer description to be displayed on the pre-win/lose screens
+  useEffect(() => {
+    if (announcer.description !== "") {
+      setAnnouncer((currentAnnouncer) => {
+        return {
+          ...currentAnnouncer,
+          lastDescription: currentAnnouncer.description,
+        };
+      });
+    }
+  }, [announcer.description]);
 
   useEffect(() => {
     if (fellow.isDead) {
@@ -303,9 +321,9 @@ function App() {
     {
       level: 4,
       subLevel: "preWinOneShot",
-      text1: `(Get damage from final Announcer’s reaction. This is what your measely damage would have been. "This could have been your fate.")`,
-      text2: `Instead, you saw it all as if on high and one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
-      text3: `All of the beast’s feocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick,`,
+      text1: `A singular strike!`,
+      text2: `You saw it as if on high and one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
+      text3: `All of the beast’s feocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
       action: "Nudge the beast to be sure",
       image: "path to image",
       endLevel: false,
@@ -342,7 +360,7 @@ function App() {
       text3: `As the beast widens its toothy maw, you hear a single/symphony of ${
         fellow.number - 1 // TODO singular/plural
       } tortured voice(s) soon to be joined with your own.`, // TODO singular/plural
-      action: "To the pit",
+      action: "Back to the pit",
       image: "path to image",
       endLevel: false,
     },
@@ -430,11 +448,8 @@ function App() {
     if (isLastLevel) {
       // Advance when on the last level
       if (level.endLevel) {
-        console.log("player.guess: ", player.guess);
-        console.log("fellow.number: ", fellow.number);
         // During the guess phase of the last level
         if (player.guess === fellow.number) {
-          console.log("number matches");
           // Player guesses the right number
           setPlayer((currentPlayer) => {
             return { ...currentPlayer, subLevel: "preWinOneShot" };
@@ -443,7 +458,6 @@ function App() {
           // Player did not guess the right number
           if (fellow.isDead) {
             // Player kills the beast
-            console.log("this is firing even when the number is guessed."); //!TODO
             setPlayer((currentPlayer) => {
               return { ...currentPlayer, subLevel: "preWinLucky" };
             });
@@ -609,7 +623,7 @@ function App() {
           setAnnouncer((currentAnnouncer) => {
             return {
               ...currentAnnouncer,
-              [type]: "test",
+              [type]: "",
             };
           });
         } else console.log("Invalid Announcer type, nothing cleared.");
@@ -684,47 +698,121 @@ function App() {
         case 1:
         case 2:
         case 3:
+          damage = 0;
+          respond(
+            "reaction",
+            "The beast is too quick!",
+            "The beast moves faster than you can see!",
+            "The beast moves wildly. He is one with the darkness."
+          );
+          respond(
+            "description",
+            "You swing your fist wildly but miss.",
+            "You swing! But miss...",
+            "You throw a powerful fist... it hits nothing."
+          );
+          break;
         case 4:
         case 5:
-          damage = 0;
-          respond("reaction", "The beast is too quick!");
-          respond("description", `You swing your fist wildly but miss!`);
-          break;
         case 6:
+          damage = 3;
+          respond(
+            "reaction",
+            "The beast is distracted!",
+            "The beast is confused.",
+            "The beast is turned around!"
+          );
+          respond(
+            "description",
+            `You run up and kick the the beast in the shin for ${damage} damage.`,
+            `You sneak up and take a cheap shot for ${damage} damage.`,
+            `You give him a smack for ${damage} damage.`
+          );
+          break;
         case 7:
         case 8:
         case 9:
-        case 10:
           damage = 5;
-          respond("reaction", "The beast takes a hit but its armor is strong!");
-          respond("description", `You jab the beast for ${damage} damage!`);
+          respond(
+            "reaction",
+            "The beast takes a hit but its armor is strong!",
+            "The beast flexes his chest.",
+            "The beast begins to charge but trips on a loose stone."
+          );
+          respond(
+            "description",
+            `You jab the beast for ${damage} damage.`,
+            `You poke him in the eyes for ${damage} damage.`,
+            `You sucker punch him in the gut for ${damage} damage.`
+          );
           break;
+        case 10:
         case 11:
         case 12:
+          damage = 7;
+          respond(
+            "reaction",
+            "The beast lowers his defenses.",
+            "The beast lowers his guard.",
+            "The beast roars."
+          );
+          respond(
+            "description",
+            `You throw a rock for ${damage} damage.`,
+            `You kick dirt in his mouth for ${damage} damage.`,
+            `You throw your shoe at him for ${damage} damage.`
+          );
+          break;
         case 13:
         case 14:
         case 15:
-          damage = 10;
-          respond("reaction", "The beast is hit!");
-          respond("description", `You throw a rock for ${damage} damage!`);
-          break;
         case 16:
-        case 17:
-          damage = 15;
-          respond("reaction", "The beast gets knocked down!");
-          respond("description", `You slam the beast for ${damage} damage!`);
-          break;
-        case 18:
-        case 19:
-          damage = 20;
-          respond("reaction", "The beast falls over...");
+          damage = 10;
+          respond(
+            "reaction",
+            "The beast is blindsided!",
+            "The beast shows a brief glimmer of weakness.",
+            "Is this beast not invicible after all?"
+          );
           respond(
             "description",
-            `You kick it in the horn for ${damage} damage!`
+            `You surprise him with a jump kick for ${damage} damage!`,
+            `You move in low and deliver a surprising uppercut for ${damage} damage!`,
+            `You try to choke him out for ${damage} damage!`
+          );
+          break;
+        case 17:
+        case 18:
+          damage = 15;
+          respond(
+            "reaction",
+            "The beast gets knocked down!",
+            "The beast is down... now is your chance!",
+            "The beast looses its hoofing."
+          );
+          respond(
+            "description",
+            `You slam the beast for ${damage} damage!`,
+            `You ground pound the beast for ${damage} damage!`,
+            `You surprise the beast with ${damage}-damage roundhouse!`
+          );
+          break;
+        case 19:
+          damage = 17;
+          respond(
+            "reaction",
+            "The beast falls over...",
+            "The beast begins to charge...",
+            "The beast leans in forward..."
+          );
+          respond(
+            "description",
+            `You kick it in the horn for ${damage} damage!`,
+            `You kick pop him in the chin for ${damage} damage!`
           );
           break;
         case 20:
-          damage = 30;
+          damage = 20;
           respond("reaction", "The beast is stunned!");
           respond(
             "description",
@@ -744,57 +832,119 @@ function App() {
         case 1:
         case 2:
         case 3:
+          damage = 0;
+          respond(
+            "reaction",
+            "You jump to the side!",
+            "You fake him out!",
+            "You feign left, then right..."
+          );
+          respond(
+            "description",
+            `The beast swipes and misses.`,
+            `The beast misses and roars in angery.`,
+            `The beast’s powerful claw whiffs the air.`
+          );
+          break;
         case 4:
         case 5:
-          damage = 0;
-          respond("reaction", "You jump to the side!");
-          respond("description", `The beast swipes and misses!`);
-          break;
         case 6:
+          damage = 5;
+          respond(
+            "reaction",
+            "The beast begins to charge!",
+            "The beast comes right for you!",
+            "The beast is on the hunt!"
+          );
+          respond(
+            "description",
+            `You dodge but run into the wall for ${damage} damage.`,
+            `He knocks you down for for ${damage} damage.`,
+            `You try a fancy dodge but twist your Achilles heel for ${damage} damage.`
+          );
+          break;
         case 7:
         case 8:
         case 9:
-        case 10:
-          damage = 5;
-          respond("reaction", "The beast lands a swipe to your shoulder!");
-          respond("description", `You take ${damage} damage!`);
+          damage = 7;
+          respond(
+            "reaction",
+            "The beast lands a swipe to your shoulder!",
+            "The beast swoops and slashes!",
+            "The beast bites with his terrible jaws!"
+          );
+          respond(
+            "description",
+            `You take ${damage} damage.`,
+            `You cry out and take ${damage} damage.`
+          ),
+            `You are hit for ${damage} damage.`;
           break;
+        case 10:
         case 11:
         case 12:
+          damage = 10;
+          respond(
+            "reaction",
+            "The beast conjures a bow with fire arrows!",
+            "The beast conjures a fireball!",
+            "The beast sprays you with vile poison!"
+          );
+          respond(
+            "description",
+            `He goes for a headshot but ends up grazing your ear for ${damage} damage.`,
+            `You are hit in the knew and thrown into the stone behind you for ${damage} damage!`,
+            `The powerful hit sends you flying back for ${damage} damage.`
+          );
+          break;
         case 13:
         case 14:
         case 15:
-          damage = 10;
-          respond("reaction", "The beast roars so loud it shakes your soul!");
-          respond(
-            "description",
-            `You gain your senses after taking ${damage} damage!`
-          );
-          break;
         case 16:
-        case 17:
           damage = 15;
-          respond("reaction", "The beast leaps!");
+          respond(
+            "reaction",
+            "You lose your footing.",
+            "You fall over.",
+            "You trip over your own feet."
+          );
           respond(
             "description",
-            `You turn as he claws your back for ${damage} damage!`
+            `The beast takes a swipe for ${damage} damage!`,
+            `The beast leaps and slashes for ${damage} damage!`,
+            `The beast swipes in a flurry for ${damage} damage!`
           );
           break;
+        case 17:
         case 18:
+          damage = 17;
+          respond(
+            "reaction",
+            "The beast leaps!",
+            "The beast attacks!",
+            "The beast locks onto you!"
+          );
+          respond(
+            "description",
+            `You turn as he claws your back for ${damage} damage!`,
+            `You run but he swipes your ankle for ${damage} damage!`,
+            `You cannot escape his reach! You take ${damage} damage!`
+          );
+          break;
         case 19:
           damage = 20;
-          respond("reaction", "You lose your footing.");
+          respond("reaction", "Whip-crack went his whippy tail!");
           respond(
             "description",
-            `The beast takes a swipe for ${damage} damage!`
+            `The beast lashes your cheek for ${damage} damage.`
           );
           break;
         case 20:
-          damage = 30;
+          damage = 25;
           respond("reaction", "The beast strikes with BOTH claws!");
           respond(
             "description",
-            `You take a critical hit for ${damage} damage!`
+            `You take a wicked critical hit for ${damage} damage!`
           );
           break;
         default:
@@ -946,7 +1096,6 @@ function App() {
     // Clear player's incorrect guesss, retaining the final level guess if correct
     if (!isLastLevel) clearGuess();
     else if (isLastLevel && player.guess !== fellow.number) {
-      console.log("hello from hell");
       clearGuess();
     }
   }
@@ -1020,7 +1169,13 @@ function App() {
                           </>
                         ) : (
                           <>
-                            <p>{level.text1}</p>
+                            {announcer.lastDescription &&
+                            isPreEndLevel &&
+                            player.guess !== fellow.number ? (
+                              <p>{announcer.lastDescription}</p>
+                            ) : (
+                              <p>{level.text1}</p>
+                            )}
                             <p>{level.text2}</p>
                             {level.text3 ? <p>{level.text3}</p> : null}
                           </>
