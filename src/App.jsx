@@ -1,4 +1,4 @@
-import { Children, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import TitleScreen from "./components/TitleScreen";
 import EnterName from "./components/EnterName";

@@ -1,3 +1,7 @@
+:root {
+  --health-bar-width: 100%;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -139,7 +143,7 @@
   color: red;
 }
 
-.health-bar {
+.health-bar-container {
   border: 1px solid red;
   color: red;
   background-color: white;
@@ -147,4 +151,11 @@
   top: 0;
   left: auto;
   margin-top: 1em;
+  /* width: 50%; */
+}
+
+.health-bar {
+  border: 1px solid blue;
+  background-color: red;
+  width: var(--health-bar-width);
 }
