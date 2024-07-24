@@ -1,23 +1,32 @@
 import { Children, useEffect, useState } from "react";
 import "./App.css";
+import TitleScreen from "./components/TitleScreen";
+import EnterName from "./components/EnterName";
+import GameImage from "./components/GameImage";
+import GameText from "./components/GameText";
+import GuessingUI from "./components/GuessingUI";
+import HealthBar from "./components/HealthBar";
+import Logbook from "./components/Logbook";
+import ActionButton from "./components/ActionButton";
 
+// ! TODO Improve final health bars
 // ! TODO Put logbook into a modal...
 // ! TODO Track battle hits and running health totals were tracked in the logbook)
+// TODO Make Logbook a button/icon that opens a modal.
+// TODO Make logbook a hover/click button that opens a modal.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
 // TODO Revise variations to the final fight text
 // TODO Add variations to all the text
-// TODO Add hearts for guesses (lives) - should be at top left until it becomes a battle boss bar. Should it be hearts even during the boss battle?
-// TODO Make Logbook a button/icon that opens a modal.
-// TODO Separate into components
 // TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
-// TODO Make logbook a hover/click button that opens a modal.
 // TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
 // TODO Add more random responses - proof and improve all text
 // TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO add intro text on name screen. Play old game and make sure certain text matches.
 // TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
+// TODO Refactor, add function descriptions, and put some functions into separate modules?
+// TODO Add a gear menu: reset name, start over, switch art, credits, contact
 
 function App() {
   const startingLives = 3;
@@ -142,8 +151,6 @@ function App() {
     }
   }, [player.isDead, fellow.isDead]);
 
-  const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-
   const gameLevels = [
     {
       level: 1,
@@ -158,7 +165,7 @@ function App() {
       level: 1,
       subLevel: 2,
       text1: "With a curious smirk, he says to you:",
-      text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it? I’ll give you ${player.lives} tries.”`,
+      text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it?”`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -195,7 +202,7 @@ function App() {
       level: 2,
       subLevel: 2,
       text1: "With a respectful bow, he says to you:",
-      text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of? How about ${player.lives} tries this time?”`,
+      text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of?`,
       action: "Guess",
       image: "path to image",
       endLevel: true,
@@ -235,7 +242,7 @@ function App() {
       level: 3,
       subLevel: 2,
       text1: "Serious now, he asks you directly:",
-      text2: `“What’s my number, ${player.name}? From 1-${fellow.max}... ${player.lives} tries...”`,
+      text2: `“What’s my number, ${player.name}? From 1-${fellow.max}...”`,
       text3: `His voice deepens. “The darkness awaits...”`,
       action: "Guess",
       image: "path to image",
@@ -404,17 +411,6 @@ function App() {
   function toggleIsPlaying() {
     if (!isPlaying) setIsPlaying(true);
     else setIsPlaying(false);
-  }
-
-  function handleChange(name) {
-    setPlayer((currentPlayer) => {
-      return { ...currentPlayer, name: name };
-    });
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    advancePlayerLevel();
   }
 
   function increaseMax() {
@@ -1107,40 +1103,24 @@ function App() {
   return (
     <div className="container">
       {!isPlaying ? (
-        <div className="intro-container">
-          NUMBER QUEST
-          <button onClick={() => toggleIsPlaying()}>Begin</button>
-        </div>
+        <TitleScreen toggleIsPlaying={toggleIsPlaying} />
       ) : (
-        // Player Start, Enter Name
         <>
           {player.level === 0 ? (
-            <div className="intro-container">
-              What is your Name?
-              <form onSubmit={(e) => handleSubmit(e)}>
-                <input
-                  onChange={(e) => handleChange(e.target.value)}
-                  value={player.name}
-                />
-                <button>Accept Quest</button>
-              </form>
-            </div>
+            <EnterName
+              setPlayer={setPlayer}
+              advancePlayerLevel={advancePlayerLevel}
+              name={player.name}
+            />
           ) : (
-            // Game Start
             <div className="game-container">
-              <div className="game-image">
-                {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
-                  <div className="fellow-health">Health: {fellow.health}</div>
-                ) : null}
-                <p>Artwork.</p>
-                <p>
-                  Player level {player.level}, Player subLevel {player.subLevel}
-                </p>
-                <p>
-                  Number: {fellow.number}, Max: {fellow.max}
-                </p>
-                <p>Fellow Response: {fellow.response}</p>
-              </div>
+              <GameImage
+                // TODO Clean up unused props after game art is put in
+                player={player}
+                fellow={fellow}
+                isLastLevel={isLastLevel}
+                isPreEndLevel={isPreEndLevel}
+              />
 
               {gameLevels.map((level) => {
                 if (
@@ -1152,164 +1132,43 @@ function App() {
                       key={crypto.randomUUID()}
                       className="game-text-container"
                     >
-                      <div className="game-text">
-                        {fellow.response || announcer.hasAnnouncement ? (
-                          <>
-                            {isLastLevel ? (
-                              <>
-                                {announcer.reaction ? (
-                                  <p>{announcer.reaction}</p>
-                                ) : null}
-                                {announcer.description ? (
-                                  <p>{announcer.description}</p>
-                                ) : null}
-                                {announcer.suggestion ? (
-                                  <p>{announcer.suggestion}</p>
-                                ) : null}
-                              </>
-                            ) : (
-                              <p>{fellow.response}</p>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            {announcer.lastDescription &&
-                            isPreEndLevel &&
-                            player.guess !== fellow.number ? (
-                              <p>{announcer.lastDescription}</p>
-                            ) : (
-                              <p>{level.text1}</p>
-                            )}
-                            <p>{level.text2}</p>
-                            {level.text3 ? <p>{level.text3}</p> : null}
-                          </>
-                        )}
-                      </div>
+                      <GameText
+                        level={level}
+                        player={player}
+                        fellow={fellow}
+                        announcer={announcer}
+                        isLastLevel={isLastLevel}
+                        isPreEndLevel={isPreEndLevel}
+                      />
                       {isLastLevel &&
                       (level.endLevel || isPreEndLevel) &&
                       player.subLevel !== "win" &&
                       player.subLevel !== "lose" ? (
-                        <div className="player-health">
-                          Health: {player.health}
-                        </div>
+                        <HealthBar health={player.health} />
                       ) : null}
                       {level.endLevel ? (
-                        // Guessing interface here
-                        // Display number buttons
-                        // Display guess
-                        // Display guesses with > or < indicators
                         <>
-                          <div className="your-guess">{player.guess}</div>
-                          <div className="number-btns-container">
-                            {numberButtons.map((numberButton) => {
-                              return (
-                                <div key={crypto.randomUUID()}>
-                                  <button
-                                    className="number-btn"
-                                    onClick={() => {
-                                      inputDigit(numberButton);
-                                    }}
-                                  >
-                                    {numberButton}
-                                  </button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <div className="guess-btns">
-                            <button
-                              onClick={() => {
-                                clearGuess(level);
-                                clearAnnouncer();
-                                if (player.guess) {
-                                  if (isLastLevel) {
-                                    respond(
-                                      "suggestion",
-                                      `All is clear now, ${player.name}. Focus your aim!`,
-                                      `The way is clear, ${player.name}! Find your target!`,
-                                      `Clear your mind and strike!`
-                                    );
-                                  } else {
-                                    respond(
-                                      "fellow",
-                                      `“That’s it, ${player.name}. Clear your mind.”`,
-                                      `“Clear your mind of everything, ${player.name}.”`,
-                                      `“Yes, let your mind go blank.”`
-                                    );
-                                  }
-                                } else if (isLastLevel) {
-                                  respond(
-                                    "suggestion",
-                                    `It’s clear enough. Strike the beast!`,
-                                    `How clear must it be, ${player.name}? Attack!`,
-                                    `Forget clarity! Fight for your life!`
-                                  );
-                                } else {
-                                  respond(
-                                    "fellow",
-                                    `“Could it be any clearer?”`,
-                                    `“But it’s so clear already, ${player.name}?”`,
-                                    `“${player.name}, what are you trying to do?”`
-                                  );
-                                }
-                              }}
-                            >
-                              Clear
-                            </button>
-                            <button onClick={() => checkGuess()}>
-                              {level.action}
-                            </button>
-                          </div>
-                          <div className="logbook">
-                            <p>Logbook</p>
-                            {fellow.max ? <p>Range: 1-{fellow.max}</p> : null}
-                            {!isLastLevel ? (
-                              <>
-                                {/* TODO singular/plural */}
-                                <p>{player.lives} guess(es) remain</p>
-                                <div className="hearts-container">
-                                  {Array.from({ length: player.lives }).map(
-                                    (_, index) => {
-                                      return (
-                                        <img
-                                          key={index}
-                                          alt="Player health heart container"
-                                          className="heart"
-                                          src="/img/heart.png"
-                                        />
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              </>
-                            ) : null}
-
-                            <div className="guesses">
-                              {player.guesses.length > 0 ? (
-                                <>
-                                  {player.guesses.map((guess) => {
-                                    if (guess > fellow.number)
-                                      return (
-                                        <p
-                                          key={crypto.randomUUID()}
-                                        >{`# < ${guess}`}</p>
-                                      );
-                                    return (
-                                      <p
-                                        key={crypto.randomUUID()}
-                                      >{`# > ${guess}`}</p>
-                                    );
-                                  })}
-                                </>
-                              ) : null}
-                            </div>
-                          </div>
+                          <GuessingUI
+                            level={level}
+                            player={player}
+                            inputDigit={inputDigit}
+                            clearGuess={clearGuess}
+                            clearAnnouncer={clearAnnouncer}
+                            respond={respond}
+                            checkGuess={checkGuess}
+                            isLastLevel={isLastLevel}
+                          />
+                          <Logbook
+                            player={player}
+                            fellow={fellow}
+                            isLastLevel={isLastLevel}
+                          />
                         </>
                       ) : (
-                        // Non-guessing interface here
-                        <button onClick={() => advancePlayer()}>
-                          {level.action}
-                        </button>
+                        <ActionButton
+                          advancePlayer={advancePlayer}
+                          level={level}
+                        />
                       )}
                     </div>
                   );

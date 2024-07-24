@@ -12,6 +12,7 @@
 }
 
 .intro-container {
+  border: 1px solid blue;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -46,6 +47,7 @@
   align-items: center;
   background-color: dimgray;
   gap: 1em;
+  position: relative;
 }
 
 .game-text-container {
@@ -137,14 +139,12 @@
   color: red;
 }
 
-.player-health {
+.health-bar {
   border: 1px solid red;
   color: red;
   background-color: white;
-}
-
-.fellow-health {
-  border: 1px solid red;
-  color: red;
-  background-color: white;
+  position: fixed;
+  top: 0;
+  left: auto;
+  margin-top: 1em;
 }
