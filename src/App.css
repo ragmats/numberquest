@@ -1,5 +1,6 @@
 :root {
-  --health-bar-width: 100%;
+  --health-bar-player-width: 100%;
+  --health-bar-beast-width: 100%;
 }
 
 * {
@@ -123,6 +124,7 @@
   top: 0;
   left: 0;
   padding: 0.5em;
+  user-select: none;
 }
 
 .heart {
@@ -161,11 +163,18 @@
   display: flex;
   justify-content: end;
   align-items: center;
-  width: var(--health-bar-width);
   height: 100%;
   background-color: red;
   color: black;
   /* padding: 0.5em; */
+}
+
+.health-bar-player {
+  width: var(--health-bar-player-width);
+}
+
+.health-bar-beast {
+  width: var(--health-bar-beast-width);
 }
 
 .health-number {

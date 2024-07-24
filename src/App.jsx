@@ -5,17 +5,17 @@ import EnterName from "./components/EnterName";
 import GameImage from "./components/GameImage";
 import GameText from "./components/GameText";
 import GuessingUI from "./components/GuessingUI";
-import HealthBar from "./components/HealthBar";
 import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
+import HealthBarPlayer from "./components/HealthBarPlayer";
 
-// ! TODO Improve final health bars
-// ! TODO Put logbook into a modal...
-// ! TODO Track battle hits and running health totals were tracked in the logbook)
-// TODO Make Logbook a button/icon that opens a modal.
-// TODO Make logbook a hover/click button that opens a modal.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
+// TODO Put logbook into a modal...
+// TODO Track battle hits and running health totals were tracked in the logbook)
+// TODO On the pre win/lose screens, the health bars seem to flash in the beginning. Can this be prevented?
+// TODO Make Logbook a button/icon that opens a modal.
+// TODO Make logbook a hover/click button that opens a modal.
 // TODO Revise variations to the final fight text
 // TODO Add variations to all the text
 // TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
@@ -42,15 +42,17 @@ function App() {
     guess: "",
     guesses: [],
     lives: startingLives,
-    health: 30,
-    damage: 1,
+    health: playerStartingHealth,
+    damage: playerStartingDamage,
+    isVictim: false,
     isDead: false,
   });
   const [fellow, setFellow] = useState({
     number: 0,
     max: 0,
     response: "",
-    health: 30,
+    health: fellowStartingHealth,
+    isVictim: false,
     isDead: false,
   });
   const [announcer, setAnnouncer] = useState({
@@ -62,9 +64,32 @@ function App() {
   });
   const [isLastLevel, setIsLastLevel] = useState(false);
   const [isPreEndLevel, setIsPreEndLevel] = useState(false);
+  const [battleLog, setBattleLog] = useState([]);
 
   useEffect(() => {
-    console.log(announcer.lastDescription);
+    console.log(battleLog);
+  }, [battleLog]);
+
+  useEffect(() => {
+    // console.log("player: ", player.health, "beast: ", fellow.health);
+    // setBattleLog((currentBattleLog) => [
+    //   ...currentBattleLog,
+    //   `${player.name}: ${player.health}, Beast: ${fellow.health}`,
+    // ]);
+  }, [player.health, fellow.health]);
+
+  useEffect(() => {
+    if (announcer.description !== "") {
+      setBattleLog((currentBattleLog) => [
+        ...currentBattleLog,
+        announcer.description,
+        `${player.name}: ${player.health}, Beast: ${fellow.health}`,
+      ]);
+    }
+  }, [announcer.description]);
+
+  useEffect(() => {
+    // console.log(announcer.lastDescription);
   }, [announcer.lastDescription]);
 
   useEffect(() => {
@@ -334,7 +359,7 @@ function App() {
       level: 4,
       subLevel: "preWinOneShot",
       text1: `A singular strike!`,
-      text2: `You saw it as if on high, and then one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
+      text2: `You spied it as if on high, and then one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
       text3: `All of the beast’s feocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
       action: "Nudge the beast to be sure",
       image: "path to image",
@@ -389,6 +414,7 @@ function App() {
         lives: startingLives,
         health: playerStartingHealth,
         damage: playerStartingDamage,
+        isVictim: false,
         isDead: false,
       };
     });
@@ -399,9 +425,31 @@ function App() {
         max: 0,
         response: "",
         health: fellowStartingHealth,
+        isVictim: false,
         isDead: false,
       };
     });
+    setAnnouncer((currentAnnouncer) => {
+      return {
+        ...currentAnnouncer,
+        reaction: "",
+        description: "",
+        suggestion: "",
+        lastDescription: "",
+        hasAnnouncement: false,
+      };
+    });
+    setBattleLog([]);
+
+    // Also reset health bar styles
+    document.documentElement.style.setProperty(
+      "--health-bar-player-width",
+      "100%"
+    );
+    document.documentElement.style.setProperty(
+      "--health-bar-beast-width",
+      "100%"
+    );
   }
 
   function getRandomNumber(max) {
@@ -681,8 +729,23 @@ function App() {
   function rollVictim() {
     // Return either "player" or "beast" to be attacked
     const roll = Math.floor(Math.random() * 2);
-    if (roll === 0) return "player";
-    return "beast";
+    if (roll === 0) {
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, isVictim: false };
+      });
+      setFellow((currentFellow) => {
+        return { ...currentFellow, isVictim: true };
+      });
+      return "beast";
+    } else {
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, isVictim: true };
+      });
+      setFellow((currentFellow) => {
+        return { ...currentFellow, isVictim: false };
+      });
+      return "player";
+    }
   }
 
   function roll20() {
@@ -808,7 +871,7 @@ function App() {
           respond(
             "description",
             `You kick it in the horn for ${damage} damage!`,
-            `You kick pop him in the chin for ${damage} damage!`
+            `You pop him in the chin for ${damage} damage!`
           );
           break;
         case 20:
@@ -830,8 +893,6 @@ function App() {
     } else if (victim === "player") {
       switch (roll) {
         case 1:
-        case 2:
-        case 3:
           damage = 0;
           respond(
             "reaction",
@@ -842,13 +903,12 @@ function App() {
           respond(
             "description",
             `The beast swipes and misses.`,
-            `The beast misses and roars in angery.`,
+            `The beast misses and roars in anger.`,
             `The beast’s powerful claw whiffs the air.`
           );
           break;
-        case 4:
-        case 5:
-        case 6:
+        case 2:
+        case 3:
           damage = 5;
           respond(
             "reaction",
@@ -860,12 +920,12 @@ function App() {
             "description",
             `You dodge but run into the wall for ${damage} damage.`,
             `He knocks you down for for ${damage} damage.`,
-            `You try a fancy dodge but twist your Achilles heel for ${damage} damage.`
+            `You try a fancy dodge but twist your ankle for ${damage} damage.`
           );
           break;
-        case 7:
-        case 8:
-        case 9:
+        case 4:
+        case 5:
+        case 6:
           damage = 7;
           respond(
             "reaction",
@@ -880,9 +940,10 @@ function App() {
           ),
             `You are hit for ${damage} damage.`;
           break;
+        case 7:
+        case 8:
+        case 9:
         case 10:
-        case 11:
-        case 12:
           damage = 10;
           respond(
             "reaction",
@@ -893,14 +954,14 @@ function App() {
           respond(
             "description",
             `He goes for a headshot but ends up grazing your ear for ${damage} damage.`,
-            `You are hit in the knew and thrown into the stone behind you for ${damage} damage!`,
+            `You are hit in the knee and thrown into the stone behind you for ${damage} damage!`,
             `The powerful hit sends you flying back for ${damage} damage.`
           );
           break;
+        case 11:
+        case 12:
         case 13:
         case 14:
-        case 15:
-        case 16:
           damage = 15;
           respond(
             "reaction",
@@ -915,8 +976,9 @@ function App() {
             `The beast swipes in a flurry for ${damage} damage!`
           );
           break;
+        case 15:
+        case 16:
         case 17:
-        case 18:
           damage = 17;
           respond(
             "reaction",
@@ -927,10 +989,11 @@ function App() {
           respond(
             "description",
             `You turn as he claws your back for ${damage} damage!`,
-            `You run but he swipes your ankle for ${damage} damage!`,
+            `You run but he swipes your Achilles heel for ${damage} damage!`,
             `You cannot escape his reach! You take ${damage} damage!`
           );
           break;
+        case 18:
         case 19:
           damage = 20;
           respond("reaction", "Whip-crack went his whippy tail!");
@@ -989,15 +1052,22 @@ function App() {
       } else if (player.guess === fellow.number) {
         // Player, on last level, guesses the right number
         toggleDeath("beast");
-        // clearAnnouncer();
-        // advancePlayer();
+
+        // Set health bar style to zero
+        document.documentElement.style.setProperty(
+          "--health-bar-beast-width",
+          "0%"
+        );
       } else {
         // Player, on last level, guessed the wrong number
         const victim = rollVictim();
         const roll = roll20();
         const damage = damageVictim(victim, roll);
 
-        if (player.health - damage < 1 || fellow.health - damage < 1) {
+        if (
+          (player.health - damage < 1 && victim === "player") ||
+          (fellow.health - damage < 1 && victim === "beast")
+        ) {
           // If there is a killing blow
           toggleDeath(victim);
         } else {
@@ -1144,7 +1214,10 @@ function App() {
                       (level.endLevel || isPreEndLevel) &&
                       player.subLevel !== "win" &&
                       player.subLevel !== "lose" ? (
-                        <HealthBar health={player.health} />
+                        <HealthBarPlayer
+                          health={player.health}
+                          playerIsVictim={player.isVictim}
+                        />
                       ) : null}
                       {level.endLevel ? (
                         <>
