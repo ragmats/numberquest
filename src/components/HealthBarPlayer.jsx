@@ -1,18 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function HealthBarPlayer({ health, playerIsVictim }) {
+export default function HealthBarPlayer({
+  startHealth,
+  endHealth,
+  playerIsVictim,
+}) {
+  const [health, setHealth] = useState(startHealth);
+
   useEffect(() => {
-    if (playerIsVictim)
-      document.documentElement.style.setProperty(
-        "--health-bar-player-width",
-        `${health}%`
-      );
-  }, [health]);
+    if (playerIsVictim) {
+      setHealth(startHealth);
+      requestAnimationFrame(() => {
+        setHealth(endHealth);
+      });
+    }
+  }, [endHealth, playerIsVictim]);
 
   return (
     <div className="health-bar-container">
-      <div className="health-number">{health}</div>
-      <div className="health-bar health-bar-player"></div>
+      <div className="health-number">{endHealth}</div>
+      <div
+        className="health-bar"
+        style={{ width: `${health}%`, transition: "width 0.5s ease" }}
+      />
     </div>
   );
 }

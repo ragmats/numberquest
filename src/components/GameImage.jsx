@@ -1,4 +1,4 @@
-import HealthBarbeast from "./HealthBarBeast";
+import HealthBarBeast from "./HealthBarBeast";
 
 export default function GameImage({
   player,
@@ -9,8 +9,9 @@ export default function GameImage({
   return (
     <div className="game-image">
       {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
-        <HealthBarbeast
-          health={fellow.health}
+        <HealthBarBeast
+          startHealth={fellow.prevHealth}
+          endHealth={fellow.health}
           beastIsVictim={fellow.isVictim}
         />
       ) : null}

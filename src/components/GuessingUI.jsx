@@ -11,7 +11,7 @@ export default function GuessingUI({
   const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
   return (
-    <>
+    <div className="guessing-ui-container">
       <div className="your-guess">{player.guess}</div>
       <div className="number-btns-container">
         {numberButtons.map((numberButton) => {
@@ -71,6 +71,6 @@ export default function GuessingUI({
         </button>
         <button onClick={() => checkGuess()}>{level.action}</button>
       </div>
-    </>
+    </div>
   );
 }

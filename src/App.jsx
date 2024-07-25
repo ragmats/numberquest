@@ -9,6 +9,9 @@ import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
 import HealthBarPlayer from "./components/HealthBarPlayer";
 
+// ! TODO - health bars are flashing 100% then 0% on pre-win/lose screens for non one-shot killshots.
+// ! TODO make health bars flash at low health.
+// ! TODO Added game-text-super-container to prevent health bar re-render, so animations would work. This might be where all the animations need to happen. Need to clean up CSS.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
 // TODO Put logbook into a modal...
@@ -43,6 +46,7 @@ function App() {
     guesses: [],
     lives: startingLives,
     health: playerStartingHealth,
+    prevHealth: playerStartingHealth,
     damage: playerStartingDamage,
     isVictim: false,
     isDead: false,
@@ -52,6 +56,7 @@ function App() {
     max: 0,
     response: "",
     health: fellowStartingHealth,
+    prevHealth: fellowStartingHealth,
     isVictim: false,
     isDead: false,
   });
@@ -65,6 +70,14 @@ function App() {
   const [isLastLevel, setIsLastLevel] = useState(false);
   const [isPreEndLevel, setIsPreEndLevel] = useState(false);
   const [battleLog, setBattleLog] = useState([]);
+
+  useEffect(() => {
+    console.log("player.prevHealth: ", player.prevHealth);
+  }, [player.prevHealth]);
+
+  useEffect(() => {
+    console.log("fellow.prevHealth: ", fellow.prevHealth);
+  }, [fellow.prevHealth]);
 
   useEffect(() => {
     console.log(battleLog);
@@ -159,18 +172,10 @@ function App() {
   useEffect(() => {
     if (fellow.isDead) {
       console.log("The beast is dead");
-      // Set health to 0
-      setFellow((currentFellow) => {
-        return { ...currentFellow, health: 0 };
-      });
       clearAnnouncer();
       advancePlayer();
     } else if (player.isDead) {
       console.log("The player is dead");
-      // Set health to 0
-      setPlayer((currentPlayer) => {
-        return { ...currentPlayer, health: 0 };
-      });
       clearAnnouncer();
       loseGame();
     }
@@ -413,6 +418,7 @@ function App() {
         guesses: [],
         lives: startingLives,
         health: playerStartingHealth,
+        prevHealth: playerStartingHealth,
         damage: playerStartingDamage,
         isVictim: false,
         isDead: false,
@@ -425,6 +431,7 @@ function App() {
         max: 0,
         response: "",
         health: fellowStartingHealth,
+        prevHealth: fellowStartingHealth,
         isVictim: false,
         isDead: false,
       };
@@ -440,16 +447,6 @@ function App() {
       };
     });
     setBattleLog([]);
-
-    // Also reset health bar styles
-    document.documentElement.style.setProperty(
-      "--health-bar-player-width",
-      "100%"
-    );
-    document.documentElement.style.setProperty(
-      "--health-bar-beast-width",
-      "100%"
-    );
   }
 
   function getRandomNumber(max) {
@@ -729,22 +726,35 @@ function App() {
   function rollVictim() {
     // Return either "player" or "beast" to be attacked
     const roll = Math.floor(Math.random() * 2);
+    let victim;
     if (roll === 0) {
+      victim = "beast";
+      victimize(victim);
+      return victim;
+    } else {
+      victim = "player";
+      victimize(victim);
+      return victim;
+    }
+  }
+
+  function victimize(victim) {
+    if (victim === "beast") {
       setPlayer((currentPlayer) => {
         return { ...currentPlayer, isVictim: false };
       });
       setFellow((currentFellow) => {
         return { ...currentFellow, isVictim: true };
       });
-      return "beast";
-    } else {
+    } else if (victim === "player") {
       setPlayer((currentPlayer) => {
         return { ...currentPlayer, isVictim: true };
       });
       setFellow((currentFellow) => {
         return { ...currentFellow, isVictim: false };
       });
-      return "player";
+    } else {
+      console.log("Invalid victim, no victim set");
     }
   }
 
@@ -888,7 +898,11 @@ function App() {
           respond("description", `You poke the beast for ${damage} damage!`);
       }
       setFellow((currentFellow) => {
-        return { ...currentFellow, health: fellow.health - damage };
+        return {
+          ...currentFellow,
+          health: fellow.health - damage,
+          prevHealth: currentFellow.health,
+        };
       });
     } else if (victim === "player") {
       switch (roll) {
@@ -999,7 +1013,7 @@ function App() {
           respond("reaction", "Whip-crack went his whippy tail!");
           respond(
             "description",
-            `The beast lashes your cheek for ${damage} damage.`
+            `The beast whips your cheek for ${damage} damage.`
           );
           break;
         case 20:
@@ -1011,12 +1025,19 @@ function App() {
           );
           break;
         default:
-          damage = 1;
-          respond("reaction", "You get hurt, but not bad.");
-          respond("description", `The beast gets you for ${damage} damage!`);
+          damage = 25;
+          respond("reaction", "The beast strikes with BOTH claws!");
+          respond(
+            "description",
+            `You take a wicked critical hit for ${damage} damage!`
+          );
       }
       setPlayer((currentPlayer) => {
-        return { ...currentPlayer, health: player.health - damage };
+        return {
+          ...currentPlayer,
+          health: player.health - damage,
+          prevHealth: currentPlayer.health,
+        };
       });
     }
     return damage;
@@ -1025,11 +1046,21 @@ function App() {
   function toggleDeath(victim) {
     if (victim === "player") {
       setPlayer((currentPlayer) => {
-        return { ...currentPlayer, isDead: true };
+        return {
+          ...currentPlayer,
+          isDead: true,
+          health: 0,
+          prevHealth: currentPlayer.health,
+        };
       });
     } else if (victim === "beast") {
       setFellow((currentFellow) => {
-        return { ...currentFellow, isDead: true };
+        return {
+          ...currentFellow,
+          isDead: true,
+          health: 0,
+          prevHealth: currentFellow.health,
+        };
       });
     }
   }
@@ -1051,13 +1082,8 @@ function App() {
         );
       } else if (player.guess === fellow.number) {
         // Player, on last level, guesses the right number
+        victimize("beast");
         toggleDeath("beast");
-
-        // Set health bar style to zero
-        document.documentElement.style.setProperty(
-          "--health-bar-beast-width",
-          "0%"
-        );
       } else {
         // Player, on last level, guessed the wrong number
         const victim = rollVictim();
@@ -1191,62 +1217,62 @@ function App() {
                 isLastLevel={isLastLevel}
                 isPreEndLevel={isPreEndLevel}
               />
+              <div className="game-text-relative-container">
+                {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
+                  <HealthBarPlayer
+                    startHealth={player.prevHealth}
+                    endHealth={player.health}
+                    playerIsVictim={player.isVictim}
+                  />
+                ) : null}
 
-              {gameLevels.map((level) => {
-                if (
-                  level.level === player.level &&
-                  level.subLevel === player.subLevel
-                ) {
-                  return (
-                    <div
-                      key={crypto.randomUUID()}
-                      className="game-text-container"
-                    >
-                      <GameText
-                        level={level}
-                        player={player}
-                        fellow={fellow}
-                        announcer={announcer}
-                        isLastLevel={isLastLevel}
-                        isPreEndLevel={isPreEndLevel}
-                      />
-                      {isLastLevel &&
-                      (level.endLevel || isPreEndLevel) &&
-                      player.subLevel !== "win" &&
-                      player.subLevel !== "lose" ? (
-                        <HealthBarPlayer
-                          health={player.health}
-                          playerIsVictim={player.isVictim}
-                        />
-                      ) : null}
-                      {level.endLevel ? (
-                        <>
-                          <GuessingUI
-                            level={level}
-                            player={player}
-                            inputDigit={inputDigit}
-                            clearGuess={clearGuess}
-                            clearAnnouncer={clearAnnouncer}
-                            respond={respond}
-                            checkGuess={checkGuess}
-                            isLastLevel={isLastLevel}
-                          />
-                          <Logbook
-                            player={player}
-                            fellow={fellow}
-                            isLastLevel={isLastLevel}
-                          />
-                        </>
-                      ) : (
-                        <ActionButton
-                          advancePlayer={advancePlayer}
+                {gameLevels.map((level) => {
+                  if (
+                    level.level === player.level &&
+                    level.subLevel === player.subLevel
+                  ) {
+                    return (
+                      <div
+                        key={crypto.randomUUID()}
+                        className="game-text-container"
+                      >
+                        <GameText
                           level={level}
+                          player={player}
+                          fellow={fellow}
+                          announcer={announcer}
+                          isLastLevel={isLastLevel}
+                          isPreEndLevel={isPreEndLevel}
                         />
-                      )}
-                    </div>
-                  );
-                }
-              })}
+                        {level.endLevel ? (
+                          <div>
+                            <GuessingUI
+                              level={level}
+                              player={player}
+                              inputDigit={inputDigit}
+                              clearGuess={clearGuess}
+                              clearAnnouncer={clearAnnouncer}
+                              respond={respond}
+                              checkGuess={checkGuess}
+                              isLastLevel={isLastLevel}
+                            />
+                            <Logbook
+                              player={player}
+                              fellow={fellow}
+                              isLastLevel={isLastLevel}
+                            />
+                          </div>
+                        ) : (
+                          <ActionButton
+                            advancePlayer={advancePlayer}
+                            level={level}
+                          />
+                        )}
+                      </div>
+                    );
+                  }
+                })}
+              </div>
             </div>
           )}
         </>

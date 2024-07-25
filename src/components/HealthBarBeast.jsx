@@ -1,18 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function HealthBarbeast({ health, beastIsVictim }) {
+export default function HealthBarBeast({
+  startHealth,
+  endHealth,
+  beastIsVictim,
+}) {
+  const [health, setHealth] = useState(startHealth);
+
   useEffect(() => {
-    if (beastIsVictim)
-      document.documentElement.style.setProperty(
-        "--health-bar-beast-width",
-        `${health}%`
-      );
-  }, [health]);
+    if (beastIsVictim) {
+      setHealth(startHealth);
+      requestAnimationFrame(() => {
+        setHealth(endHealth);
+      });
+    }
+  }, [endHealth, beastIsVictim]);
 
   return (
     <div className="health-bar-container">
-      <div className="health-number">{health}</div>
-      <div className="health-bar health-bar-beast"></div>
+      <div className="health-number">{endHealth}</div>
+      <div
+        className="health-bar"
+        style={{ width: `${health}%`, transition: "width 0.5s ease" }}
+      />
     </div>
   );
 }
