@@ -175,12 +175,10 @@
   margin: 1em;
 }
 
-.health-bar {
+.health-bar-player,
+.health-bar-beast {
   /* border: 2px solid black; */
   border-right: 1px solid black;
-  display: flex;
-  justify-content: end;
-  align-items: center;
   height: 100%;
   background-color: red;
   color: black;

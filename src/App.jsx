@@ -9,9 +9,8 @@ import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
 import HealthBarPlayer from "./components/HealthBarPlayer";
 
-// ! TODO - health bars are flashing 100% then 0% on pre-win/lose screens for non one-shot killshots.
-// ! TODO make health bars flash at low health.
-// ! TODO Added game-text-super-container to prevent health bar re-render, so animations would work. This might be where all the animations need to happen. Need to clean up CSS.
+// ! TODO Killing blows are not animating health bars.
+// ! TODO make health bars blink at low health.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
 // TODO Put logbook into a modal...
@@ -71,24 +70,24 @@ function App() {
   const [isPreEndLevel, setIsPreEndLevel] = useState(false);
   const [battleLog, setBattleLog] = useState([]);
 
-  useEffect(() => {
-    console.log("player.prevHealth: ", player.prevHealth);
-  }, [player.prevHealth]);
+  // useEffect(() => {
+  //   console.log("player.prevHealth: ", player.prevHealth);
+  // }, [player.prevHealth]);
 
-  useEffect(() => {
-    console.log("fellow.prevHealth: ", fellow.prevHealth);
-  }, [fellow.prevHealth]);
+  // useEffect(() => {
+  //   console.log("fellow.prevHealth: ", fellow.prevHealth);
+  // }, [fellow.prevHealth]);
 
-  useEffect(() => {
-    console.log(battleLog);
-  }, [battleLog]);
+  // useEffect(() => {
+  //   console.log(battleLog);
+  // }, [battleLog]);
 
   useEffect(() => {
     // console.log("player: ", player.health, "beast: ", fellow.health);
-    // setBattleLog((currentBattleLog) => [
-    //   ...currentBattleLog,
-    //   `${player.name}: ${player.health}, Beast: ${fellow.health}`,
-    // ]);
+    setBattleLog((currentBattleLog) => [
+      ...currentBattleLog,
+      `${player.name}: ${player.health}, Beast: ${fellow.health}`,
+    ]);
   }, [player.health, fellow.health]);
 
   useEffect(() => {
@@ -101,9 +100,9 @@ function App() {
     }
   }, [announcer.description]);
 
-  useEffect(() => {
-    // console.log(announcer.lastDescription);
-  }, [announcer.lastDescription]);
+  // useEffect(() => {
+  //   console.log(announcer.lastDescription);
+  // }, [announcer.lastDescription]);
 
   useEffect(() => {
     if (player.level === 4) setIsLastLevel(true);
@@ -723,6 +722,11 @@ function App() {
     });
   }
 
+  function clamp(num) {
+    if (num < 0) return 0;
+    return num;
+  }
+
   function rollVictim() {
     // Return either "player" or "beast" to be attacked
     const roll = Math.floor(Math.random() * 2);
@@ -900,7 +904,7 @@ function App() {
       setFellow((currentFellow) => {
         return {
           ...currentFellow,
-          health: fellow.health - damage,
+          health: clamp(fellow.health - damage),
           prevHealth: currentFellow.health,
         };
       });
@@ -1035,7 +1039,7 @@ function App() {
       setPlayer((currentPlayer) => {
         return {
           ...currentPlayer,
-          health: player.health - damage,
+          health: clamp(player.health - damage),
           prevHealth: currentPlayer.health,
         };
       });
