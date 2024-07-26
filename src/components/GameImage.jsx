@@ -22,6 +22,7 @@ export default function GameImage({
           characterIsVictim={fellow.isVictim}
           healthBar={beastHealthBar}
           setHealthBar={setBeastHealthBar}
+          turn={player.guesses.length}
         />
       ) : null}
       <p>Artwork.</p>

@@ -10,12 +10,15 @@ export default function HealthBar({
   characterIsVictim,
   healthBar,
   setHealthBar,
+  turn,
 }) {
-  const [animationClass, setAnimationClass] = useState("");
+  const [key, setKey] = useState(crypto.randomUUID());
+
   useEffect(() => {
-    if (characterIsVictim) {
-      // Set the health to startHealth to initialize the animation
-      setHealthBar(startHealth);
+    {
+      if (characterIsVictim)
+        // Set the health to startHealth to initialize the animation
+        setHealthBar(startHealth);
       // Use requestAnimationFrame to ensure the state update happens in the next frame
       requestAnimationFrame(() => {
         // Trigger the transition to endHealth
@@ -24,22 +27,19 @@ export default function HealthBar({
     }
   }, [startHealth, endHealth, characterIsVictim]);
 
+  // Update the key only when it's a new turn to trigger the damage taken number animation
   useEffect(() => {
-    // Toggle class to trigger animation
-    if (damageTaken > 0) {
-      // Reset animation class
-      setAnimationClass("");
-      // Apply class
-      setAnimationClass("animate-damage-number");
+    if (characterIsVictim) {
+      setKey(crypto.randomUUID());
     }
-  }, [endHealth]);
+  }, [turn, characterIsVictim]);
 
   return (
     <div className="health-UI">
       <div className="health-bar-upper">
         <span className="health-bar-name">{name}</span>
         {damageTaken > 0 ? (
-          <span className={`health-bar-damage-number ${animationClass}`}>
+          <span key={key} className={`health-bar-damage-number`}>
             {damageTaken}
           </span>
         ) : null}

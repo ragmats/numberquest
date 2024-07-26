@@ -9,20 +9,14 @@ import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 
-// ! TODO damageTaken numbers are only showing once the first time
-// TODO is player.damage and fellow.damage and playerStartingDamage ever used?
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
-// TODO Improve look of health bars
-// TODO Put logbook into a modal...
-// TODO Add a tutorial?
-// TODO Track battle hits and running health totals were tracked in the logbook)
-// TODO On the pre win/lose screens, the health bars seem to flash in the beginning. Can this be prevented?
 // TODO Make Logbook a button/icon that opens a modal.
-// TODO Make logbook a hover/click button that opens a modal.
+// TODO Add a tutorial?
+// TODO Track battle hits and running health totals were tracked in the logbook
 // TODO Revise variations to the final fight text
 // TODO Add variations to all the text
-// TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
+// TODO On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Emris idea: add in "kid mode" which would switch to his artwork, make the game easier, and change the text to a younger reading level.
 // TODO Emris idea: add a button to reverse game text and artwork, right/left to left/right
 // TODO Add more random responses - proof and improve all text
@@ -30,6 +24,7 @@ import HealthBar from "./components/HealthBar";
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO add intro text on name screen. Play old game and make sure certain text matches.
 // TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
+// TODO When the player chooses "put on the cloak", fade to black and then a final story full-page screen about you are drawn to a path, etc., action is: Wait for a Traveler
 // TODO Refactor, add function descriptions, and put some functions into separate modules?
 // TODO Add a gear menu: reset name, start over, kid mode toggle, sound toggle, credits, contact
 
@@ -1097,6 +1092,7 @@ function App() {
             currentFellow.health > 0
               ? currentFellow.health
               : currentFellow.prevHealth,
+          damageTaken: currentFellow.health,
         };
       });
     }
@@ -1269,6 +1265,7 @@ function App() {
                     characterIsVictim={player.isVictim}
                     healthBar={playerHealthBar}
                     setHealthBar={setPlayerHealthBar}
+                    turn={player.guesses.length}
                   />
                 ) : null}
 
