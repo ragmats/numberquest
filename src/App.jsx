@@ -7,9 +7,10 @@ import GameText from "./components/GameText";
 import GuessingUI from "./components/GuessingUI";
 import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
-import HealthBarPlayer from "./components/HealthBarPlayer";
+import HealthBar from "./components/HealthBar";
 
-// ! TODO make health bars blink at low health.
+// ! TODO damageTaken numbers are only showing once the first time
+// TODO is player.damage and fellow.damage and playerStartingDamage ever used?
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
 // TODO Improve look of health bars
@@ -36,7 +37,6 @@ function App() {
   const startingLives = 3;
   const playerStartingHealth = 100;
   const fellowStartingHealth = 100;
-  const playerStartingDamage = 1;
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState({
@@ -48,7 +48,7 @@ function App() {
     lives: startingLives,
     health: playerStartingHealth,
     prevHealth: playerStartingHealth,
-    damage: playerStartingDamage,
+    damageTaken: 0,
     isVictim: false,
     isDead: false,
   });
@@ -58,6 +58,7 @@ function App() {
     response: "",
     health: fellowStartingHealth,
     prevHealth: fellowStartingHealth,
+    damageTaken: 0,
     isVictim: false,
     isDead: false,
   });
@@ -433,7 +434,7 @@ function App() {
         lives: startingLives,
         health: playerStartingHealth,
         prevHealth: playerStartingHealth,
-        damage: playerStartingDamage,
+        damageTaken: 0,
         isVictim: false,
         isDead: false,
       };
@@ -446,6 +447,7 @@ function App() {
         response: "",
         health: fellowStartingHealth,
         prevHealth: fellowStartingHealth,
+        damageTaken: 0,
         isVictim: false,
         isDead: false,
       };
@@ -926,6 +928,7 @@ function App() {
             currentFellow.health > 0
               ? currentFellow.health
               : currentFellow.prevHealth,
+          damageTaken: damage,
         };
       });
     } else if (victim === "player") {
@@ -1064,6 +1067,7 @@ function App() {
             currentPlayer.health > 0
               ? currentPlayer.health
               : currentPlayer.prevHealth,
+          damageTaken: damage,
         };
       });
     }
@@ -1247,6 +1251,7 @@ function App() {
                 // TODO Clean up unused props after game art is put in
                 player={player}
                 fellow={fellow}
+                fellowStartingHealth={fellowStartingHealth}
                 isLastLevel={isLastLevel}
                 isPreEndLevel={isPreEndLevel}
                 beastHealthBar={beastHealthBar}
@@ -1254,10 +1259,14 @@ function App() {
               />
               <div className="game-text-relative-container">
                 {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
-                  <HealthBarPlayer
+                  <HealthBar
+                    character={"player"}
+                    name={player.name}
+                    maxHealth={playerStartingHealth}
                     startHealth={player.prevHealth}
                     endHealth={player.health}
-                    playerIsVictim={player.isVictim}
+                    damageTaken={player.damageTaken}
+                    characterIsVictim={player.isVictim}
                     healthBar={playerHealthBar}
                     setHealthBar={setPlayerHealthBar}
                   />
