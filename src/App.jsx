@@ -9,11 +9,12 @@ import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
 import HealthBarPlayer from "./components/HealthBarPlayer";
 
-// ! TODO Killing blows are not animating health bars.
 // ! TODO make health bars blink at low health.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
+// TODO Improve look of health bars
 // TODO Put logbook into a modal...
+// TODO Add a tutorial?
 // TODO Track battle hits and running health totals were tracked in the logbook)
 // TODO On the pre win/lose screens, the health bars seem to flash in the beginning. Can this be prevented?
 // TODO Make Logbook a button/icon that opens a modal.
@@ -21,14 +22,15 @@ import HealthBarPlayer from "./components/HealthBarPlayer";
 // TODO Revise variations to the final fight text
 // TODO Add variations to all the text
 // TODO In final battle, when health is 20 or below, it should start to pulsate. On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
-// TODO EMRIS' IDEA - add a button to reverse game text and artwork, right/left to left/right
+// TODO Emris idea: add in "kid mode" which would switch to his artwork, make the game easier, and change the text to a younger reading level.
+// TODO Emris idea: add a button to reverse game text and artwork, right/left to left/right
 // TODO Add more random responses - proof and improve all text
 // TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO add intro text on name screen. Play old game and make sure certain text matches.
 // TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
 // TODO Refactor, add function descriptions, and put some functions into separate modules?
-// TODO Add a gear menu: reset name, start over, switch art, credits, contact
+// TODO Add a gear menu: reset name, start over, kid mode toggle, sound toggle, credits, contact
 
 function App() {
   const startingLives = 3;
@@ -69,6 +71,8 @@ function App() {
   const [isLastLevel, setIsLastLevel] = useState(false);
   const [isPreEndLevel, setIsPreEndLevel] = useState(false);
   const [battleLog, setBattleLog] = useState([]);
+  const [playerHealthBar, setPlayerHealthBar] = useState(player.health);
+  const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
 
   // useEffect(() => {
   //   console.log("player.prevHealth: ", player.prevHealth);
@@ -81,6 +85,17 @@ function App() {
   // useEffect(() => {
   //   console.log(battleLog);
   // }, [battleLog]);
+
+  useEffect(() => {
+    console.log(
+      "playerHealth: ",
+      player.health,
+      "playerPrevHealth: ",
+      player.prevHealth,
+      "playerHealthBar: ",
+      playerHealthBar
+    );
+  }, [player.subLevel]);
 
   useEffect(() => {
     // console.log("player: ", player.health, "beast: ", fellow.health);
@@ -100,9 +115,9 @@ function App() {
     }
   }, [announcer.description]);
 
-  // useEffect(() => {
-  //   console.log(announcer.lastDescription);
-  // }, [announcer.lastDescription]);
+  useEffect(() => {
+    console.log(announcer.lastDescription);
+  }, [announcer.lastDescription]);
 
   useEffect(() => {
     if (player.level === 4) setIsLastLevel(true);
@@ -446,6 +461,8 @@ function App() {
       };
     });
     setBattleLog([]);
+    setPlayerHealthBar(playerStartingHealth);
+    setBeastHealthBar(fellowStartingHealth);
   }
 
   function getRandomNumber(max) {
@@ -905,7 +922,10 @@ function App() {
         return {
           ...currentFellow,
           health: clamp(fellow.health - damage),
-          prevHealth: currentFellow.health,
+          prevHealth:
+            currentFellow.health > 0
+              ? currentFellow.health
+              : currentFellow.prevHealth,
         };
       });
     } else if (victim === "player") {
@@ -1040,7 +1060,10 @@ function App() {
         return {
           ...currentPlayer,
           health: clamp(player.health - damage),
-          prevHealth: currentPlayer.health,
+          prevHealth:
+            currentPlayer.health > 0
+              ? currentPlayer.health
+              : currentPlayer.prevHealth,
         };
       });
     }
@@ -1054,7 +1077,10 @@ function App() {
           ...currentPlayer,
           isDead: true,
           health: 0,
-          prevHealth: currentPlayer.health,
+          prevHealth:
+            currentPlayer.health > 0
+              ? currentPlayer.health
+              : currentPlayer.prevHealth,
         };
       });
     } else if (victim === "beast") {
@@ -1063,7 +1089,10 @@ function App() {
           ...currentFellow,
           isDead: true,
           health: 0,
-          prevHealth: currentFellow.health,
+          prevHealth:
+            currentFellow.health > 0
+              ? currentFellow.health
+              : currentFellow.prevHealth,
         };
       });
     }
@@ -1220,6 +1249,8 @@ function App() {
                 fellow={fellow}
                 isLastLevel={isLastLevel}
                 isPreEndLevel={isPreEndLevel}
+                beastHealthBar={beastHealthBar}
+                setBeastHealthBar={setBeastHealthBar}
               />
               <div className="game-text-relative-container">
                 {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
@@ -1227,6 +1258,8 @@ function App() {
                     startHealth={player.prevHealth}
                     endHealth={player.health}
                     playerIsVictim={player.isVictim}
+                    healthBar={playerHealthBar}
+                    setHealthBar={setPlayerHealthBar}
                   />
                 ) : null}
 

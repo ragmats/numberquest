@@ -165,14 +165,15 @@
 
 .health-bar-container {
   border: 2px solid black;
-  color: red;
+  /* color: red; */
   background-color: white;
   position: absolute;
   top: 0;
   left: auto;
-  height: 50px;
+  height: 20px;
   width: 95%;
   margin: 1em;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .health-bar-player,
@@ -180,8 +181,22 @@
   /* border: 2px solid black; */
   border-right: 1px solid black;
   height: 100%;
-  background-color: red;
+  background-color: #dccd26;
   color: black;
+  position: absolute;
+  z-index: 1;
+  /* padding: 0.5em; */
+}
+
+.health-bar-player-static,
+.health-bar-beast-static {
+  /* border: 2px solid black; */
+  /* border-right: 2px solid white; */
+  height: 100%;
+  background-color: #be2225;
+  color: black;
+  position: absolute;
+  z-index: 2;
   /* padding: 0.5em; */
 }
 

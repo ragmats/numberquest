@@ -5,6 +5,8 @@ export default function GameImage({
   fellow,
   isLastLevel,
   isPreEndLevel,
+  beastHealthBar,
+  setBeastHealthBar,
 }) {
   return (
     <div className="game-image">
@@ -13,6 +15,8 @@ export default function GameImage({
           startHealth={fellow.prevHealth}
           endHealth={fellow.health}
           beastIsVictim={fellow.isVictim}
+          healthBar={beastHealthBar}
+          setHealthBar={setBeastHealthBar}
         />
       ) : null}
       <p>Artwork.</p>
