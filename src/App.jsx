@@ -13,6 +13,7 @@ import Guesses from "./components/Guesses";
 
 // TODO add intro text on name screen. Play old game and make sure certain text matches.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
+// TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
 // TODO Get on GitHub pages so Daniel can demo
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO Add a tutorial?
@@ -1099,10 +1100,13 @@ function App() {
         setBattleLog((currentBattleLog) => [
           ...currentBattleLog,
           {
-            text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
+            text: `${player.name}: ${player.health}, The Beast: 0`,
             type: "health",
           },
-          { text: "A singular strike!", type: "fight" },
+          {
+            text: "You found the weak-spot and one-shot The Beast!",
+            type: "fight",
+          },
         ]);
         victimize("beast");
         toggleDeath("beast");
