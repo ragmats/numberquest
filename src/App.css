@@ -244,7 +244,7 @@ body {
 
 .guesses span::after {
   content: "|";
-  margin: 0.75em;
+  margin: 0.35em;
   color: lightgray;
 }
 
