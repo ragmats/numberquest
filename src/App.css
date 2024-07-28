@@ -18,6 +18,10 @@ body {
   font-style: normal;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .container {
   border: 1px solid red;
   display: flex;
@@ -124,24 +128,84 @@ body {
   gap: 1em;
 }
 
+.logbook-button-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 .logbook {
-  /* border: 1px solid red; */
+  border: 1px solid black;
+  box-shadow: 5px 5px 10px 1px black;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
+  align-items: center;
   /* min-height: 200px; */
   /* width: 500px; */
   display: flex;
   gap: 1em;
   padding: 1em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 70%;
+  max-width: 50%;
+  background-color: gray;
 }
 
-.guesses {
+.close-X {
+  border: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 2em;
+  margin-right: 0.25em;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.battle-log {
   /* border: 1px solid red; */
   display: flex;
-  justify-content: center;
-  height: 20px;
-  gap: 0.75em;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  /* width: 100%; */
+  overflow: hidden;
+  position: relative;
+}
+
+.battle-log-gradient {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to bottom, transparent 90%, gray 100%);
+  position: absolute;
+}
+
+.battle-log-ul {
+  list-style: none;
+  padding: 0px;
+}
+
+.battle-log-ul li:not(:last-child) {
+  margin-bottom: 0.5em;
+}
+
+.battle-log-ul li.battle-log-health-li:not(:last-child) {
+  margin-bottom: 1em;
+}
+
+.battle-log-fight-li::before {
+  content: "⚔️";
+  margin-right: 0.5em;
+}
+
+.battle-log-health-li::before {
+  content: "❤️";
+  margin-right: 0.5em;
+  margin-left: 1em;
 }
 
 .hearts-container {
@@ -150,7 +214,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  padding: 0.5em;
+  margin: 0.5em;
   user-select: none;
 }
 
@@ -158,9 +222,39 @@ body {
   height: 50px;
 }
 
+.guesses {
+  /* border: 1px solid red; */
+  display: flex;
+  flex-wrap: wrap;
+  height: 20px;
+  /* gap: 1.5em; */
+  position: absolute;
+  top: 2.5em;
+  left: 0;
+  margin: 1em;
+}
+
+.guesses-last-level {
+  top: 3.5em;
+  left: 50%;
+  transform: translate(-50%);
+  width: 95%;
+  margin: 0;
+}
+
+.guesses span::after {
+  content: "|";
+  margin: 0.75em;
+  color: lightgray;
+}
+
+.container span:last-child::after {
+  content: "";
+}
+
 .your-guess {
   /* border: 1px solid red; */
-  /* height: 100px; */
+  height: 100%;
   /* width: 100px; */
   display: flex;
   justify-content: center;

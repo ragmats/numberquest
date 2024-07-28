@@ -4,6 +4,7 @@ export default function GameImage({
   player,
   fellow,
   fellowStartingHealth,
+  isEndSubLevel,
   isLastLevel,
   isPreEndLevel,
   beastHealthBar,

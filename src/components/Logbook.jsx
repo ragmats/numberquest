@@ -1,37 +1,62 @@
-export default function Logbook({ player, fellow, isLastLevel }) {
-  return (
-    <div className="logbook">
-      <p>Logbook</p>
-      {fellow.max ? <p>Range: 1-{fellow.max}</p> : null}
-      {!isLastLevel ? (
-        <>
-          {/* Rmeaining Guesses displayed as heart containers */}
-          <div className="hearts-container">
-            {Array.from({ length: player.lives }).map((_, index) => {
-              return (
-                <img
-                  key={index}
-                  alt="Player health heart container"
-                  className="heart"
-                  src="/img/heart.png"
-                />
-              );
-            })}
-          </div>
-        </>
-      ) : null}
+import { useEffect, useState } from "react";
 
-      <div className="guesses">
-        {player.guesses.length > 0 ? (
-          <>
-            {player.guesses.map((guess) => {
-              if (guess > fellow.number)
-                return <p key={crypto.randomUUID()}>{`# < ${guess}`}</p>;
-              return <p key={crypto.randomUUID()}>{`# > ${guess}`}</p>;
-            })}
-          </>
-        ) : null}
+export default function Logbook({ player, fellow, isLastLevel, battleLog }) {
+  // Should tell the player level, loops?, guesses, battle log
+  const [showLogbook, setShowLogbook] = useState(false);
+
+  const reversedBattleLog = [...battleLog].reverse();
+
+  // Close logbook modal on Escape key
+  useEffect(() => {
+    if (showLogbook) {
+      function closeOnEscape(e) {
+        if (e.key === "Escape") setShowLogbook(!showLogbook);
+      }
+      window.addEventListener("keydown", closeOnEscape);
+      return () => window.removeEventListener("keydown", closeOnEscape);
+    }
+  }, [showLogbook]);
+
+  function toggleShowLogbook() {
+    setShowLogbook(!showLogbook);
+  }
+
+  return (
+    <>
+      <div className="logbook-button-container">
+        <button onClick={() => toggleShowLogbook()}>Logbook</button>
       </div>
-    </div>
+      {showLogbook ? (
+        <div onClick={() => toggleShowLogbook()} className="logbook">
+          <button onClick={() => toggleShowLogbook()} className="close-X">
+            ×
+          </button>
+          <h3>Battle Log</h3>
+          <div className="battle-log">
+            <div className="battle-log-gradient" />
+            <ul className="battle-log-ul">
+              {reversedBattleLog.length > 1 ? (
+                reversedBattleLog.map((log, index) => {
+                  return (
+                    <li
+                      key={index}
+                      className={
+                        log.type === "health"
+                          ? "battle-log-health-li"
+                          : "battle-log-fight-li"
+                      }
+                    >
+                      {log.text}
+                    </li>
+                  );
+                })
+              ) : (
+                <p>Nothing has happened yet... do some fightin’!</p>
+              )}
+            </ul>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }

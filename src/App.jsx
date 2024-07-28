@@ -8,24 +8,24 @@ import GuessingUI from "./components/GuessingUI";
 import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
+import Hearts from "./components/Hearts";
+import Guesses from "./components/Guesses";
 
+// TODO add intro text on name screen. Play old game and make sure certain text matches.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO Get on GitHub pages so Daniel can demo
-// TODO Make Logbook a button/icon that opens a modal.
+// TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO Add a tutorial?
-// TODO Track battle hits and running health totals were tracked in the logbook
-// TODO Revise variations to the final fight text
 // TODO Add variations to all the text
+// TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
+// TODO Proof all the text
 // TODO On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Emris idea: add in "kid mode" which would switch to his artwork, make the game easier, and change the text to a younger reading level.
 // TODO Emris idea: add a button to reverse game text and artwork, right/left to left/right
-// TODO Add more random responses - proof and improve all text
-// TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
-// TODO test and balance damage of final battle. Add a heal mechanic?
-// TODO add intro text on name screen. Play old game and make sure certain text matches.
 // TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
 // TODO When the player chooses "put on the cloak", fade to black and then a final story full-page screen about you are drawn to a path, etc., action is: Wait for a Traveler
 // TODO Refactor, add function descriptions, and put some functions into separate modules?
+// TODO Is there a better way to record "A singular strike!" in the logbook upon one-shot (in checkGuess())?
 // TODO Add a gear menu: reset name, start over, kid mode toggle, sound toggle, credits, contact
 
 function App() {
@@ -64,63 +64,42 @@ function App() {
     lastDescription: "",
     hasAnnouncement: false,
   });
+  const [isEndSubLevel, setIsEndSubLevel] = useState(false);
   const [isLastLevel, setIsLastLevel] = useState(false);
   const [isPreEndLevel, setIsPreEndLevel] = useState(false);
   const [battleLog, setBattleLog] = useState([]);
   const [playerHealthBar, setPlayerHealthBar] = useState(player.health);
   const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
 
-  // useEffect(() => {
-  //   console.log("player.prevHealth: ", player.prevHealth);
-  // }, [player.prevHealth]);
-
-  // useEffect(() => {
-  //   console.log("fellow.prevHealth: ", fellow.prevHealth);
-  // }, [fellow.prevHealth]);
-
-  // useEffect(() => {
-  //   console.log(battleLog);
-  // }, [battleLog]);
-
-  useEffect(() => {
-    console.log(
-      "playerHealth: ",
-      player.health,
-      "playerPrevHealth: ",
-      player.prevHealth,
-      "playerHealthBar: ",
-      playerHealthBar
-    );
-  }, [player.subLevel]);
-
-  useEffect(() => {
-    // console.log("player: ", player.health, "beast: ", fellow.health);
-    setBattleLog((currentBattleLog) => [
-      ...currentBattleLog,
-      `${player.name}: ${player.health}, Beast: ${fellow.health}`,
-    ]);
-  }, [player.health, fellow.health]);
-
   useEffect(() => {
     if (announcer.description !== "") {
       setBattleLog((currentBattleLog) => [
         ...currentBattleLog,
-        announcer.description,
-        `${player.name}: ${player.health}, Beast: ${fellow.health}`,
+        {
+          text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
+          type: "health",
+        },
+        { text: announcer.description, type: "fight" },
       ]);
     }
   }, [announcer.description]);
 
   useEffect(() => {
-    console.log(announcer.lastDescription);
-  }, [announcer.lastDescription]);
-
-  useEffect(() => {
-    if (player.level === 4) setIsLastLevel(true);
-    else setIsLastLevel(false);
+    if (player.level === 4) {
+      setIsLastLevel(true);
+    } else {
+      setIsLastLevel(false);
+    }
   }, [player.level]);
 
   useEffect(() => {
+    if (
+      (!isLastLevel && player.subLevel === 2) ||
+      (isLastLevel && player.subLevel === 5)
+    ) {
+      setIsEndSubLevel(true);
+    } else setIsEndSubLevel(false);
+
     if (
       player.subLevel === "preWinLucky" ||
       player.subLevel === "preWinOneShot" ||
@@ -374,7 +353,7 @@ function App() {
       level: 4,
       subLevel: "preWinOneShot",
       text1: `A singular strike!`,
-      text2: `You spied it as if on high, and then one-shot the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
+      text2: `As if spied from on high, you perfectly strike the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, <span class="italic">the beast was done!</span>`,
       text3: `All of the beast’s feocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
       action: "Nudge the beast to be sure",
       image: "path to image",
@@ -1107,6 +1086,7 @@ function App() {
       // Player is on last level
       if (!player.guess) {
         // Repond if there is no guess
+        clearAnnouncer("reaction", "description");
         respond(
           "suggestion",
           `There is no time to waste, ${player.name}, you are under attack!`,
@@ -1115,6 +1095,15 @@ function App() {
         );
       } else if (player.guess === fellow.number) {
         // Player, on last level, guesses the right number
+        // Set unique battle log entry for this "singular strike" situation
+        setBattleLog((currentBattleLog) => [
+          ...currentBattleLog,
+          {
+            text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
+            type: "health",
+          },
+          { text: "A singular strike!", type: "fight" },
+        ]);
         victimize("beast");
         toggleDeath("beast");
       } else {
@@ -1248,25 +1237,49 @@ function App() {
                 player={player}
                 fellow={fellow}
                 fellowStartingHealth={fellowStartingHealth}
+                isEndSubLevel={isEndSubLevel}
                 isLastLevel={isLastLevel}
                 isPreEndLevel={isPreEndLevel}
                 beastHealthBar={beastHealthBar}
                 setBeastHealthBar={setBeastHealthBar}
               />
               <div className="game-text-relative-container">
-                {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
-                  <HealthBar
-                    character={"player"}
-                    name={player.name}
-                    maxHealth={playerStartingHealth}
-                    startHealth={player.prevHealth}
-                    endHealth={player.health}
-                    damageTaken={player.damageTaken}
-                    characterIsVictim={player.isVictim}
-                    healthBar={playerHealthBar}
-                    setHealthBar={setPlayerHealthBar}
-                    turn={player.guesses.length}
+                {!isLastLevel && isEndSubLevel ? (
+                  <Hearts
+                    isLastLevel={isLastLevel}
+                    isEndSubLevel={isEndSubLevel}
+                    lives={player.lives}
                   />
+                ) : null}
+                {isEndSubLevel ? (
+                  <Guesses
+                    isLastLevel={isLastLevel}
+                    guesses={player.guesses}
+                    number={fellow.number}
+                    max={fellow.max}
+                  />
+                ) : null}
+                {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
+                  <>
+                    <HealthBar
+                      character={"player"}
+                      name={player.name}
+                      maxHealth={playerStartingHealth}
+                      startHealth={player.prevHealth}
+                      endHealth={player.health}
+                      damageTaken={player.damageTaken}
+                      characterIsVictim={player.isVictim}
+                      healthBar={playerHealthBar}
+                      setHealthBar={setPlayerHealthBar}
+                      turn={player.guesses.length}
+                    />
+                    <Logbook
+                      player={player}
+                      fellow={fellow}
+                      isLastLevel={isLastLevel}
+                      battleLog={battleLog}
+                    />
+                  </>
                 ) : null}
 
                 {gameLevels.map((level) => {
@@ -1297,11 +1310,6 @@ function App() {
                               clearAnnouncer={clearAnnouncer}
                               respond={respond}
                               checkGuess={checkGuess}
-                              isLastLevel={isLastLevel}
-                            />
-                            <Logbook
-                              player={player}
-                              fellow={fellow}
                               isLastLevel={isLastLevel}
                             />
                           </div>
