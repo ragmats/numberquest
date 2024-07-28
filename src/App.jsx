@@ -12,6 +12,7 @@ import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
 // TODO add intro text on name screen. Play old game and make sure certain text matches.
+// TODO add a character limit to name
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
 // TODO Get on GitHub pages so Daniel can demo

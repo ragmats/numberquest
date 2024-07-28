@@ -30,14 +30,31 @@ body {
 }
 
 .intro-container {
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
+  margin: 0 2em;
+  font-size: 2em;
   gap: 1em;
+  text-align: center;
+}
+
+.name-form {
+  /* border: 1px solid blue; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.input-name {
+  text-align: center;
+  font-size: 0.75em;
 }
 
 .game-container {

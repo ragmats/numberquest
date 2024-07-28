@@ -12,9 +12,17 @@ export default function EnterName({ setPlayer, advancePlayerLevel, name }) {
 
   return (
     <div className="intro-container">
-      What is your Name?
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <input onChange={(e) => handleChange(e.target.value)} value={name} />
+      <p>
+        Blue birds sing and the warm sun shines... despite tales of darkness
+        told in this land.
+      </p>
+      <p>What is your Name?</p>
+      <form className="name-form" onSubmit={(e) => handleSubmit(e)}>
+        <input
+          className="input-name"
+          onChange={(e) => handleChange(e.target.value)}
+          value={name}
+        />
         <button>Accept Quest</button>
       </form>
     </div>
