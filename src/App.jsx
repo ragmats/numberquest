@@ -11,7 +11,6 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
-// TODO add intro text on name screen. Play old game and make sure certain text matches.
 // TODO add a character limit to name
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
@@ -314,7 +313,7 @@ function App() {
       level: 4,
       subLevel: 3,
       text1: "The form moves suddenly. It jerks and moans.",
-      text2: "You think you can make out your name, almost a whimper.",
+      text2: "You think you hear your name, almost in a whimper.",
       text3: "It is becoming something much larger...",
       action: "Turn back and run",
       image: "path to image",
@@ -324,7 +323,7 @@ function App() {
       level: 4,
       subLevel: 4,
       text1:
-        "In a shimmer of light, you can see it has sharp, twisted numbers growing out of its body.",
+        "In a brief shimmer of light, you can see it has sharp, twisted numbers growing out of its body.",
       text2: "It locks its black eyes on you and roars!",
       action: "Try desperately to escape",
       image: "path to image",
