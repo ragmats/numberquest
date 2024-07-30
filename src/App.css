@@ -480,30 +480,30 @@ body {
     height: 80%;
     min-width: 85%;
   }
+}
 
-  /* Handle "short" portrait devices  */
-  @media (min-aspect-ratio: 1/2) {
-    .game-text {
-      /* border: 1px solid green; */
-      font-size: 4vw;
-    }
-  }
-
-  @media (min-aspect-ratio: 1/3) {
-    .game-text {
-      /* border: 1px solid blue; */
-      font-size: 2vw;
-    }
-
-    .number-btns-container {
-      /* border: 1px solid red; */
-      gap: 1.5vw;
-    }
-
-    .number-btn {
-      /* border: 1px solid red; */
-      height: 5vw;
-      font-size: 3.5vw;
-    }
+/* Handle "short" portrait devices  */
+/* @media (max-aspect-ratio: 1/2) {
+  .game-text {
+    border: 1px solid green;
+    font-size: 4vw;
   }
 }
+
+@media (max-aspect-ratio: 1/3) {
+  .game-text {
+    border: 1px solid blue;
+    font-size: 2vw;
+  }
+
+  .number-btns-container {
+    border: 1px solid red;
+    gap: 1.5vw;
+  }
+
+  .number-btn {
+    border: 1px solid red;
+    height: 5vw;
+    font-size: 3.5vw;
+  }
+} */
