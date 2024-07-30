@@ -1,4 +1,5 @@
 export default function Guesses({ isLastLevel, guesses, number, max }) {
+  console.log(guesses);
   return (
     <div className={isLastLevel ? "guesses guesses-last-level" : "guesses"}>
       <span>(1-{max})</span>

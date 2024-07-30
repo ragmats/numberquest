@@ -11,6 +11,10 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
+// TODO After guessing, there is some kind of flash text or movement - Possibly need to create separate components for gameText, gameTextEnd, and gameTextFinal
+// TODO the game-text div has a top margin so that it is below the hearts and guesses. This top margin needs to be removed on non-guess stages so that text appears vertically centered.
+// TODO vertical centering is also off on the final battle in mobile view
+// TODO logbook in mobile view needs to be center of screen, not bottom window. Maybe try making it fixed?
 // TODO add a character limit to name
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
@@ -1285,7 +1289,6 @@ function App() {
                     />
                   </>
                 ) : null}
-
                 {gameLevels.map((level) => {
                   if (
                     level.level === player.level &&
@@ -1293,7 +1296,7 @@ function App() {
                   ) {
                     return (
                       <div
-                        key={crypto.randomUUID()}
+                        key={`${level.level}${level.subLevel}`}
                         className="game-text-container"
                       >
                         <GameText

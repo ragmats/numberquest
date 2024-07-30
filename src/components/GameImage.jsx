@@ -26,14 +26,11 @@ export default function GameImage({
           turn={player.guesses.length}
         />
       ) : null}
-      <p>Artwork.</p>
+      <p>Artwork goes here (square format)</p>
       <p>
         Player level {player.level}, Player subLevel {player.subLevel}
       </p>
-      <p>
-        Number: {fellow.number}, Max: {fellow.max}
-      </p>
-      <p>Fellow Response: {fellow.response}</p>
+      <p>The number is {fellow.number}.</p>
     </div>
   );
 }
