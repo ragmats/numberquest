@@ -8,11 +8,8 @@ export default function Guesses({ isLastLevel, guesses, number, max }) {
           {guesses.map((guess) => {
             return (
               <span key={crypto.randomUUID()}>
-                {guess > number ? (
-                  <span>&#129051; {guess}</span>
-                ) : (
-                  <span>&#129049; {guess}</span>
-                )}
+                {guess > number ? "🠇" : "🠅"}
+                {guess}
               </span>
             );
           })}

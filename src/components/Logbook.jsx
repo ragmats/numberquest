@@ -29,7 +29,7 @@ export default function Logbook({ player, fellow, isLastLevel, battleLog }) {
       {showLogbook ? (
         <div onClick={() => toggleShowLogbook()} className="logbook">
           <button onClick={() => toggleShowLogbook()} className="close-X">
-            &#215;
+            ×
           </button>
           <h3>Battle Log</h3>
           <div className="battle-log">
