@@ -11,12 +11,11 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
-// TODO After guessing, there is some kind of flash text or movement - Possibly need to create separate components for gameText, gameTextEnd, and gameTextFinal
-// TODO the game-text div has a top margin so that it is below the hearts and guesses. This top margin needs to be removed on non-guess stages so that text appears vertically centered.
-// TODO vertical centering is also off on the final battle in mobile view
-// TODO logbook in mobile view needs to be center of screen, not bottom window. Maybe try making it fixed?
-// TODO add a character limit to name
+// TODO Need to replace special characters, not showing up on Brave mobile
+// TODO Adjust buttons. Number buttons should be followed by a check and X for submit. Regular action buttons should match the height of the number buttons. All buttons the same height.
+// TODO Need to re-think image size. Art should be 16:9. Art area will be ~60% the screen in landscape, ~40% of the screen in portrait, cover fit.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
+// TODO add a character limit to name
 // TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
 // TODO Get on GitHub pages so Daniel can demo
 // TODO test and balance damage of final battle. Add a heal mechanic?
@@ -384,7 +383,7 @@ function App() {
       }? You were supposed to be my precious number ${fellow.number}!”`,
       text2: `Suddenly, the beast bursts into black flames. The surrounding air feels both hot and cold. You meet its eyes and glimpse the fleeting expression of a lost child. The beast reaches out a trembling finger, whispers your name... “${player.name}...” and is instantly swallowed whole by the darkness, leaving only the empty black cloak to collapse and crumple onto the ground.`,
       text3: "You pick it up. It still feels warm. You ponder.",
-      action: "Put on the cloak",
+      action: "Put on the cloak?",
       image: "path to image",
       endLevel: false,
     },
@@ -1200,7 +1199,7 @@ function App() {
             // Respond to player's too-low guess
             respond(
               "fellow",
-              `“Regretfully, no. Try higher, ${player.name}”`,
+              `“Regretfully, no. Try higher, ${player.name}.”`,
               `“No, ${player.name}. Think higher.”`,
               `“Try something higher.”`
             );
