@@ -9,7 +9,7 @@ export default function Guesses({ isLastLevel, guesses, number, max }) {
             return (
               <span key={crypto.randomUUID()}>
                 {/* {guess > number ? "🠇" : "🠅"} */}
-                {guess > number ? "↑" : "↓"}
+                {guess > number ? "↓" : "↑"}
                 {guess}
               </span>
             );
