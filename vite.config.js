@@ -8,4 +8,5 @@ const env = loadEnv(process.env.NODE_ENV, process.cwd());
 export default defineConfig({
   plugins: [react()],
   base: env.VITE_BASE_URL || "/",
+  // base: "/",
 });
