@@ -18,6 +18,11 @@ body {
   font-style: normal;
 }
 
+.arrow {
+  border: 1px solid red;
+  font-family: "Arial", sans-serif;
+}
+
 .italic {
   font-style: italic;
 }

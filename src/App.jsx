@@ -11,7 +11,7 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
-// TODO Need to replace special characters, not showing up on Brave mobile
+// TODO Need to replace unicode Arrow 🠅🠇 characters, not showing up on Brave mobile
 // TODO Adjust buttons. Number buttons should be followed by a check and X for submit. Regular action buttons should match the height of the number buttons. All buttons the same height.
 // TODO Need to re-think image size. Art should be 16:9. Art area will be ~60% the screen in landscape, ~40% of the screen in portrait, cover fit.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
