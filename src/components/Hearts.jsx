@@ -9,7 +9,7 @@ export default function Hearts({ isLastLevel, isEndSubLevel, lives }) {
                 key={index}
                 alt="Player health heart container"
                 className="heart"
-                src="/img/heart.png"
+                src={`${import.meta.env.VITE_BASE_URL}img/heart.png`}
               />
             );
           })}
