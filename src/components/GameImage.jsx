@@ -26,7 +26,7 @@ export default function GameImage({
           turn={player.guesses.length}
         />
       ) : null}
-      <p>Artwork goes here (square format)</p>
+      <p>Artwork goes here.</p>
       <p>
         Player level {player.level}, Player subLevel {player.subLevel}
       </p>

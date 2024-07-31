@@ -72,7 +72,9 @@ body {
   display: flex;
   flex-direction: column;
   height: 100svh;
-  aspect-ratio: 1/1;
+  min-width: 65vw;
+  /* max-width: 60vw; */
+  /* aspect-ratio: 16/9; */
   justify-content: center;
   align-items: center;
   background-color: dimgray;
@@ -103,22 +105,59 @@ body {
 
 .game-text {
   /* border: 1px solid green; */
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  height: 75%;
+  width: 100%;
+  /* font-size: 2em; */
+  /* font-size: 16px; */
+  /* font-size: 1.5vw; */
+  /* font-size: 2em; */
+  /* margin-top: 3em; */
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+  padding: 0 2em;
+  /* gap: 1em; */
+  z-index: -1;
+}
+
+.game-text-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   width: 100%;
-  font-size: 1.5vw;
+  /* font-size: 1em; */
+  /* font-size: 30px; */
+  /* font-size: 1.5vw; */
   /* font-size: 2em; */
   /* margin-top: 3em; */
-  position: absolute;
+  /* position: absolute; */
   /* top: 10%; */
-  left: 50%;
-  transform: translate(-50%);
-  padding: 0 1em;
+  /* left: 50%; */
+  /* transform: translate(-50%); */
+  /* padding: 0 1em; */
   gap: 1em;
-  z-index: -1;
+  opacity: 0;
+  /* animation: 0.5s fade-in ease; */
+}
+
+/* .fade-in {
+  animation: 0.5s fade-in ease;
+} */
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .guessing-ui-container {
@@ -176,7 +215,7 @@ body {
 }
 
 .logbook-button-container {
-  border: 1px solid red;
+  /* border: 1px solid red; */
   position: absolute;
   bottom: 0;
   right: 0;
@@ -403,10 +442,12 @@ body {
 
   .game-image {
     width: 100vw;
-    min-height: 100vw;
-    max-height: 100vw;
+    /* min-height: 100vw; */
+    /* max-height: 100vw; */
     /* height: 100px; */
-    aspect-ratio: 1/1;
+    min-height: calc(100vw * (9 / 16));
+    max-height: calc(100vw * (9 / 16));
+    /* aspect-ratio: 16/9; */
   }
 
   .game-text-container {
@@ -417,9 +458,9 @@ body {
   .game-text {
     /* border: 1px solid purple; */
     /* height: 73%; */
-    font-size: 5.5vw;
+    /* font-size: 5.5vw; */
     /* top: 10%; */
-    padding: 0 1em;
+    /* padding: 0 1em; */
     gap: 0.5em;
   }
 
