@@ -11,6 +11,8 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
+// TODO Heart UI needs to be bigger on vertical tablet view
+// TODO Main UI action button is annoying small
 // TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
 // TODO Media queries need to reset when going from potrait to Landscape
 // TODO The smaller width of the left side in landscape needs to handle to number button wrap
@@ -259,7 +261,7 @@ function App() {
       subLevel: 1,
       text1: "You reach a long, worn bridge, the only way forward.",
       text2: "At the bridge’s mouth, you spy the shape of your old friend.",
-      text3: "It appears he has been wating for you.",
+      text3: "It appears he has been waiting for you.",
       action: "Approach",
       image: "path to image",
       endLevel: false,
@@ -339,7 +341,7 @@ function App() {
       level: 4,
       subLevel: 5,
       text1:
-        "The beast is quick! As if teleporting, you instantly see it raising a razor sharp claw.",
+        "The beast is quick! As if teleporting, you instantly see it lifting a razor sharp claw.",
       text2: `Quickly, ${player.name}, it must have a weak spot!`,
       text3: `From 1-${fellow.max}, you must find it!`,
       action: "Fight!", // Initiate health bars & fight sequence
@@ -361,7 +363,7 @@ function App() {
       subLevel: "preWinOneShot",
       text1: `A singular strike!`,
       text2: `As if spied from on high, you perfectly strike the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, <span class="italic">the beast was done!</span>`,
-      text3: `All of the beast’s feocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
+      text3: `All of the beast’s ferocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
       action: "Nudge the beast to be sure",
       image: "path to image",
       endLevel: false,
