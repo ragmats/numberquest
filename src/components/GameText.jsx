@@ -8,7 +8,7 @@ export default function GameText({
   isLastLevel,
   isPreEndLevel,
 }) {
-  const startingFontSize = 6;
+  const startingFontSize = 1;
   const maxFontSize = 30;
   const containerRef = useRef(null);
   const [fontSize, setFontSize] = useState(10);
