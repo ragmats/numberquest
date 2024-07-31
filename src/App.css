@@ -82,7 +82,7 @@ body {
   text-shadow: 1px 1px 2px black;
   gap: 1em;
   position: relative;
-  background-image: url("img/temp.jpg");
+  /* background-image: url("img/temp.jpg"); */
   background-size: cover;
   background-position: center;
 }

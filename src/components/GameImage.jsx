@@ -11,7 +11,12 @@ export default function GameImage({
   setBeastHealthBar,
 }) {
   return (
-    <div className="game-image">
+    <div
+      className="game-image"
+      style={{
+        backgroundImage: `url("${import.meta.env.VITE_BASE_URL}img/temp.jpg")`,
+      }}
+    >
       {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
         <HealthBar
           character={"beast"}
