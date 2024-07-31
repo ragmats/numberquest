@@ -11,7 +11,7 @@ export default function GameText({
   const startingFontSize = 1;
   const maxFontSize = 30;
   const containerRef = useRef(null);
-  const [fontSize, setFontSize] = useState(10);
+  const [fontSize, setFontSize] = useState(startingFontSize);
   const [textAnimation, setTextAnimation] = useState(null);
 
   function resizeFontToFit() {
