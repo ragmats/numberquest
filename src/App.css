@@ -78,8 +78,13 @@ body {
   justify-content: center;
   align-items: center;
   background-color: dimgray;
+  color: lightgray;
+  text-shadow: 1px 1px 2px black;
   gap: 1em;
   position: relative;
+  background-image: url("img/temp.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .game-text-relative-container {
@@ -104,12 +109,12 @@ body {
 }
 
 .game-text {
-  /* border: 1px solid green; */
+  border: 1px solid green;
   /* display: flex; */
   /* flex-direction: column; */
   /* justify-content: center; */
   /* align-items: center; */
-  height: 75%;
+  height: 60%;
   width: 100%;
   /* font-size: 2em; */
   /* font-size: 16px; */
@@ -117,9 +122,9 @@ body {
   /* font-size: 2em; */
   /* margin-top: 3em; */
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -45%);
+  transform: translate(-50%, -50%);
   padding: 0 2em;
   /* gap: 1em; */
   z-index: -1;
@@ -461,6 +466,8 @@ body {
     /* font-size: 5.5vw; */
     /* top: 10%; */
     /* padding: 0 1em; */
+    top: 40%;
+    transform: translate(-50%, -40%);
     gap: 0.5em;
   }
 

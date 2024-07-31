@@ -11,6 +11,9 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
+// TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
+// TODO Media queries need to reset when going from potrait to Landscape
+// TODO The smaller width of the left side in landscape needs to handle to number button wrap
 // TODO Improve unicode arrows
 // TODO Adjust buttons. Number buttons should be followed by a check and X for submit. Regular action buttons should match the height of the number buttons. All buttons the same height.
 // TODO Need to re-think image size. Art should be 16:9. Art area will be ~60% the screen in landscape, ~40% of the screen in portrait, cover fit.

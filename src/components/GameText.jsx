@@ -8,7 +8,8 @@ export default function GameText({
   isLastLevel,
   isPreEndLevel,
 }) {
-  const maxFontSize = 35;
+  const startingFontSize = 6;
+  const maxFontSize = 30;
   const containerRef = useRef(null);
   const [fontSize, setFontSize] = useState(10);
   const [textAnimation, setTextAnimation] = useState(null);
@@ -19,7 +20,7 @@ export default function GameText({
       const text = container.querySelector(".game-text-text");
 
       // Set text with a smallish font size
-      let currentFontSize = 10;
+      let currentFontSize = startingFontSize;
       text.style.fontSize = `${currentFontSize}px`;
 
       // Keep increasing the font size by 1px as long as its container fits within the game-text div
@@ -48,7 +49,7 @@ export default function GameText({
   }, []);
 
   return (
-    <div ref={containerRef} className="game-text">
+    <div ref={containerRef} key={crypto.randomUUID()} className="game-text">
       <div
         className="game-text-text"
         // Set the font size, animation, and persistent opacity once the animation style is preset
