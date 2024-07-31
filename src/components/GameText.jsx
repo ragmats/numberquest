@@ -44,6 +44,10 @@ export default function GameText({
     return () => window.removeEventListener("resize", resizeFontToFit);
   }, []);
 
+  useEffect(() => {
+    resizeFontToFit(); // re-trigger font resize when isPreEndLevel changes
+  }, [isPreEndLevel]);
+
   return (
     <div ref={containerRef} key={crypto.randomUUID()} className="game-text">
       <div
