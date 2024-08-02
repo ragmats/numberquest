@@ -373,7 +373,7 @@ function App() {
       level: 4,
       subLevel: "preLose",
       text1: `(Get final Announcer’s reaction)`,
-      text2: `You collaspe to the ground, as if your body has turned to liquid. Is this death? You remember having a dream about this once.`,
+      text2: `You collapse to the ground, as if your body has turned to liquid. Is this death? You remember having a dream about this once.`,
       text3: `If only you had aimed higher, or lower... does it even matter now? You hear stone crushing beneath the beast’s cloven hooves inches from your throbbing ears.`,
       action: "Try to lift your head",
       image: "path to image",
