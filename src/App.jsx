@@ -11,13 +11,14 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 import Guesses from "./components/Guesses";
 
+// TODO Heart UI - if size based on vh/vw, guesses text needs to be anchored. Can be inside a div withi the relative hearts, right? Similarly, final battle should be that way without a special final class.
 // TODO Heart UI needs to be bigger on vertical tablet view
-// TODO Main UI action button is annoying small
+// TODO Adjust number buttons. Use JS to calc width, then make it fit perfectly. Will need to fade in probably. Move clear/guess buttons above number, and only appear when a guess is entered?
+// TODO Main UI action button is annoying small on tablets, maybe everywhere
+// TODO The smaller width of the left side in landscape needs to handle to number button wrap
 // TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
 // TODO Media queries need to reset when going from potrait to Landscape
-// TODO The smaller width of the left side in landscape needs to handle to number button wrap
-// TODO Improve unicode arrows
-// TODO Adjust buttons. Number buttons should be followed by a check and X for submit. Regular action buttons should match the height of the number buttons. All buttons the same height.
+// TODO Improve unicode arrows - use svg instead?
 // TODO Need to re-think image size. Art should be 16:9. Art area will be ~60% the screen in landscape, ~40% of the screen in portrait, cover fit.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO add a character limit to name
@@ -1312,18 +1313,17 @@ function App() {
                           isPreEndLevel={isPreEndLevel}
                         />
                         {level.endLevel ? (
-                          <div>
-                            <GuessingUI
-                              level={level}
-                              player={player}
-                              inputDigit={inputDigit}
-                              clearGuess={clearGuess}
-                              clearAnnouncer={clearAnnouncer}
-                              respond={respond}
-                              checkGuess={checkGuess}
-                              isLastLevel={isLastLevel}
-                            />
-                          </div>
+                          <GuessingUI
+                            level={level}
+                            player={player}
+                            inputDigit={inputDigit}
+                            clearGuess={clearGuess}
+                            clearAnnouncer={clearAnnouncer}
+                            respond={respond}
+                            checkGuess={checkGuess}
+                            isEndSubLevel={isEndSubLevel}
+                            isLastLevel={isLastLevel}
+                          />
                         ) : (
                           <ActionButton
                             advancePlayer={advancePlayer}

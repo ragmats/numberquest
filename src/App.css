@@ -166,17 +166,18 @@ body {
 }
 
 .guessing-ui-container {
-  /* border: 1px solid orange; */
+  border: 1px solid orange;
   display: flex;
   flex-direction: column;
   justify-content: end;
   align-items: center;
   /* height: 150px; */
+  width: 100%;
   gap: 1em;
 }
 
 .your-guess {
-  /* border: 1px solid red; */
+  border: 1px solid red;
   height: 35px;
   line-height: 1em;
   /* width: 100px; */
@@ -191,13 +192,14 @@ body {
 }
 
 .number-btns-container {
-  /* border: 1px solid red; */
-  /* display: flex; */
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  border: 1px solid red;
+  display: flex;
+  /* display: grid; */
+  /* grid-template-columns: repeat(10, 1fr); */
   /* justify-content: flex-start; */
-  gap: 1em;
+  /* gap: 1em; */
   /* flex-wrap: wrap; */
+  opacity: 0;
 }
 
 /* @media (width < 1450px) {
@@ -208,9 +210,9 @@ body {
 
 .number-btn {
   /* border: 1px solid red; */
-  height: 40px;
-  aspect-ratio: 1/1;
-  font-size: 1.5em;
+  /* width: 20px; */
+  /* aspect-ratio: 1/1; */
+  /* font-size: 1.5em; */
 }
 
 .guess-btns {
@@ -312,7 +314,8 @@ body {
 }
 
 .heart {
-  height: 50px;
+  /* height: 50px; */
+  height: 5svh;
 }
 
 .guesses {
@@ -472,7 +475,8 @@ body {
   }
 
   .heart {
-    height: 25px;
+    /* height: 25px; */
+    height: 10vw;
   }
 
   .guesses {
