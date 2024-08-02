@@ -10,20 +10,18 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// TODO Number buttons are still a bit small on mobile landscape... reduce container margins?
 // TODO Try to refactor font resizer. The final final text isn't fitting on mobile.
-// TODO Heart UI - if size based on vh/vw, guesses text needs to be anchored. Can be inside a div withi the relative hearts, right? Similarly, final battle should be that way without a special final class.
 // TODO Heart UI needs to be bigger on vertical tablet view
-// TODO Adjust number buttons. Use JS to calc width, then make it fit perfectly. Will need to fade in probably. Move clear/guess buttons above number, and only appear when a guess is entered?
-// TODO Main UI action button is annoying small on tablets, maybe everywhere
-// TODO The smaller width of the left side in landscape needs to handle to number button wrap
+// TODO Begin and Accept quest button is annoying small
 // TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
+// TODO Add main text reveal animation...
+// TODO Some people don't know at first how to enter a second digit...
 // TODO Media queries need to reset when going from potrait to Landscape
 // TODO Improve unicode arrows - use svg instead?
-// TODO Need to re-think image size. Art should be 16:9. Art area will be ~60% the screen in landscape, ~40% of the screen in portrait, cover fit.
 // TODO Make page roughly responsive so it is acceptable in mobile mode
 // TODO add a character limit to name
 // TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
-// TODO Get on GitHub pages so Daniel can demo
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO Add a tutorial?
 // TODO Add variations to all the text

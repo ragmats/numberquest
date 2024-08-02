@@ -114,6 +114,13 @@ body {
   /* background-color: yellow; */
 }
 
+@media ((orientation: landscape) and (width < 800px)) {
+  .game-text-container {
+    /* border: 1px solid purple; */
+    padding: 0 0.5em 1em 0.5em;
+  }
+}
+
 .game-text {
   /* border: 1px solid green; */
   /* display: flex; */
