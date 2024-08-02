@@ -5,6 +5,7 @@ export default function GameText({
   player,
   fellow,
   announcer,
+  isEndSubLevel,
   isLastLevel,
   isPreEndLevel,
 }) {
@@ -28,6 +29,8 @@ export default function GameText({
         currentFontSize <= maxFontSize + 1
         // maxFontSize + 1 because the font will always be set at a -1 to prevent overflow
       ) {
+        console.log("container.clientWidth: ", container.clientWidth);
+        console.log("container.clientHeight: ", container.clientHeight);
         currentFontSize++;
         text.style.fontSize = `${currentFontSize}px`;
       }
@@ -45,8 +48,8 @@ export default function GameText({
   }, []);
 
   useEffect(() => {
-    resizeFontToFit(); // re-trigger font resize when isPreEndLevel changes
-  }, [isPreEndLevel]);
+    resizeFontToFit(); // re-trigger font resize when isEndSubLevel and isPreEndLevel changes
+  }, [isEndSubLevel, isPreEndLevel]);
 
   return (
     <div ref={containerRef} key={crypto.randomUUID()} className="game-text">

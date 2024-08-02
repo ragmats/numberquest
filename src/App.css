@@ -63,16 +63,21 @@ body {
   flex-direction: row-reverse;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
+  /* width: 100%; */
+  /* height: 100%; */
+  width: 100vw;
+  height: 100svh;
 }
 
 .game-image {
   /* border: 1px solid blue; */
   display: flex;
   flex-direction: column;
-  height: 100svh;
-  min-width: 65vw;
+  /* height: 100svh; */
+  /* min-width: 65vw; */
+  /* min-width: 65%; */
+  width: 100%;
+  height: 100%;
   /* max-width: 60vw; */
   /* aspect-ratio: 16/9; */
   justify-content: center;
@@ -89,7 +94,8 @@ body {
 
 .game-text-relative-container {
   /* border: 1px solid green; */
-  width: 100%;
+  min-width: 45%;
+  max-width: 45%;
   height: 100%;
   position: relative;
 }
@@ -215,10 +221,21 @@ body {
   /* font-size: 1.5em; */
 }
 
+.action-btn {
+  /* border: 1px solid red; */
+  display: flex;
+}
+
 .guess-btns {
   /* border: 1px solid red; */
   display: flex;
   gap: 1em;
+}
+
+.guess-btns button,
+.action-btn button {
+  font-size: 1.25em;
+  padding: 0.5em;
 }
 
 .logbook-button-container {
@@ -306,11 +323,20 @@ body {
 .hearts-container {
   /* border: 1px solid red; */
   display: flex;
+  flex-direction: column;
   position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0.5em;
+  /* top: 0; */
+  /* left: 0; */
+  margin: 1em;
   user-select: none;
+  gap: 0;
+}
+
+.hearts {
+  /* border: 1px solid blue; */
+  display: flex;
+  gap: 0.5em;
+  line-height: 1;
 }
 
 .heart {
@@ -322,21 +348,21 @@ body {
   /* border: 1px solid red; */
   display: flex;
   flex-wrap: wrap;
-  height: 20px;
+  /* height: 20px; */
   /* gap: 1.5em; */
-  position: absolute;
-  top: 2.5em;
-  left: 0;
-  margin: 1em;
+  /* position: absolute; */
+  /* top: 2.5em; */
+  /* left: 0; */
+  /* margin: 1em; */
 }
 
-.guesses-last-level {
+/* .guesses-last-level {
   top: 3.5em;
   left: 50%;
   transform: translate(-50%);
   width: 95%;
   margin: 0;
-}
+} */
 
 .guesses span::after {
   content: "|";
@@ -458,9 +484,14 @@ body {
     /* aspect-ratio: 16/9; */
   }
 
+  .game-text-relative-container {
+    /* border: 1px solid green; */
+    min-width: 100%;
+  }
+
   .game-text-container {
     /* border: 1px solid purple; */
-    padding: 0 1em 0.5em 1em;
+    padding-bottom: 0.5em;
   }
 
   .game-text {
@@ -468,9 +499,13 @@ body {
     /* height: 73%; */
     /* font-size: 5.5vw; */
     /* top: 10%; */
-    /* padding: 0 1em; */
-    top: 40%;
-    transform: translate(-50%, -40%);
+    padding: 0 1em;
+    height: 70%;
+    /* top: 50%; */
+    /* transform: translate(-50%, -50%); */
+  }
+
+  .game-text-text {
     gap: 0.5em;
   }
 
@@ -481,8 +516,9 @@ body {
 
   .guesses {
     /* border: 1px solid red; */
-    top: 1.5em;
-    font-size: 0.75em;
+    /* top: 1.5em; */
+    /* margin-top: 0.25em; */
+    /* font-size: 0.9em; */
   }
 
   .guessing-ui-container {
@@ -534,6 +570,10 @@ body {
     min-width: 85%;
   }
 }
+
+/* @media (orientation: landscape ) and (height < ) {
+
+} */
 
 /* Handle "short" portrait devices  */
 /* @media (max-aspect-ratio: 1/2) {

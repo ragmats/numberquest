@@ -41,7 +41,7 @@ export default function GuessingUI({
     getPerfectButtonWidth(); // resize buttons to fit container component mount
     window.addEventListener("resize", getPerfectButtonWidth); // resize buttons upon window resize
     return () => window.removeEventListener("resize", getPerfectButtonWidth);
-  }, [isEndSubLevel]);
+  }, []);
 
   useEffect(() => {
     console.log({ buttonWidth });
@@ -52,6 +52,50 @@ export default function GuessingUI({
 
   return (
     <div ref={guessingUIContainerRef} className="guessing-ui-container">
+      {player.guess ? (
+        <div className="guess-btns">
+          <button
+            onClick={() => {
+              clearGuess(level);
+              clearAnnouncer();
+              if (player.guess) {
+                if (isLastLevel) {
+                  respond(
+                    "suggestion",
+                    `All is clear now, ${player.name}. Focus your aim!`,
+                    `The way is clear, ${player.name}! Find your target!`,
+                    `Clear your mind and strike!`
+                  );
+                } else {
+                  respond(
+                    "fellow",
+                    `“That’s it, ${player.name}. Clear your mind.”`,
+                    `“Clear your mind of everything, ${player.name}.”`,
+                    `“Yes, let your mind go blank.”`
+                  );
+                }
+              } else if (isLastLevel) {
+                respond(
+                  "suggestion",
+                  `It’s clear enough. Strike the beast!`,
+                  `How clear must it be, ${player.name}? Attack!`,
+                  `Forget clarity! Fight for your life!`
+                );
+              } else {
+                respond(
+                  "fellow",
+                  `“Could it be any clearer?”`,
+                  `“But it’s so clear already, ${player.name}?”`,
+                  `“${player.name}, what are you trying to do?”`
+                );
+              }
+            }}
+          >
+            Clear
+          </button>
+          <button onClick={() => checkGuess()}>{level.action}</button>
+        </div>
+      ) : null}
       <div className="your-guess">{player.guess}</div>
       <div
         style={{
@@ -81,7 +125,7 @@ export default function GuessingUI({
           );
         })}
       </div>
-      <div className="guess-btns">
+      {/* <div className="guess-btns">
         <button
           onClick={() => {
             clearGuess(level);
@@ -122,7 +166,7 @@ export default function GuessingUI({
           Clear
         </button>
         <button onClick={() => checkGuess()}>{level.action}</button>
-      </div>
+      </div> */}
     </div>
   );
 }

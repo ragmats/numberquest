@@ -9,8 +9,8 @@ import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
-import Guesses from "./components/Guesses";
 
+// TODO Try to refactor font resizer. The final final text isn't fitting on mobile.
 // TODO Heart UI - if size based on vh/vw, guesses text needs to be anchored. Can be inside a div withi the relative hearts, right? Similarly, final battle should be that way without a special final class.
 // TODO Heart UI needs to be bigger on vertical tablet view
 // TODO Adjust number buttons. Use JS to calc width, then make it fit perfectly. Will need to fade in probably. Move clear/guess buttons above number, and only appear when a guess is entered?
@@ -382,12 +382,10 @@ function App() {
     {
       level: 4,
       subLevel: "win",
-      text1: `The beast cries out with the tears of ${
-        fellow.number - 1 // TODO singular/plural
-      } terrified brother(s), and roars: “No, no! What have you done, ${
+      text1: `The beast cries out and roars: “What have you done, ${
         player.name // TODO singular/plural
-      }? You were supposed to be my precious number ${fellow.number}!”`,
-      text2: `Suddenly, the beast bursts into black flames. The surrounding air feels both hot and cold. You meet its eyes and glimpse the fleeting expression of a lost child. The beast reaches out a trembling finger, whispers your name... “${player.name}...” and is instantly swallowed whole by the darkness, leaving only the empty black cloak to collapse and crumple onto the ground.`,
+      }? You were supposed to be my... precious number ${fellow.number}!”`,
+      text2: `Suddenly, the beast bursts into black flames. He reaches out a trembling finger, whispers your name... “${player.name}...” and is instantly swallowed whole by the darkness, leaving only the empty black cloak to collapse on the ground.`,
       text3: "You pick it up. It still feels warm. You ponder.",
       action: "Put on the cloak?",
       image: "path to image",
@@ -1262,11 +1260,6 @@ function App() {
                     isLastLevel={isLastLevel}
                     isEndSubLevel={isEndSubLevel}
                     lives={player.lives}
-                  />
-                ) : null}
-                {isEndSubLevel ? (
-                  <Guesses
-                    isLastLevel={isLastLevel}
                     guesses={player.guesses}
                     number={fellow.number}
                     max={fellow.max}
@@ -1285,6 +1278,9 @@ function App() {
                       healthBar={playerHealthBar}
                       setHealthBar={setPlayerHealthBar}
                       turn={player.guesses.length}
+                      guesses={player.guesses}
+                      number={fellow.number}
+                      max={fellow.max}
                     />
                     <Logbook
                       player={player}
@@ -1309,6 +1305,7 @@ function App() {
                           player={player}
                           fellow={fellow}
                           announcer={announcer}
+                          isEndSubLevel={isEndSubLevel}
                           isLastLevel={isLastLevel}
                           isPreEndLevel={isPreEndLevel}
                         />

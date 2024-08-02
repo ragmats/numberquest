@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Guesses from "./Guesses";
 
 export default function HealthBar({
   character,
@@ -11,6 +12,9 @@ export default function HealthBar({
   healthBar,
   setHealthBar,
   turn,
+  guesses,
+  number,
+  max,
 }) {
   const [key, setKey] = useState(crypto.randomUUID());
 
@@ -55,6 +59,9 @@ export default function HealthBar({
         />
         <div className="health-number">{`${endHealth}/${maxHealth}`}</div>
       </div>
+      {character === "player" ? (
+        <Guesses guesses={guesses} number={number} max={max} />
+      ) : null}
     </div>
   );
 }
