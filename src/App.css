@@ -166,7 +166,7 @@ body {
 }
 
 .guessing-ui-container {
-  border: 1px solid orange;
+  /* border: 1px solid orange; */
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -177,7 +177,7 @@ body {
 }
 
 .your-guess {
-  border: 1px solid red;
+  /* border: 1px solid red; */
   height: 35px;
   line-height: 1em;
   /* width: 100px; */
@@ -192,7 +192,7 @@ body {
 }
 
 .number-btns-container {
-  border: 1px solid red;
+  /* border: 1px solid red; */
   display: flex;
   /* display: grid; */
   /* grid-template-columns: repeat(10, 1fr); */

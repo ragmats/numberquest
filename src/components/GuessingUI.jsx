@@ -14,72 +14,46 @@ export default function GuessingUI({
   const numberButtons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
   const guessingUIContainerRef = useRef(null);
-  const btnContainerRef = useRef(null);
-  const startingWidth = 10;
+  const startingVal = 10;
   const gapFactor = 4; // Gap will be 1/4 button width
-  const pixelBuffer = 10; // Attempts to prevent overflow
-  const [buttonWidth, setButtonWidth] = useState(startingWidth);
-  const [buttonGap, setButtonGap] = useState(startingWidth / gapFactor);
+  const fontFactor = 1.75; // Font size will be 1/1.75 button width
+  const [buttonWidth, setButtonWidth] = useState(startingVal);
+  const [buttonGap, setButtonGap] = useState(startingVal / gapFactor);
+  const [buttonFontSize, setButtonFontSize] = useState(startingVal);
   const [btnAnimation, setBtnAnimation] = useState(null);
-  const buttonFontSize = buttonWidth / 1.75;
 
-  function resizeBtnWidthToFit() {
-    if (guessingUIContainerRef.current && btnContainerRef.current) {
-      const guessingUIContainer = guessingUIContainerRef.current;
-      const btnContainer = btnContainerRef.current;
-      const buttons = btnContainer.querySelectorAll(".number-btn");
-
-      // Set each button starting width
+  function getPerfectButtonWidth() {
+    if (guessingUIContainerRef) {
+      const maxWidth = guessingUIContainerRef.current.clientWidth;
+      const startingWidth = 10;
+      const startingGap = startingWidth / gapFactor;
       let currentWidth = startingWidth;
-      buttons.forEach((button) => {
-        button.style.width = `${currentWidth}px`;
-      });
-
-      // Set starting button gap
-      let currentGap = currentWidth / gapFactor;
-      btnContainer.style.setProperty("gap", `${currentGap}px`);
-
-      // Increase the button width until its container is as wide as guessingUIContainer
-      while (
-        btnContainer.scrollWidth <=
-        guessingUIContainer.clientWidth - pixelBuffer
-      ) {
-        // Increase button width
+      let currentGap = startingGap;
+      while (currentWidth * 10 + currentGap * 9 < maxWidth) {
         currentWidth++;
-        buttons.forEach((button) => {
-          button.style.width = `${currentWidth}px`;
-        });
-
-        // Set button gap
         currentGap = currentWidth / gapFactor;
-        btnContainer.style.setProperty("gap", `${currentGap}px`);
       }
-
       setButtonWidth(currentWidth - 1);
-      setButtonGap((currentWidth - 1) / gapFactor);
-
-      // Fade-in button after resizing flashing is finished
-      setBtnAnimation("0.25s fade-in ease");
     }
   }
 
   useEffect(() => {
-    resizeBtnWidthToFit(); // resize buttons to fit container component mount
-    window.addEventListener("resize", resizeBtnWidthToFit); // resize buttons upon window resize
-    return () => window.removeEventListener("resize", resizeBtnWidthToFit);
+    getPerfectButtonWidth(); // resize buttons to fit container component mount
+    window.addEventListener("resize", getPerfectButtonWidth); // resize buttons upon window resize
+    return () => window.removeEventListener("resize", getPerfectButtonWidth);
   }, [isEndSubLevel]);
 
   useEffect(() => {
     console.log({ buttonWidth });
-    console.log({ buttonGap });
-    console.log({ buttonFontSize });
-  }, []);
+    setButtonFontSize(buttonWidth / fontFactor);
+    setButtonGap(buttonWidth / gapFactor);
+    setBtnAnimation("0.25s fade-in ease");
+  }, [buttonWidth]);
 
   return (
     <div ref={guessingUIContainerRef} className="guessing-ui-container">
       <div className="your-guess">{player.guess}</div>
       <div
-        ref={btnContainerRef}
         style={{
           gap: `${buttonGap}px`,
           animation: btnAnimation,
@@ -92,8 +66,8 @@ export default function GuessingUI({
             <div key={crypto.randomUUID()}>
               <button
                 style={{
-                  width: `${buttonWidth}px`,
-                  height: `${buttonWidth}px`,
+                  width: `${buttonWidth}px`, // is initially set to 33 ??
+                  height: `${buttonWidth}px`, // is intially set to 32 ??
                   fontSize: `${buttonFontSize}px`,
                 }}
                 className="number-btn"
