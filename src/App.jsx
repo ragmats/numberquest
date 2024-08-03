@@ -10,9 +10,7 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// TODO Number buttons are still a bit small on mobile landscape... reduce container margins?
-// TODO Try to refactor font resizer. The final final text isn't fitting on mobile.
-// TODO Heart UI needs to be bigger on vertical tablet view
+// TODO All text needs to be bigger on high-rez screens... (tablet view)
 // TODO Begin and Accept quest button is annoying small
 // TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
 // TODO Add main text reveal animation...
