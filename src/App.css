@@ -17,6 +17,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+  line-height: 1.15;
 }
 
 .italic {
@@ -114,13 +115,6 @@ body {
   /* background-color: yellow; */
 }
 
-@media ((orientation: landscape) and (width < 800px)) {
-  .game-text-container {
-    /* border: 1px solid purple; */
-    padding: 0 0.5em 1em 0.5em;
-  }
-}
-
 .game-text {
   /* border: 1px solid green; */
   /* display: flex; */
@@ -144,6 +138,7 @@ body {
 }
 
 .game-text-text {
+  /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -575,6 +570,21 @@ body {
     transform: translate(-50%, -50%);
     height: 80%;
     min-width: 85%;
+  }
+}
+
+@media ((orientation: landscape) and (width < 800px)) {
+  .game-text-container {
+    /* border: 1px solid purple; */
+    padding: 0 0.5em 1em 0.5em;
+  }
+
+  .game-text {
+    padding: 0 1em;
+  }
+
+  .game-text-text {
+    gap: 0.5em;
   }
 }
 
