@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import HealthBar from "./HealthBar";
 
 export default function GameImage({
@@ -10,11 +11,19 @@ export default function GameImage({
   beastHealthBar,
   setBeastHealthBar,
 }) {
+  const [imgName, setImgName] = useState("1-1.webp");
+
+  useEffect(() => {
+    setImgName(`${player.level}-${player.subLevel}`);
+  }, [player.level, player.subLevel]);
+
   return (
     <div
       className="game-image"
       style={{
-        backgroundImage: `url("${import.meta.env.VITE_BASE_URL}img/temp.jpg")`,
+        backgroundImage: `url("${
+          import.meta.env.VITE_BASE_URL
+        }img/tempart/${imgName}.webp")`,
       }}
     >
       {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
