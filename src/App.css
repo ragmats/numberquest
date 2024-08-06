@@ -83,7 +83,7 @@ body {
   /* aspect-ratio: 16/9; */
   justify-content: center;
   align-items: center;
-  background-color: dimgray;
+  /* background-color: black; */
   color: lightgray;
   text-shadow: 1px 1px 2px black;
   gap: 1em;
@@ -91,6 +91,8 @@ body {
   /* background-image: url("img/temp.jpg"); */
   background-size: cover;
   background-position: center;
+  /* animation: 0.5s fade-in ease; */
+  /* transition: background-image 0.15s ease-in-out; */
 }
 
 .game-text-relative-container {

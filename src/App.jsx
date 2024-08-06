@@ -10,6 +10,7 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// TODO AI Art flickers in between... try pre-loading the image, setting the prev image as the background, and maybe swithing to an image instead of background?
 // TODO All text needs to be bigger on high-rez screens... (tablet view)
 // TODO Begin and Accept quest button is annoying small
 // TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
