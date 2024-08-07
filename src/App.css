@@ -97,7 +97,9 @@ body {
 }
 
 .game-image {
+  /* border: 1px solid red; */
   height: 100%;
+  width: auto;
   position: absolute;
   z-index: -1;
 }
@@ -487,6 +489,7 @@ body {
   }
 
   .game-image-container {
+    /* border: 1px solid blue; */
     width: 100vw;
     /* min-height: 100vw; */
     /* max-height: 100vw; */
@@ -494,6 +497,12 @@ body {
     min-height: calc(100vw * (9 / 16));
     max-height: calc(100vw * (9 / 16));
     /* aspect-ratio: 16/9; */
+  }
+
+  .game-image {
+    /* border: 1px solid red; */
+    width: 100%;
+    height: auto;
   }
 
   .game-text-relative-container {

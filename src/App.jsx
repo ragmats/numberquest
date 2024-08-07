@@ -330,7 +330,7 @@ function App() {
       action: "Cross the bridge",
       image: `${
         import.meta.env.VITE_BASE_URL
-      }img/tempart/2-win_${screenSize}.webp`,
+      }img/tempart/3-win_${screenSize}.webp`,
       endLevel: false,
     },
     {
