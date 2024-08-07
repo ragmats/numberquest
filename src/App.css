@@ -102,6 +102,7 @@ body {
   width: auto;
   position: absolute;
   z-index: -1;
+  /* transition: display 0.15s ease-in-out; */
 }
 
 .game-text-relative-container {

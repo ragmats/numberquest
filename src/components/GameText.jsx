@@ -15,6 +15,7 @@ export default function GameText({
   const textContainerRef = useRef(null);
   const [fontSize, setFontSize] = useState(startingFontSize);
   const [textAnimation, setTextAnimation] = useState(null);
+  const [key, setKey] = useState(crypto.randomUUID());
 
   // Calculate the perfect font size using a hidden element that matches the real one in size
   function getPerfectFontSize() {

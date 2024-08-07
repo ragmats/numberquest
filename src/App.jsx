@@ -10,13 +10,11 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// TODO Add main text reveal animation...
+// TODO First image loading needs to be hidden somehow.
 // TODO show loading bar on start page? "Loading artork..."
-// TODO Determine large, med, small image breakpoints: 600px wide,
-// TODO AI Art flickers in between... try loading all images at once in the beginning with display none, then just turn on/off images as needed.
 // TODO All text needs to be bigger on high-rez screens... (tablet view)
 // TODO Begin and Accept quest button is annoying small
-// TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
-// TODO Add main text reveal animation...
 // TODO Some people don't know at first how to enter a second digit...
 // TODO Media queries need to reset when going from potrait to Landscape
 // TODO Improve unicode arrows - use svg instead?
@@ -83,6 +81,7 @@ function App() {
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
 
+  // Save screen height and width to state on mount or whenever it changes
   useEffect(() => {
     function handleResize() {
       setScreenWidth(window.innerWidth);
@@ -92,6 +91,7 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   });
 
+  // Set the screen size descriptor based on width and height to load that set of images
   useEffect(() => {
     if (screenWidth >= screenHeight) {
       if (screenHeight <= 450) setScreenSize("sm");
@@ -104,6 +104,7 @@ function App() {
     }
   }, [screenWidth, screenHeight]);
 
+  // Add to the battle log whenever the announcer describes something
   useEffect(() => {
     if (announcer.description !== "") {
       setBattleLog((currentBattleLog) => [
@@ -117,6 +118,7 @@ function App() {
     }
   }, [announcer.description]);
 
+  // Set isLastLevel only when player is on level 4
   useEffect(() => {
     if (player.level === 4) {
       setIsLastLevel(true);
@@ -125,6 +127,7 @@ function App() {
     }
   }, [player.level]);
 
+  // Set isPreEndLevel only when player is on level 4 and a pre-ending subLevel
   useEffect(() => {
     if (
       (!isLastLevel && player.subLevel === 2) ||
@@ -144,25 +147,28 @@ function App() {
     }
   }, [player.subLevel]);
 
+  // Reset defaults when the game ends
   useEffect(() => {
     if (!isPlaying) {
-      // Reset player to defaults
       resetDefaults();
     }
   }, [isPlaying]);
 
+  // Restore player lives, reset guesses, and increase the max number on new level
   useEffect(() => {
     retoreLives();
     clearGuesses();
     increaseMax();
   }, [player.level]);
 
+  // Update the fellow's number whenenver the max number increases
   useEffect(() => {
     setFellow((currentFellow) => {
       return { ...currentFellow, number: getRandomNumber(fellow.max) };
     });
   }, [fellow.max]);
 
+  // Set hasAnnouncement based on if the announcer has any of 3 announcement types
   useEffect(() => {
     if (
       announcer.reaction !== "" ||
@@ -179,7 +185,7 @@ function App() {
     }
   }, [announcer.reaction, announcer.description, announcer.suggestion]);
 
-  // Saves most recent announcer description to be displayed on the pre-win/lose screens
+  // Save most recent announcer description to be displayed on the pre-win/lose screens
   useEffect(() => {
     if (announcer.description !== "") {
       setAnnouncer((currentAnnouncer) => {
@@ -191,6 +197,7 @@ function App() {
     }
   }, [announcer.description]);
 
+  // Clear announcer and advance the game when either the player or beast dies
   useEffect(() => {
     if (fellow.isDead) {
       console.log("The beast is dead");
@@ -203,6 +210,7 @@ function App() {
     }
   }, [player.isDead, fellow.isDead]);
 
+  // Create all game level data
   const gameLevels = [
     {
       level: 1,
@@ -472,16 +480,16 @@ function App() {
     },
   ];
 
+  // Pre-load all images that are most appropriate for the current screen size
   useEffect(() => {
     console.log(screenSize);
-
-    // Pre-load all images that are most appropriate for the screen size
     gameLevels.forEach((level) => {
       const img = new Image();
       img.src = level.image; // Trigger browser to start loading the image
     });
   }, [screenSize]);
 
+  // Reset all the game defaults ready for another play through
   function resetDefaults() {
     setPlayer((currentPlayer) => {
       return {
@@ -629,6 +637,7 @@ function App() {
 
   function inputDigit(digit) {
     const newNumber = parseInt(`${player.guess}${digit}`);
+    // The number is out of range
     if (newNumber < 1 || newNumber > fellow.max) {
       if (isLastLevel) {
         clearAnnouncer();
@@ -646,26 +655,38 @@ function App() {
           `“Would that be from 1-${fellow.max}? No, it would not.”`
         );
       }
+      // The number is in range
     } else {
       if (isLastLevel) {
-        if (!player.guess) {
-          clearAnnouncer();
-          respond(
-            "suggestion",
-            `Aim true, ${player.name}!`,
-            `Is that the beast’s weak spot, ${player.name}?`,
-            `Be certain before you strike.`
-          );
-        }
+        clearAnnouncer();
+        respond(
+          "suggestion",
+          `Aim true, ${player.name}!`,
+          `Is that the beast’s weak spot?`,
+          `Be certain before you strike.`,
+          `Don’t move until you see it.`,
+          `Do you see it?`,
+          `Strike with confidence!`,
+          `Strike only the weak spot!`,
+          `Did you find it?`,
+          `Do you know where it is?`,
+          `Be sure of it!`
+        );
       } else {
-        if (!player.guess) {
-          respond(
-            "fellow",
-            `“Are you certain about that, ${player.name}?”`,
-            `“Could it be that simple, ${player.name}?”`,
-            `“Are you sure?”`
-          );
-        }
+        // It is the first digit entered
+        respond(
+          "fellow",
+          `“Are you certain about that?”`,
+          `“Are you certain?”`,
+          `“Could it be that simple?”`,
+          `“Are you sure?”`,
+          `“Is that it?”`,
+          `“Is that my number?”`,
+          `“Could that be it?”`,
+          `“Is that really your guess?”`,
+          `“Do you think that’s it?”`,
+          `“Do you really think?”`
+        );
       }
       setPlayer((currentPlayer) => {
         return { ...currentPlayer, guess: newNumber };
