@@ -70,7 +70,7 @@ body {
   height: 100svh;
 }
 
-.game-image {
+.game-image-container {
   /* border: 1px solid blue; */
   display: flex;
   flex-direction: column;
@@ -93,6 +93,13 @@ body {
   background-position: center;
   /* animation: 0.5s fade-in ease; */
   /* transition: background-image 0.15s ease-in-out; */
+  overflow: hidden;
+}
+
+.game-image {
+  height: 100%;
+  position: absolute;
+  z-index: -1;
 }
 
 .game-text-relative-container {
@@ -479,7 +486,7 @@ body {
     flex-direction: column;
   }
 
-  .game-image {
+  .game-image-container {
     width: 100vw;
     /* min-height: 100vw; */
     /* max-height: 100vw; */

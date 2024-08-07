@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import HealthBar from "./HealthBar";
 
 export default function GameImage({
+  gameLevels,
   player,
   fellow,
   fellowStartingHealth,
@@ -19,13 +20,31 @@ export default function GameImage({
 
   return (
     <div
-      className="game-image"
-      style={{
-        backgroundImage: `url("${
-          import.meta.env.VITE_BASE_URL
-        }img/tempart/${imgName}.webp")`,
-      }}
+      className="game-image-container"
+      // style={{
+      //   backgroundImage: `url("${
+      //     import.meta.env.VITE_BASE_URL
+      //   }img/tempart/${imgName}.webp")`,
+      // }}
     >
+      {gameLevels.map((level) => {
+        return (
+          <>
+            <img
+              key={`${level.level}-${level.subLevel}`}
+              className="game-image"
+              style={
+                level.level === player.level &&
+                level.subLevel === player.subLevel
+                  ? { display: "block" }
+                  : { display: "none" }
+              }
+              src={level.image}
+            />
+            {console.log(level.image)}
+          </>
+        );
+      })}
       {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
         <HealthBar
           character={"beast"}

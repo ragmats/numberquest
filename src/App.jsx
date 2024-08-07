@@ -10,7 +10,9 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// TODO AI Art flickers in between... try pre-loading the image, setting the prev image as the background, and maybe swithing to an image instead of background?
+// TODO show loading bar on start page? "Loading artork..."
+// TODO Determine large, med, small image breakpoints: 600px wide,
+// TODO AI Art flickers in between... try loading all images at once in the beginning with display none, then just turn on/off images as needed.
 // TODO All text needs to be bigger on high-rez screens... (tablet view)
 // TODO Begin and Accept quest button is annoying small
 // TODO Prevent the game-text fade animation from happening when entering a second digit and the text stays the same
@@ -77,6 +79,30 @@ function App() {
   const [battleLog, setBattleLog] = useState([]);
   const [playerHealthBar, setPlayerHealthBar] = useState(player.health);
   const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [screenHeight, setScreenHeight] = useState(window.innerHeight);
+  const [screenSize, setScreenSize] = useState(null); // sm, med, lg
+
+  useEffect(() => {
+    function handleResize() {
+      setScreenWidth(window.innerWidth);
+      setScreenHeight(window.innerHeight);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  });
+
+  useEffect(() => {
+    if (screenWidth >= screenHeight) {
+      if (screenHeight <= 450) setScreenSize("sm");
+      else if (screenHeight <= 850) setScreenSize("med");
+      else setScreenSize("lg");
+    } else {
+      if (screenWidth <= 450) setScreenSize("sm");
+      else if (screenWidth <= 850) setScreenSize("med");
+      else setScreenSize("lg");
+    }
+  }, [screenWidth, screenHeight]);
 
   useEffect(() => {
     if (announcer.description !== "") {
@@ -184,7 +210,9 @@ function App() {
       text1: "Along a path, you meet a young fellow in a black cloak.",
       text2: "He looks friendly enough... or does he?",
       action: "Approach",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/1-1_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -193,7 +221,9 @@ function App() {
       text1: "With a curious smirk, he says to you:",
       text2: `“Greetings, ${player.name}! I’m thinking of a number from 1-${fellow.max}. Can you guess it?”`,
       action: "Guess",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/1-2_${screenSize}.webp`,
       endLevel: true,
     },
     {
@@ -202,7 +232,9 @@ function App() {
       text1: "With an almost surprised look, the fellow says:",
       text2: `“Very impressive, ${player.name}! You may pass...”`,
       action: "Walk the path",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/1-win_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -212,7 +244,9 @@ function App() {
       text2:
         "His eyes turn black. You suddenly feel heavy and very tired. The world around you begins to fade.",
       action: "Leave this world forever",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/1-lose_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -221,7 +255,9 @@ function App() {
       text1: "At the edge of a forest, you once again meet your new friend.",
       text2: "Does he still look friendly?",
       action: "Approach",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/2-1_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -230,7 +266,9 @@ function App() {
       text1: "With a respectful bow, he says to you:",
       text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of?`,
       action: "Guess",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/2-2_${screenSize}.webp`,
       endLevel: true,
     },
     {
@@ -239,7 +277,9 @@ function App() {
       text1: "With a glimpse of annoyance masked by charm, the fellow says:",
       text2: `“You win again, ${player.name}! Go ahead... if you must.”`,
       action: "Step into the forest",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/2-win_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -251,7 +291,9 @@ function App() {
       text3:
         "The fellow opens his arms and pulls you into the irresistible darkness and silence.",
       action: "Let go of life and light",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/2-lose_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -261,7 +303,9 @@ function App() {
       text2: "At the bridge’s mouth, you spy the shape of your old friend.",
       text3: "It appears he has been waiting for you.",
       action: "Approach",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/3-1_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -271,7 +315,9 @@ function App() {
       text2: `“What’s my number, ${player.name}? From 1-${fellow.max}...”`,
       text3: `His voice deepens. “The darkness awaits...”`,
       action: "Guess",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/3-2_${screenSize}.webp`,
       endLevel: true,
     },
     {
@@ -282,7 +328,9 @@ function App() {
       text2: `His voice can be heard at an ominous distance, a mere echo in the sky:`,
       text3: `“Now you have done it.”`,
       action: "Cross the bridge",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/2-win_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -293,7 +341,9 @@ function App() {
         "His form begins to grow and the blacks of his cloak become blacker and wider until shrouding anything and everything.",
       text3: "Especially you.",
       action: "Become one with darkness",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/3-lose_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -303,7 +353,9 @@ function App() {
       text2: "Beyond the bridge is a cave.",
       text3: "You hesitantly approach.",
       action: "Step inside",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-1_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -312,7 +364,9 @@ function App() {
       text1: "In the darkness, you think you see a form.",
       text2: "Could it be him?",
       action: "Approach",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-2_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -322,7 +376,9 @@ function App() {
       text2: "You think you hear your name, almost in a whimper.",
       text3: "It is becoming something much larger...",
       action: "Turn back and run",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-3_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -332,7 +388,9 @@ function App() {
         "In a brief shimmer of light, you can see it has sharp, twisted numbers growing out of its body.",
       text2: "It locks its black eyes on you and roars!",
       action: "Try desperately to escape",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-4_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -343,7 +401,9 @@ function App() {
       text2: `Quickly, ${player.name}, it must have a weak spot!`,
       text3: `From 1-${fellow.max}, you must find it!`,
       action: "Fight!", // Initiate health bars & fight sequence
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-5_${screenSize}.webp`,
       endLevel: true,
     },
     {
@@ -353,7 +413,9 @@ function App() {
       text2: `Perhaps you have been anointed with luck by some holy numerical force. As you did not find the beast’s weak spot, he is fallen still, fetal and trembling, revealing a glowing red ${fellow.number} at the nape of his neck.`,
       text3: `You pick up a nearby stick and walk toward the pathetic creature.`,
       action: `Poke the glowing red ${fellow.number}`,
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-preWinLucky_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -363,7 +425,9 @@ function App() {
       text2: `As if spied from on high, you perfectly strike the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, <span class="italic">the beast was done!</span>`,
       text3: `All of the beast’s ferocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
       action: "Nudge the beast to be sure",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-preWinOneShot_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -373,7 +437,9 @@ function App() {
       text2: `You collapse to the ground, as if your body has turned to liquid. Is this death? You remember having a dream about this once.`,
       text3: `If only you had aimed higher, or lower... does it even matter now? You hear stone crushing beneath the beast’s cloven hooves inches from your throbbing ears.`,
       action: "Try to lift your head",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-preLose_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -385,7 +451,9 @@ function App() {
       text2: `Suddenly, the beast bursts into black flames. He reaches out a trembling finger, whispers your name... “${player.name}...” and is instantly swallowed whole by the darkness, leaving only the empty black cloak to collapse on the ground.`,
       text3: "You pick it up. It still feels warm. You ponder.",
       action: "Put on the cloak?",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-win_${screenSize}.webp`,
       endLevel: false,
     },
     {
@@ -397,10 +465,22 @@ function App() {
         fellow.number - 1 // TODO singular/plural
       } tortured voice(s) soon to be joined with your own.`, // TODO singular/plural
       action: "To the pit",
-      image: "path to image",
+      image: `${
+        import.meta.env.VITE_BASE_URL
+      }img/tempart/4-lose_${screenSize}.webp`,
       endLevel: false,
     },
   ];
+
+  useEffect(() => {
+    console.log(screenSize);
+
+    // Pre-load all images that are most appropriate for the screen size
+    gameLevels.forEach((level) => {
+      const img = new Image();
+      img.src = level.image; // Trigger browser to start loading the image
+    });
+  }, [screenSize]);
 
   function resetDefaults() {
     setPlayer((currentPlayer) => {
@@ -1242,6 +1322,7 @@ function App() {
             <div className="game-container">
               <GameImage
                 // TODO Clean up unused props after game art is put in
+                gameLevels={gameLevels}
                 player={player}
                 fellow={fellow}
                 fellowStartingHealth={fellowStartingHealth}

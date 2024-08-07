@@ -27,8 +27,8 @@ export default function GameText({
       const maxHeight = textContainer.clientHeight;
       const maxWidth = textContainer.clientWidth;
 
-      console.log("maxHeight: ", maxHeight);
-      console.log("maxWidth: ", maxWidth);
+      // console.log("maxHeight: ", maxHeight);
+      // console.log("maxWidth: ", maxWidth);
 
       // Create a hidden, absolute test element containing the same text as textContainer
       const testElement = document.createElement("span");
@@ -49,8 +49,8 @@ export default function GameText({
         testElement.clientHeight <= maxHeight &&
         testElement.clientWidth <= maxWidth
       ) {
-        console.log("testElement.clientHeight: ", testElement.clientHeight);
-        console.log("testElement.clientWidth: ", testElement.clientWidth);
+        // console.log("testElement.clientHeight: ", testElement.clientHeight);
+        // console.log("testElement.clientWidth: ", testElement.clientWidth);
         newFontSize++;
         testElement.style.fontSize = `${newFontSize}px`;
       }
@@ -65,7 +65,7 @@ export default function GameText({
   useEffect(() => {
     // Fade-in text after text is re-sized to perfect size
     setTextAnimation("0.25s fade-in ease");
-    console.log("font size: ", fontSize);
+    // console.log("font size: ", fontSize);
   }, [fontSize]);
 
   useEffect(() => {
@@ -77,42 +77,6 @@ export default function GameText({
   useEffect(() => {
     getPerfectFontSize(); // re-trigger font resize when isEndSubLevel and isPreEndLevel changes
   }, [isEndSubLevel, isPreEndLevel]);
-
-  // function resizeFontToFit() {
-  //   if (containerRef.current) {
-  //     const container = containerRef.current;
-  //     const text = container.querySelector(".game-text-text");
-  //     // Set text with a small font size
-  //     let currentFontSize = startingFontSize;
-  //     text.style.fontSize = `${currentFontSize}px`;
-  //     // Keep increasing the font size by 1px as long as its container fits within the game-text div
-  //     while (
-  //       text.scrollWidth <= container.clientWidth &&
-  //       text.scrollHeight <= container.clientHeight &&
-  //       currentFontSize <= maxFontSize + 1
-  //       // maxFontSize + 1 because the font will always be set at a -1 to prevent overflow
-  //     ) {
-  //       console.log("container.clientWidth: ", container.clientWidth);
-  //       console.log("container.clientHeight: ", container.clientHeight);
-  //       currentFontSize++;
-  //       text.style.fontSize = `${currentFontSize}px`;
-  //     }
-  //     // Set the font to a size just before it was too big for the game-text div
-  //     setFontSize(currentFontSize - 1);
-  //     // Fade-in text after resizing flashing is finished
-  //     setTextAnimation("0.25s fade-in ease");
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   resizeFontToFit(); // resize font to fit upon component mount
-  //   window.addEventListener("resize", resizeFontToFit); // resize font upon window resize
-  //   return () => window.removeEventListener("resize", resizeFontToFit);
-  // }, []);
-
-  // useEffect(() => {
-  //   resizeFontToFit(); // re-trigger font resize when isEndSubLevel and isPreEndLevel changes
-  // }, [isEndSubLevel, isPreEndLevel]);
 
   return (
     <div ref={containerRef} key={crypto.randomUUID()} className="game-text">
