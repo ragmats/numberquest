@@ -10,38 +10,35 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// TODO Need to save everything to localStorage so game will be saved
-// TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
-// TODO First image loading needs to be hidden somehow.
-// TODO Make Logbook an icon and move to the Beast's lower right panel
-// TODO Add a setting menu, next to the logbook and map buttons
+// ! TODO Need to save everything to localStorage so game will be saved
+// ! TODO Fix Logbook modal background color - text is hard to read currently
+// ! TODO First image loading needs to be hidden somehow.
+// ! TODO Make Logbook an icon and move to the Beast's lower right panel
+// ! TODO Add a gear/setting menu, next to the logbook and map buttons
+// ! reset name, start over, kid mode toggle, sound toggle, credits, contact
+// ! TODO Fix Begin and Accept Quest button sized
+// ! TODO add a character limit to name
+// ! TODO All text needs to be bigger on high-rez screens... (tablet view)
+// ! TODO Proof all the text
+// ! TODO Refactor, add function descriptions, and put some functions into separate modules?
 // TODO Add a map button that opens a simple map showing the 4 levels - portrait and landscape versions
 // TODO Should logbook be viewable in the regular levels just showing the guesses and losing health?
 // TODO Add some kind of background style to the text part... change based on time of day?
-// TODO Fix Begin and Accept Quest button sized
-// TODO Fix Logbook modal background color - text is hard to read currently
 // TODO Add main text reveal animation...
 // TODO show loading bar on start page? "Loading artork..."
-// TODO All text needs to be bigger on high-rez screens... (tablet view)
 // TODO Begin and Accept quest button is annoying small
-// TODO Some people don't know at first how to enter a second digit...
-// TODO Media queries need to reset when going from potrait to Landscape
 // TODO Improve unicode arrows - use svg instead?
-// TODO Make page roughly responsive so it is acceptable in mobile mode
-// TODO add a character limit to name
 // TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO Add a tutorial?
 // TODO Add variations to all the text
-// TODO Proof all the text
 // TODO On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Emris idea: add in "kid mode" which would switch to his artwork, make the game easier, and change the text to a younger reading level.
 // TODO Emris idea: add a button to reverse game text and artwork, right/left to left/right
 // TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
 // TODO When the player chooses "put on the cloak", fade to black and then a final story full-page screen about you are drawn to a path, etc., action is: Wait for a Traveler
-// TODO Refactor, add function descriptions, and put some functions into separate modules?
 // TODO Is there a better way to record "A singular strike!" in the logbook upon one-shot (in checkGuess())?
-// TODO Add a gear menu: reset name, start over, kid mode toggle, sound toggle, credits, contact
+// TODO When player loops, need to handle numbers with commas and other weird spacing issues that will happen
 
 function App() {
   const startingLives = 3;
@@ -461,9 +458,7 @@ function App() {
     {
       level: 4,
       subLevel: "win",
-      text1: `The beast cries out and roars: “What have you done, ${
-        player.name // TODO singular/plural
-      }? You were supposed to be my... precious number ${fellow.number}!”`,
+      text1: `The beast cries out and roars: “What have you done, ${player.name}? You were supposed to be my precious number ${fellow.number}!”`,
       text2: `Suddenly, the beast bursts into black flames. He reaches out a trembling finger, whispers your name... “${player.name}...” and is instantly swallowed whole by the darkness, leaving only the empty black cloak to collapse on the ground.`,
       text3: "You pick it up. It still feels warm. You ponder.",
       action: "Put on the cloak?",
@@ -477,9 +472,21 @@ function App() {
       subLevel: "lose",
       text1: `The beast picks you up above its great numbered horns.`,
       text2: `“You are mine! You shall become my number ${fellow.number}!”`,
-      text3: `As the beast widens its toothy maw, you hear a single/symphony of ${
-        fellow.number - 1 // TODO singular/plural
-      } tortured voice(s) soon to be joined with your own.`, // TODO singular/plural
+      text3: `As the beast widens its toothy maw, you hear ${
+        fellow.number === 1
+          ? "only the deafening sound of silence."
+          : fellow.number === 2
+          ? "only 1 other tortured voice soon to be joined with your own."
+          : fellow.number === 3
+          ? "a duo of tortured voices soon to be joined with your own."
+          : fellow.number === 4
+          ? "a trio of tortured voices soon to be joined with your own."
+          : fellow.number === 5
+          ? "a quartet of tortured voices soon to be joined with your own."
+          : `a symphony of ${
+              fellow.number - 1
+            } tortured voices soon to be joined with your own.`
+      }`,
       action: "To the pit",
       image: `${
         import.meta.env.VITE_BASE_URL
