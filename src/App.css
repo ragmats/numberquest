@@ -176,6 +176,10 @@ body {
   animation: 0.5s fade-in ease;
 } */
 
+.fade-in-text {
+  animation: 0.5s fade-in ease;
+}
+
 @keyframes fade-in {
   0% {
     opacity: 0;

@@ -10,8 +10,17 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// TODO Add main text reveal animation...
+// TODO Need to save everything to localStorage so game will be saved
+// TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
 // TODO First image loading needs to be hidden somehow.
+// TODO Make Logbook an icon and move to the Beast's lower right panel
+// TODO Add a setting menu, next to the logbook and map buttons
+// TODO Add a map button that opens a simple map showing the 4 levels - portrait and landscape versions
+// TODO Should logbook be viewable in the regular levels just showing the guesses and losing health?
+// TODO Add some kind of background style to the text part... change based on time of day?
+// TODO Fix Begin and Accept Quest button sized
+// TODO Fix Logbook modal background color - text is hard to read currently
+// TODO Add main text reveal animation...
 // TODO show loading bar on start page? "Loading artork..."
 // TODO All text needs to be bigger on high-rez screens... (tablet view)
 // TODO Begin and Accept quest button is annoying small
@@ -24,7 +33,6 @@ import Hearts from "./components/Hearts";
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO Add a tutorial?
 // TODO Add variations to all the text
-// TODO improve text to handle singular and plural: (es) and (s) - search for "singular/plural"
 // TODO Proof all the text
 // TODO On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Emris idea: add in "kid mode" which would switch to his artwork, make the game easier, and change the text to a younger reading level.
@@ -970,7 +978,7 @@ function App() {
             "description",
             `You slam the beast for ${damage} damage!`,
             `You ground pound the beast for ${damage} damage!`,
-            `You surprise the beast with ${damage}-damage roundhouse!`
+            `You surprise the beast with a ${damage}-damage roundhouse!`
           );
           break;
         case 19:
