@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./App.css";
+// import "./App.css";
 import TitleScreen from "./components/TitleScreen";
 import EnterName from "./components/EnterName";
 import GameImage from "./components/GameImage";
@@ -10,7 +10,6 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO On refresh, in final battle, health bars flash
 // ! TODO On refresh, the battle log duplicates its entries
 // ! TODO Upon refresh, hearts, guesses, and probably final health and others are resetting -- these should stay the same.
 // ! TODO Now that we are saving to local storage, there needs to be an easy way to reset the game

@@ -21,14 +21,18 @@ export default function HealthBar({
 
   useEffect(() => {
     {
-      if (characterIsVictim)
-        // Set the health to startHealth to initialize the animation
-        setHealthBar(startHealth);
-      // Use requestAnimationFrame to ensure the state update happens in the next frame
-      requestAnimationFrame(() => {
-        // Trigger the transition to endHealth
+      if (fightHasStarted) {
+        if (characterIsVictim)
+          // Set the health to startHealth to initialize the animation
+          setHealthBar(startHealth);
+        // Use requestAnimationFrame to ensure the state update happens in the next frame
+        requestAnimationFrame(() => {
+          // Trigger the transition to endHealth
+          setHealthBar(endHealth);
+        });
+      } else {
         setHealthBar(endHealth);
-      });
+      }
     }
   }, [startHealth, endHealth, characterIsVictim]);
 
