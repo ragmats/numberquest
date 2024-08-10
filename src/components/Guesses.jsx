@@ -1,5 +1,5 @@
 export default function Guesses({ guesses, number, max }) {
-  console.log(guesses);
+  // console.log(guesses);
   return (
     <div className="guesses">
       <span>(1-{max})</span>

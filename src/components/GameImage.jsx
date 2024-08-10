@@ -11,6 +11,7 @@ export default function GameImage({
   isPreEndLevel,
   beastHealthBar,
   setBeastHealthBar,
+  fightHasStarted,
   endGame,
 }) {
   const [imgName, setImgName] = useState("1-1.webp");
@@ -56,6 +57,7 @@ export default function GameImage({
           characterIsVictim={fellow.isVictim}
           healthBar={beastHealthBar}
           setHealthBar={setBeastHealthBar}
+          fightHasStarted={fightHasStarted}
           turn={player.guesses.length}
         />
       ) : null}

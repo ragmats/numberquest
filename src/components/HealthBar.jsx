@@ -11,6 +11,7 @@ export default function HealthBar({
   characterIsVictim,
   healthBar,
   setHealthBar,
+  fightHasStarted,
   turn,
   guesses,
   number,
@@ -42,7 +43,7 @@ export default function HealthBar({
     <div className="health-UI">
       <div className="health-bar-upper">
         <span className="health-bar-name">{name}</span>
-        {damageTaken > 0 ? (
+        {fightHasStarted && damageTaken > 0 ? (
           <span key={key} className={`health-bar-damage-number`}>
             {damageTaken}
           </span>

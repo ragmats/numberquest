@@ -106,6 +106,7 @@ function App() {
   });
   const [playerHealthBar, setPlayerHealthBar] = useState(player.health);
   const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
+  const [fightHasStarted, setFightHasStarted] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
@@ -1255,6 +1256,7 @@ function App() {
 
   function checkGuess() {
     if (isLastLevel) {
+      setFightHasStarted(true);
       // Player is on last level
       if (!player.guess) {
         // Repond if there is no guess
@@ -1418,6 +1420,7 @@ function App() {
                 isPreEndLevel={isPreEndLevel}
                 beastHealthBar={beastHealthBar}
                 setBeastHealthBar={setBeastHealthBar}
+                fightHasStarted={fightHasStarted}
                 endGame={endGame}
               />
               <div className="game-text-relative-container">
@@ -1447,6 +1450,7 @@ function App() {
                       guesses={player.guesses}
                       number={fellow.number}
                       max={fellow.max}
+                      fightHasStarted={fightHasStarted}
                     />
                     <Logbook
                       player={player}
