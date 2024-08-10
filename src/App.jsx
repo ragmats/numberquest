@@ -10,16 +10,13 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO On refresh, the battle log duplicates its entries
-// ! TODO Upon refresh, hearts, guesses, and probably final health and others are resetting -- these should stay the same.
-// ! TODO Now that we are saving to local storage, there needs to be an easy way to reset the game
-// ! TODO Need to save everything to localStorage so game will be saved
-// ! TODO Fix Logbook modal background color - text is hard to read currently
-// ! TODO First image loading needs to be hidden somehow.
 // ! TODO Make Logbook an icon and move to the Beast's lower right panel
 // ! TODO Add a gear/setting menu, next to the logbook and map buttons
-// ! reset name, start over, kid mode toggle, sound toggle, credits, contact
+// ! TODO reset name, start over, kid mode toggle, sound toggle, credits, contact
+// ! TODO First image loading needs to be hidden somehow.
+// ! TODO Try image transitions as fades?
 // ! TODO Fix Begin and Accept Quest button sized
+// ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO add a character limit to name
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
 // ! TODO Proof all the text
@@ -156,14 +153,18 @@ function App() {
 
   // Add to the battle log whenever the announcer describes something
   useEffect(() => {
-    if (announcer.description !== "") {
+    // Use turn to prevent duplicate entries upon reload
+    const turn = player.guesses.length;
+    const existingTurn = battleLog.find((log) => log["turn"] === turn);
+    if (!existingTurn && announcer.description !== "") {
       setBattleLog((currentBattleLog) => [
         ...currentBattleLog,
         {
+          turn: turn,
           text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
           type: "health",
         },
-        { text: announcer.description, type: "fight" },
+        { turn: turn, text: announcer.description, type: "fight" },
       ]);
     }
   }, [announcer.description]);

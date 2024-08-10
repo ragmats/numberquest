@@ -264,8 +264,8 @@ body {
 }
 
 .logbook {
-  border: 1px solid black;
-  box-shadow: 5px 5px 10px 1px black;
+  border: 1px solid gray;
+  box-shadow: 1px 1px 5px 1px black;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -281,7 +281,7 @@ body {
   transform: translate(-50%, -50%);
   height: 70%;
   max-width: 50%;
-  background-color: gray;
+  background-color: lightgray;
   z-index: 1;
 }
 
@@ -310,7 +310,7 @@ body {
 .battle-log-gradient {
   height: 100%;
   width: 100%;
-  background: linear-gradient(to bottom, transparent 90%, gray 100%);
+  background: linear-gradient(to bottom, transparent 90%, lightgray 100%);
   position: absolute;
 }
 
