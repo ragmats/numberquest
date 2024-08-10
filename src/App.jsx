@@ -10,6 +10,10 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// ! TODO On refresh, in final battle, health bars flash and damage numbers blink
+// ! TODO On refresh, the battle log duplicates its entries
+// ! TODO Upon refresh, hearts, guesses, and probably final health and others are resetting -- these should stay the same.
+// ! TODO Now that we are saving to local storage, there needs to be an easy way to reset the game
 // ! TODO Need to save everything to localStorage so game will be saved
 // ! TODO Fix Logbook modal background color - text is hard to read currently
 // ! TODO First image loading needs to be hidden somehow.
@@ -45,46 +49,87 @@ function App() {
   const playerStartingHealth = 100;
   const fellowStartingHealth = 100;
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [player, setPlayer] = useState({
-    name: "Traveler",
-    level: 0,
-    subLevel: 0,
-    guess: "",
-    guesses: [],
-    lives: startingLives,
-    health: playerStartingHealth,
-    prevHealth: playerStartingHealth,
-    damageTaken: 0,
-    isVictim: false,
-    isDead: false,
+  const [isPlaying, setIsPlaying] = useState(
+    () => localStorage.getItem("isPlaying") === "true"
+  );
+  const [player, setPlayer] = useState(() => {
+    const storedPlayer = localStorage.getItem("player");
+    return storedPlayer
+      ? JSON.parse(storedPlayer)
+      : {
+          name: "Traveler",
+          level: 0,
+          subLevel: 0,
+          guess: "",
+          guesses: [],
+          lives: startingLives,
+          health: playerStartingHealth,
+          prevHealth: playerStartingHealth,
+          damageTaken: 0,
+          isVictim: false,
+          isDead: false,
+        };
   });
-  const [fellow, setFellow] = useState({
-    number: 0,
-    max: 0,
-    response: "",
-    health: fellowStartingHealth,
-    prevHealth: fellowStartingHealth,
-    damageTaken: 0,
-    isVictim: false,
-    isDead: false,
+  const [fellow, setFellow] = useState(() => {
+    const storedFellow = localStorage.getItem("fellow");
+    return storedFellow
+      ? JSON.parse(storedFellow)
+      : {
+          number: 0,
+          max: 0,
+          response: "",
+          health: fellowStartingHealth,
+          prevHealth: fellowStartingHealth,
+          damageTaken: 0,
+          isVictim: false,
+          isDead: false,
+        };
   });
-  const [announcer, setAnnouncer] = useState({
-    reaction: "",
-    description: "",
-    suggestion: "",
-    lastDescription: "",
-    hasAnnouncement: false,
+  const [announcer, setAnnouncer] = useState(() => {
+    const storedAnnouncer = localStorage.getItem("announcer");
+    return storedAnnouncer
+      ? JSON.parse(storedAnnouncer)
+      : {
+          reaction: "",
+          description: "",
+          suggestion: "",
+          lastDescription: "",
+          hasAnnouncement: false,
+        };
   });
   const [isEndSubLevel, setIsEndSubLevel] = useState(false);
   const [isLastLevel, setIsLastLevel] = useState(false);
   const [isPreEndLevel, setIsPreEndLevel] = useState(false);
-  const [battleLog, setBattleLog] = useState([]);
+  const [battleLog, setBattleLog] = useState(() => {
+    const storedBattleLog = localStorage.getItem("battleLog");
+    return storedBattleLog ? JSON.parse(storedBattleLog) : [];
+  });
   const [playerHealthBar, setPlayerHealthBar] = useState(player.health);
   const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
+
+  // Save game states to local storage when they change
+  useEffect(() => {
+    localStorage.setItem("isPlaying", isPlaying);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    localStorage.setItem("player", JSON.stringify(player));
+  }, [player]);
+
+  useEffect(() => {
+    localStorage.setItem("fellow", JSON.stringify(fellow));
+  }, [fellow]);
+
+  useEffect(() => {
+    localStorage.setItem("announcer", JSON.stringify(announcer));
+  }, [announcer]);
+
+  useEffect(() => {
+    localStorage.setItem("battleLog", JSON.stringify(battleLog));
+  }, [battleLog]);
 
   // Save screen height and width to state on mount or whenever it changes
   useEffect(() => {
@@ -159,18 +204,22 @@ function App() {
     }
   }, [isPlaying]);
 
-  // Restore player lives, reset guesses, and increase the max number on new level
+  // Restore player lives, reset guesses, and increase the max number on new level, first subLevel only
   useEffect(() => {
-    retoreLives();
-    clearGuesses();
-    increaseMax();
+    if (player.subLevel === 1) {
+      restoreLives();
+      clearGuesses();
+      increaseMax();
+    }
   }, [player.level]);
 
-  // Update the fellow's number whenenver the max number increases
+  // Update the fellow's number whenenver the max number increases on the first subLevel only
   useEffect(() => {
-    setFellow((currentFellow) => {
-      return { ...currentFellow, number: getRandomNumber(fellow.max) };
-    });
+    if (player.subLevel === 1) {
+      setFellow((currentFellow) => {
+        return { ...currentFellow, number: getRandomNumber(fellow.max) };
+      });
+    }
   }, [fellow.max]);
 
   // Set hasAnnouncement based on if the announcer has any of 3 announcement types
@@ -277,7 +326,7 @@ function App() {
       level: 2,
       subLevel: 2,
       text1: "With a respectful bow, he says to you:",
-      text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of?`,
+      text2: `“Hello again, ${player.name}! From 1-${fellow.max}, now what number might I be thinking of?”`,
       action: "Guess",
       image: `${
         import.meta.env.VITE_BASE_URL
@@ -497,7 +546,7 @@ function App() {
 
   // Pre-load all images that are most appropriate for the current screen size
   useEffect(() => {
-    console.log(screenSize);
+    // console.log(screenSize);
     gameLevels.forEach((level) => {
       const img = new Image();
       img.src = level.image; // Trigger browser to start loading the image
@@ -562,7 +611,8 @@ function App() {
     let max = fellow.max;
     if (player.level === 1) max = 10;
     else if (player.level === 2) max = 25;
-    else max = max * 2;
+    else if (player.level === 3) max = 50;
+    else if (player.level === 4) max = 100;
     setFellow((currentFellow) => {
       return { ...currentFellow, max: max };
     });
@@ -830,8 +880,9 @@ function App() {
     });
   }
 
-  function retoreLives() {
+  function restoreLives() {
     setPlayer((currentPlayer) => {
+      // if (player.level === currentPlayer.level) return currentPlayer;
       return { ...currentPlayer, lives: startingLives + player.level };
     });
   }
@@ -1367,6 +1418,7 @@ function App() {
                 isPreEndLevel={isPreEndLevel}
                 beastHealthBar={beastHealthBar}
                 setBeastHealthBar={setBeastHealthBar}
+                endGame={endGame}
               />
               <div className="game-text-relative-container">
                 {!isLastLevel && isEndSubLevel ? (

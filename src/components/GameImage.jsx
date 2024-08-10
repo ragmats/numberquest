@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import HealthBar from "./HealthBar";
 
 export default function GameImage({
@@ -11,6 +11,7 @@ export default function GameImage({
   isPreEndLevel,
   beastHealthBar,
   setBeastHealthBar,
+  endGame,
 }) {
   const [imgName, setImgName] = useState("1-1.webp");
 
@@ -29,9 +30,8 @@ export default function GameImage({
     >
       {gameLevels.map((level) => {
         return (
-          <>
+          <React.Fragment key={`${level.level}-${level.subLevel}`}>
             <img
-              key={`${level.level}-${level.subLevel}`}
               className="game-image"
               style={
                 level.level === player.level &&
@@ -41,8 +41,8 @@ export default function GameImage({
               }
               src={level.image}
             />
-            {console.log(level.image)}
-          </>
+            {/* {console.log(level.image)} */}
+          </React.Fragment>
         );
       })}
       {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
@@ -64,6 +64,7 @@ export default function GameImage({
         Player level {player.level}, Player subLevel {player.subLevel}
       </p>
       <p>The number is {fellow.number}.</p>
+      <button onClick={endGame}>Restart</button>
     </div>
   );
 }
