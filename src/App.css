@@ -45,6 +45,28 @@ body {
   text-align: center;
 }
 
+.intro-container button {
+  font-size: 0.75em;
+  padding: 0.25em;
+}
+
+.title-image {
+  width: 350px;
+  height: auto;
+}
+
+@media (width < 450px) {
+  .title-image {
+    width: 75vw;
+  }
+}
+
+@media (height < 600px) {
+  .title-image {
+    width: 60svh;
+  }
+}
+
 .name-form {
   /* border: 1px solid blue; */
   display: flex;

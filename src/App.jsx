@@ -15,7 +15,6 @@ import Hearts from "./components/Hearts";
 // ! TODO reset name, start over, kid mode toggle, sound toggle, credits, contact
 // ! TODO First image loading needs to be hidden somehow.
 // ! TODO Try image transitions as fades?
-// ! TODO Fix Begin and Accept Quest button sized
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO add a character limit to name
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
@@ -155,7 +154,7 @@ function App() {
   useEffect(() => {
     // Use turn to prevent duplicate entries upon reload
     const turn = player.guesses.length;
-    const existingTurn = battleLog.find((log) => log["turn"] === turn);
+    const existingTurn = battleLog.find((log) => log.turn === turn);
     if (!existingTurn && announcer.description !== "") {
       setBattleLog((currentBattleLog) => [
         ...currentBattleLog,
