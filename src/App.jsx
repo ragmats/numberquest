@@ -10,7 +10,7 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Map X is mis-positioned in full screen mode.
+// ! TODO Map Close-X is mis-positioned in full screen mode.
 // ! TODO When map is open, put a dimming overlay behind it
 // ! TODO Make Battle log record everything, not just final fight
 // ! TODO Crete settings menu
