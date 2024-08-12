@@ -1,15 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CloseX from "./CloseX";
 
-export default function Logbook({ player, fellow, isLastLevel, battleLog }) {
+export default function Logbook({ battleLog }) {
   // Should tell the player level, loops?, guesses, battle log
   const [showLogbook, setShowLogbook] = useState(false);
 
-  const reversedBattleLog = [...battleLog].reverse();
+  const modalRef = useRef(null);
 
-  // Close logbook modal on Escape key
+  // const [reversedBattleLog, setReversedBattleLog] = useState(
+  //   [...battleLog].reverse()
+  // );
+
+  // useEffect(() => {
+  //   setReversedBattleLog(() => [...battleLog].reverse());
+  // }, [battleLog]);
+
   useEffect(() => {
     if (showLogbook) {
+      // Scroll to bottom of logbook (most recent entry)
+      if (modalRef.current) {
+        modalRef.current.scrollTo({
+          top: modalRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+
+      // Close logbook with Escape Key
       function closeOnEscape(e) {
         if (e.key === "Escape") setShowLogbook(!showLogbook);
       }
@@ -24,34 +40,36 @@ export default function Logbook({ player, fellow, isLastLevel, battleLog }) {
 
   return (
     <>
-      <div className="logbook-button-container">
-        <button onClick={() => toggleShowLogbook()}>Logbook</button>
-      </div>
+      <button onClick={() => toggleShowLogbook()} className="game-icon-btn">
+        <img
+          className="game-icon"
+          src={`${import.meta.env.VITE_BASE_URL}img/battlelog-icon.png`}
+        />
+      </button>
+
       {showLogbook ? (
         <div onClick={() => toggleShowLogbook()} className="logbook">
           <CloseX handleClose={toggleShowLogbook} />
-          <h3>Battle Log</h3>
-          <div className="battle-log">
-            <div className="battle-log-gradient" />
+          <h3>Quest Log</h3>
+          <div className="battle-log" ref={modalRef}>
+            {/* <div className="battle-log-gradient" /> */}
             <ul className="battle-log-ul">
-              {reversedBattleLog.length > 1 ? (
-                reversedBattleLog.map((log, index) => {
-                  return (
-                    <li
-                      key={index}
-                      className={
-                        log.type === "health"
-                          ? "battle-log-health-li"
-                          : "battle-log-fight-li"
-                      }
-                    >
-                      {log.text}
-                    </li>
-                  );
-                })
-              ) : (
-                <p>Nothing has happened yet... do some fightin’!</p>
-              )}
+              {battleLog.map((log, index) => {
+                return (
+                  <li
+                    key={index}
+                    className={
+                      log.type === "health"
+                        ? "battle-log-health-li"
+                        : log.type === "fight"
+                        ? "battle-log-fight-li"
+                        : "battle-log-other-li"
+                    }
+                  >
+                    {log.text}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

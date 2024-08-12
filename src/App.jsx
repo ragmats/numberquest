@@ -10,20 +10,20 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
+// ! TODO Make Battle log record more events, like guesses, guess reponses, guess deaths, etc.
+// ! TODO Give final logs special victory/death emojis
 // ! TODO Map Close-X is mis-positioned in full screen mode.
 // ! TODO When map is open, put a dimming overlay behind it
-// ! TODO Make Battle log record everything, not just final fight
-// ! TODO Crete settings menu
-// ! TODO Make Logbook an icon and move to the Beast's lower right panel
-// ! TODO Add a gear/setting menu, next to the logbook and map buttons
-// ! TODO reset name, start over, kid mode toggle, sound toggle, credits, contact
+// ! TODO Crete settings menu: change name, end game, kid mode toggle, sound toggle, credits, contact
 // ! TODO First image loading needs to be hidden somehow.
-// ! TODO Try image transitions as fades?
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO add a character limit to name
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
 // ! TODO Proof all the text
 // ! TODO Refactor, add function descriptions, and put some functions into separate modules?
+// ! Remove dev text and number answer
+// TODO Try image transitions as fades?
 // TODO Add a map button that opens a simple map showing the 4 levels - portrait and landscape versions
 // TODO Should logbook be viewable in the regular levels just showing the guesses and losing health?
 // TODO Add some kind of background style to the text part... change based on time of day?
@@ -110,6 +110,10 @@ function App() {
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
 
+  useEffect(() => {
+    console.log("Battle Log: ", battleLog);
+  }, [battleLog]);
+
   // Save game states to local storage when they change
   useEffect(() => {
     localStorage.setItem("isPlaying", isPlaying);
@@ -153,24 +157,6 @@ function App() {
       else setScreenSize("lg");
     }
   }, [screenWidth, screenHeight]);
-
-  // Add to the battle log whenever the announcer describes something
-  useEffect(() => {
-    // Use turn to prevent duplicate entries upon reload
-    const turn = player.guesses.length;
-    const existingTurn = battleLog.find((log) => log.turn === turn);
-    if (!existingTurn && announcer.description !== "") {
-      setBattleLog((currentBattleLog) => [
-        ...currentBattleLog,
-        {
-          turn: turn,
-          text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
-          type: "health",
-        },
-        { turn: turn, text: announcer.description, type: "fight" },
-      ]);
-    }
-  }, [announcer.description]);
 
   // Set isLastLevel only when player is on level 4
   useEffect(() => {
@@ -475,7 +461,7 @@ function App() {
     {
       level: 4,
       subLevel: "preWinLucky",
-      text1: `(Get final Announcer’s reaction)`,
+      text1: ``,
       text2: `Perhaps you have been anointed with luck by some holy numerical force. As you did not find the beast’s weak spot, he is fallen still, fetal and trembling, revealing a glowing red ${fellow.number} at the nape of his neck.`,
       text3: `You pick up a nearby stick and walk toward the pathetic creature.`,
       action: `Poke the glowing red ${fellow.number}`,
@@ -499,7 +485,7 @@ function App() {
     {
       level: 4,
       subLevel: "preLose",
-      text1: `(Get final Announcer’s reaction)`,
+      text1: ``,
       text2: `You collapse to the ground, as if your body has turned to liquid. Is this death? You remember having a dream about this once.`,
       text3: `If only you had aimed higher, or lower... does it even matter now? You hear stone crushing beneath the beast’s cloven hooves inches from your throbbing ears.`,
       action: "Try to lift your head",
@@ -556,6 +542,55 @@ function App() {
       img.src = level.image; // Trigger browser to start loading the image
     });
   }, [screenSize]);
+
+  // Add to the battle log whenever there is leve text, a fellow response, or announcer description
+  useEffect(() => {
+    console.log("player.level: ", player.level);
+    console.log("player.subLevel: ", player.subLevel);
+    // Prevent duplicate entries
+    const level = player.level;
+    const subLevel = player.subLevel;
+    const turn = player.guesses.length;
+    const logId = `${level}-${subLevel}-${turn}`;
+    const levelSubLevel = `${level}-${subLevel}`;
+    const existingId = battleLog.find((log) => log.id === logId);
+    const existingLevel = battleLog.find((log) => log.level === levelSubLevel);
+
+    if (!existingLevel) {
+      // Record the level text
+      gameLevels.forEach((level) => {
+        if (
+          level.level === player.level &&
+          level.subLevel === player.subLevel
+        ) {
+          setBattleLog((currentBattleLog) => [
+            ...currentBattleLog,
+            {
+              id: logId,
+              level: levelSubLevel,
+              text: `${level.text1} ${level.text2} ${
+                level.text3 ? level.text3 : ""
+              }`,
+              type: "narration",
+            },
+          ]);
+        }
+      });
+    }
+
+    // Record the announcer descriptions of the final battle
+    if (!existingId && announcer.description !== "") {
+      setBattleLog((currentBattleLog) => [
+        ...currentBattleLog,
+        { id: logId, text: announcer.description, type: "fight" },
+        {
+          id: logId,
+          text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
+          type: "health",
+        },
+      ]);
+    }
+  }, [player.level, player.subLevel, player.guesses, announcer.description]);
 
   // Reset all the game defaults ready for another play through
   function resetDefaults() {
@@ -1425,6 +1460,7 @@ function App() {
                 setBeastHealthBar={setBeastHealthBar}
                 fightHasStarted={fightHasStarted}
                 endGame={endGame}
+                battleLog={battleLog}
               />
               <div className="game-text-relative-container">
                 {!isLastLevel && isEndSubLevel ? (
@@ -1438,30 +1474,22 @@ function App() {
                   />
                 ) : null}
                 {isLastLevel && (player.subLevel === 5 || isPreEndLevel) ? (
-                  <>
-                    <HealthBar
-                      character={"player"}
-                      name={player.name}
-                      maxHealth={playerStartingHealth}
-                      startHealth={player.prevHealth}
-                      endHealth={player.health}
-                      damageTaken={player.damageTaken}
-                      characterIsVictim={player.isVictim}
-                      healthBar={playerHealthBar}
-                      setHealthBar={setPlayerHealthBar}
-                      turn={player.guesses.length}
-                      guesses={player.guesses}
-                      number={fellow.number}
-                      max={fellow.max}
-                      fightHasStarted={fightHasStarted}
-                    />
-                    <Logbook
-                      player={player}
-                      fellow={fellow}
-                      isLastLevel={isLastLevel}
-                      battleLog={battleLog}
-                    />
-                  </>
+                  <HealthBar
+                    character={"player"}
+                    name={player.name}
+                    maxHealth={playerStartingHealth}
+                    startHealth={player.prevHealth}
+                    endHealth={player.health}
+                    damageTaken={player.damageTaken}
+                    characterIsVictim={player.isVictim}
+                    healthBar={playerHealthBar}
+                    setHealthBar={setPlayerHealthBar}
+                    turn={player.guesses.length}
+                    guesses={player.guesses}
+                    number={fellow.number}
+                    max={fellow.max}
+                    fightHasStarted={fightHasStarted}
+                  />
                 ) : null}
                 {gameLevels.map((level) => {
                   if (

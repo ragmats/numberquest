@@ -14,6 +14,7 @@ export default function GameImage({
   setBeastHealthBar,
   fightHasStarted,
   endGame,
+  battleLog,
 }) {
   const [imgName, setImgName] = useState("1-1.webp");
 
@@ -68,7 +69,12 @@ export default function GameImage({
       </p>
       <p>The number is {fellow.number}.</p>
       <button onClick={endGame}>Restart</button>
-      <GameIcons player={player} />
+      <GameIcons
+        player={player}
+        fellow={fellow}
+        isLastLevel={isLastLevel}
+        battleLog={battleLog}
+      />
     </div>
   );
 }
