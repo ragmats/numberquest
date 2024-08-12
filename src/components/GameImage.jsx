@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import GameIcons from "./GameIcons";
 import HealthBar from "./HealthBar";
 
 export default function GameImage({
@@ -67,6 +68,7 @@ export default function GameImage({
       </p>
       <p>The number is {fellow.number}.</p>
       <button onClick={endGame}>Restart</button>
+      <GameIcons player={player} />
     </div>
   );
 }

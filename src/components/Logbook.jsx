@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import CloseX from "./CloseX";
 
 export default function Logbook({ player, fellow, isLastLevel, battleLog }) {
   // Should tell the player level, loops?, guesses, battle log
@@ -28,9 +29,7 @@ export default function Logbook({ player, fellow, isLastLevel, battleLog }) {
       </div>
       {showLogbook ? (
         <div onClick={() => toggleShowLogbook()} className="logbook">
-          <button onClick={() => toggleShowLogbook()} className="close-X">
-            ×
-          </button>
+          <CloseX handleClose={toggleShowLogbook} />
           <h3>Battle Log</h3>
           <div className="battle-log">
             <div className="battle-log-gradient" />
