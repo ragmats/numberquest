@@ -10,7 +10,9 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// ! Final incorrect guess is not adding to log correctly. It adds every digit instead of what was entered. It never gets added to guesses, dupe on reload.
 // ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
+// ! HTML tags are showing in battle log. Consider removing the html, also to make splitText work better later
 // ! TODO Make Battle log record more events, like guesses, guess reponses, guess deaths, etc.
 // ! TODO Give final logs special victory/death emojis
 // ! TODO Map Close-X is mis-positioned in full screen mode.
@@ -545,8 +547,6 @@ function App() {
 
   // Add to the battle log whenever there is leve text, a fellow response, or announcer description
   useEffect(() => {
-    console.log("player.level: ", player.level);
-    console.log("player.subLevel: ", player.subLevel);
     // Prevent duplicate entries
     const level = player.level;
     const subLevel = player.subLevel;
@@ -556,33 +556,105 @@ function App() {
     const existingId = battleLog.find((log) => log.id === logId);
     const existingLevel = battleLog.find((log) => log.level === levelSubLevel);
 
+    // Record the level text and final wrong guess
     if (!existingLevel) {
-      // Record the level text
-      gameLevels.forEach((level) => {
-        if (
-          level.level === player.level &&
-          level.subLevel === player.subLevel
-        ) {
-          setBattleLog((currentBattleLog) => [
-            ...currentBattleLog,
-            {
-              id: logId,
-              level: levelSubLevel,
-              text: `${level.text1} ${level.text2} ${
-                level.text3 ? level.text3 : ""
-              }`,
-              type: "narration",
-            },
-          ]);
-        }
-      });
+      // Player has hearts left
+      if (player.lives > 1) {
+        gameLevels.forEach((level) => {
+          if (
+            level.level === player.level &&
+            level.subLevel === player.subLevel
+          ) {
+            setBattleLog((currentBattleLog) => [
+              ...currentBattleLog,
+              {
+                id: logId,
+                level: levelSubLevel,
+                text: `${level.text1} ${level.text2} ${
+                  level.text3 ? level.text3 : ""
+                }`,
+                type: "narration",
+              },
+            ]);
+          }
+        });
+        // Player has lost last heart
+      }
+
+      if (!existingId && player.lives === 1) {
+        gameLevels.forEach((level) => {
+          if (
+            level.level === player.level &&
+            level.subLevel === player.subLevel
+          ) {
+            setBattleLog((currentBattleLog) => [
+              ...currentBattleLog,
+              {
+                id: logId,
+                text: `You guessed ${player.guesses[turn - 1]}.`,
+                type: "guess",
+              },
+              {
+                id: logId,
+                level: levelSubLevel,
+                text: `${level.text1} ${level.text2} ${
+                  level.text3 ? level.text3 : ""
+                }`,
+                type: "narration",
+              },
+            ]);
+          }
+        });
+      }
+    }
+
+    // Add correct guesses to log
+    if (!isLastLevel && player.guess === fellow.number) {
+      setBattleLog((currentBattleLog) => [
+        ...currentBattleLog,
+        {
+          id: logId,
+          text: `You guessed ${player.guess}.`,
+          type: "guess",
+        },
+      ]);
+    }
+
+    // Add incorrect guesses and fellow responses to log
+    console.log("player.Guesses: ", player.guesses);
+    if (
+      !existingId &&
+      !isLastLevel &&
+      player.guesses.length > 0 &&
+      fellow.response !== ""
+    ) {
+      console.log("this");
+      setBattleLog((currentBattleLog) => [
+        ...currentBattleLog,
+        {
+          id: logId,
+          text: `You guessed ${player.guesses[turn - 1]}.`,
+          type: "guess",
+        },
+        {
+          id: logId,
+          text: fellow.response,
+          type: "response",
+        },
+      ]);
     }
 
     // Record the announcer descriptions of the final battle
     if (!existingId && announcer.description !== "") {
       setBattleLog((currentBattleLog) => [
         ...currentBattleLog,
+        {
+          id: logId,
+          text: `You aim for ${player.guesses[turn - 1]}!`,
+          type: "guess",
+        },
         { id: logId, text: announcer.description, type: "fight" },
+        { id: logId, text: announcer.suggestion, type: "response" },
         {
           id: logId,
           text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
@@ -590,7 +662,14 @@ function App() {
         },
       ]);
     }
-  }, [player.level, player.subLevel, player.guesses, announcer.description]);
+  }, [
+    player.level,
+    player.subLevel,
+    player.guesses,
+    player.lives,
+    fellow.response,
+    announcer.description,
+  ]);
 
   // Reset all the game defaults ready for another play through
   function resetDefaults() {
@@ -1385,6 +1464,7 @@ function App() {
       } else {
         // If player loses last life
         if (player.lives - 1 === 0) {
+          addToGuesses();
           clearResponse();
           loseGame();
         } else {
@@ -1477,6 +1557,7 @@ function App() {
                   <HealthBar
                     character={"player"}
                     name={player.name}
+                    lives={player.lives}
                     maxHealth={playerStartingHealth}
                     startHealth={player.prevHealth}
                     endHealth={player.health}

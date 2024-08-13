@@ -24,7 +24,7 @@ export default function Hearts({
               );
             })}
           </div>
-          <Guesses guesses={guesses} number={number} max={max} />
+          <Guesses guesses={guesses} number={number} max={max} lives={lives} />
         </div>
       ) : null}
     </>

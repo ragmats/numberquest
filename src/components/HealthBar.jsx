@@ -4,6 +4,7 @@ import Guesses from "./Guesses";
 export default function HealthBar({
   character,
   name,
+  lives,
   maxHealth,
   startHealth,
   endHealth,
@@ -65,7 +66,7 @@ export default function HealthBar({
         <div className="health-number">{`${endHealth}/${maxHealth}`}</div>
       </div>
       {character === "player" ? (
-        <Guesses guesses={guesses} number={number} max={max} />
+        <Guesses guesses={guesses} number={number} max={max} lives={lives} />
       ) : null}
     </div>
   );

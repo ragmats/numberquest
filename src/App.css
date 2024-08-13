@@ -410,6 +410,11 @@ body {
   margin-right: 0.25em;
 }
 
+.battle-log-guess-li::before {
+  content: "❓";
+  margin-right: 0.25em;
+}
+
 .battle-log-health-li::before {
   content: "❤️";
   margin-right: 0.5em;

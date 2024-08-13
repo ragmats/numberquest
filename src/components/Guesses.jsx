@@ -1,9 +1,10 @@
-export default function Guesses({ guesses, number, max }) {
+export default function Guesses({ guesses, number, max, lives }) {
   // console.log(guesses);
   return (
     <div className="guesses">
       <span>(1-{max})</span>
-      {guesses.length > 0 ? (
+      {console.log("lives: ", lives)}
+      {guesses.length > 0 && lives >= 1 ? (
         <>
           {guesses.map((guess) => {
             return (

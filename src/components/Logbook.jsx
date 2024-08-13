@@ -63,6 +63,8 @@ export default function Logbook({ battleLog }) {
                         ? "battle-log-health-li"
                         : log.type === "fight"
                         ? "battle-log-fight-li"
+                        : log.type === "guess"
+                        ? "battle-log-guess-li"
                         : "battle-log-other-li"
                     }
                   >
