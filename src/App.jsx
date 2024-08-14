@@ -5,11 +5,13 @@ import EnterName from "./components/EnterName";
 import GameImage from "./components/GameImage";
 import GameText from "./components/GameText";
 import GuessingUI from "./components/GuessingUI";
-import Logbook from "./components/Logbook";
 import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// TODO (possibly fixed now) the "win/lose" narration battle log is repeating - logNarrationLevel() is happening on win/lose levels for some reason now?
+// TODO (possibly fixed now) isEndSubLevel is not correct upon refresh - need to save to localStorage maybe? Include isEndSubLevel, isLastLevel, isPreEndLevel
+// TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
 // ! TODO When page reloads, a broken image icon flashes behind the art
 // ! Reloading on final one-shot or win screens breaks the game, advances to a non-exisitng level 5 or sublevel.
 // ! TODO In final battle log, highlight the last 4 events that happen each hit.
@@ -100,9 +102,15 @@ function App() {
           hasAnnouncement: false,
         };
   });
-  const [isEndSubLevel, setIsEndSubLevel] = useState(false);
-  const [isLastLevel, setIsLastLevel] = useState(false);
-  const [isPreEndLevel, setIsPreEndLevel] = useState(false);
+  const [isEndSubLevel, setIsEndSubLevel] = useState(
+    () => localStorage.getItem("isEndSubLevel") === "true"
+  );
+  const [isLastLevel, setIsLastLevel] = useState(
+    () => localStorage.getItem("isLastLevel") === "true"
+  );
+  const [isPreEndLevel, setIsPreEndLevel] = useState(
+    () => localStorage.getItem("isPreEndLevel") === "true"
+  );
   const [battleLog, setBattleLog] = useState(() => {
     const storedBattleLog = localStorage.getItem("battleLog");
     return storedBattleLog ? JSON.parse(storedBattleLog) : [];
@@ -120,8 +128,20 @@ function App() {
 
   // Save game states to local storage when they change
   useEffect(() => {
-    localStorage.setItem("isPlaying", isPlaying);
+    localStorage.setItem("isPlaying", JSON.stringify(isPlaying));
   }, [isPlaying]);
+
+  useEffect(() => {
+    localStorage.setItem("isEndSubLevel", JSON.stringify(isEndSubLevel));
+  }, [isEndSubLevel]);
+
+  useEffect(() => {
+    localStorage.setItem("isLastLevel", JSON.stringify(isLastLevel));
+  }, [isLastLevel]);
+
+  useEffect(() => {
+    localStorage.setItem("isPreEndLevel", JSON.stringify(isPreEndLevel));
+  }, [isPreEndLevel]);
 
   useEffect(() => {
     localStorage.setItem("player", JSON.stringify(player));
@@ -250,7 +270,6 @@ function App() {
     if (fellow.isDead) {
       console.log("The beast is dead");
       clearAnnouncer();
-      advancePlayer();
     } else if (player.isDead) {
       console.log("The player is dead");
       clearAnnouncer();
@@ -563,40 +582,50 @@ function App() {
       (level) =>
         level.level === player.level && level.subLevel === player.subLevel
     );
-    console.log("currentGameLevel: ", currentGameLevel);
 
-    console.log("guesses: ", player.guesses);
+    // console.log("currentGameLevel: ", currentGameLevel);
+    // console.log("guesses: ", player.guesses);
     // console.log("guess: ", guess);
-    console.log("isPreEndLevel: ", isPreEndLevel);
-    // Refactor
+    // console.log("isPreEndLevel: ", isPreEndLevel);
+
+    console.log(isLastLevel);
+    console.log("isEndSubLevel (should be true): ", isEndSubLevel);
+    console.log("isPreEndLevel (should be false): ", isPreEndLevel);
+    console.log(
+      "!isEndSubLevel && !isPreEndLevel (should be false): ",
+      !isEndSubLevel && !isPreEndLevel
+    );
+    console.log("isPreEndLevel (should be false): ", isPreEndLevel);
+    console.log("!existingId: ", !existingId);
+    console.log("announcer.description !== '': ", announcer.description !== "");
+    console.log("player.health !== 0: ", player.health !== 0);
+    console.log("fellow.health !== 0: ", fellow.health !== 0);
 
     // Is not the final level
     if (!isLastLevel) {
       //Is a narration subLevel
-      if (!isEndSubLevel) {
+      if (!isEndSubLevel && subLevel !== "win" && subLevel !== "lose") {
         if (!existingLevel) {
           logNarrationLevel(currentGameLevel);
         }
         // Handle win/lose
       } else if (subLevel === "win" || subLevel === "lose") {
-        if (!existingId) {
-          if (currentGameLevel) {
-            setBattleLog((currentBattleLog) => [
-              ...currentBattleLog,
-              {
-                id: logId,
-                text: `You guess ${guess}.`,
-                type: "guess",
-              },
-              {
-                id: logId,
-                text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
-                  currentGameLevel.text3 ? currentGameLevel.text3 : ""
-                }`,
-                type: "narration",
-              },
-            ]);
-          }
+        if (!existingId && currentGameLevel) {
+          setBattleLog((currentBattleLog) => [
+            ...currentBattleLog,
+            {
+              id: logId,
+              text: `You guess ${guess}.`,
+              type: "guess",
+            },
+            {
+              id: logId,
+              text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
+                currentGameLevel.text3 ? currentGameLevel.text3 : ""
+              }`,
+              type: "narration",
+            },
+          ]);
         }
         // Guessing subLevel
       } else {
@@ -620,19 +649,16 @@ function App() {
 
     // Is last level
     if (isLastLevel) {
-      console.log("subLevel: ", subLevel);
-      console.log("subLevel === 'preLose': ", subLevel === "preLose");
-
       //Is a narration subLevel (includes final win/lose subLevels)
       if (!isEndSubLevel && !isPreEndLevel) {
+        console.log("this still happens");
         if (!existingLevel) {
           logNarrationLevel(currentGameLevel);
         }
         // Handle preEnd level
       } else if (isPreEndLevel) {
         console.log("This is the preEndLevel condition");
-        if (currentGameLevel && !existingId) {
-          console.log("This is the currentGameLevel & !existingId condition");
+        if (!existingId && currentGameLevel) {
           // Player one-shot the beast
           if (subLevel === "preWinOneShot") {
             console.log("this is the preWinOneShot condition");
@@ -749,6 +775,7 @@ function App() {
   }, [
     player.level,
     player.subLevel,
+    isEndSubLevel,
     isPreEndLevel,
     player.guesses,
     player.lives,
@@ -816,6 +843,9 @@ function App() {
     setBattleLog([]);
     setPlayerHealthBar(playerStartingHealth);
     setBeastHealthBar(fellowStartingHealth);
+    setIsEndSubLevel(false);
+    setIsLastLevel(false);
+    setIsPreEndLevel(false);
   }
 
   function getRandomNumber(max) {
@@ -849,8 +879,9 @@ function App() {
         // If current level is a win and not the last level, advance level
         advancePlayerLevel();
       else if (
-        (isLastLevel && currentGameLevel.subLevel === "win") ||
-        currentGameLevel.subLevel === "lose"
+        isLastLevel &&
+        (currentGameLevel.subLevel === "win" ||
+          currentGameLevel.subLevel === "lose")
       ) {
         // Is last level and player has either won or lost, so the game is over
         endGame();
@@ -864,48 +895,48 @@ function App() {
   }
 
   function advancePlayerSubLevel(level) {
+    // Advance when on the last level
     if (isLastLevel) {
-      // Advance when on the last level
+      // During the guess phase of the last level
       if (level.endLevel) {
-        // During the guess phase of the last level
+        // Player guesses the right number
         if (player.guess === fellow.number) {
-          // Player guesses the right number
           setPlayer((currentPlayer) => {
             return { ...currentPlayer, subLevel: "preWinOneShot" };
           });
-        } else {
           // Player did not guess the right number
+        } else {
+          // Player kills the beast
           if (fellow.isDead) {
-            // Player kills the beast
             setPlayer((currentPlayer) => {
               return { ...currentPlayer, subLevel: "preWinLucky" };
             });
-          } else if (player.isDead) {
             // The beast kills the player
+          } else if (player.isDead) {
             loseGame();
           }
         }
+        // Player is on one of the preWin screens
       } else if (
         level.subLevel === "preWinOneShot" ||
         level.subLevel === "preWinLucky"
       ) {
-        // Player is on one of the preWin screens
         setPlayer((currentPlayer) => {
           return { ...currentPlayer, subLevel: "win" };
         });
-      } else if (level.subLevel === "preLose") {
         // Player is on preLose screen
+      } else if (level.subLevel === "preLose") {
         setPlayer((currentPlayer) => {
           return { ...currentPlayer, subLevel: "lose" };
         });
-      } else {
         // Player is on all other last-level screens, heading toward the fight
+      } else {
         setPlayer((currentPlayer) => {
           return { ...currentPlayer, subLevel: player.subLevel + 1 };
         });
       }
-    } else {
       // Advance when not on the last level
+    } else {
       if (level.endLevel) {
         setPlayer((currentPlayer) => {
           return { ...currentPlayer, subLevel: "win" };
@@ -1505,6 +1536,7 @@ function App() {
       } else if (player.guess === fellow.number) {
         victimize("beast");
         toggleDeath("beast");
+        advancePlayer();
       } else {
         // Player, on last level, guessed the wrong number
         const victim = rollVictim();
@@ -1517,6 +1549,7 @@ function App() {
         ) {
           // If there is a killing blow
           toggleDeath(victim);
+          advancePlayer();
         } else {
           // There is no killing blow
           if (player.guesses.includes(player.guess)) {
