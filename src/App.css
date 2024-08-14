@@ -418,7 +418,22 @@ body {
 .battle-log-health-li::before {
   content: "❤️";
   margin-right: 0.5em;
-  margin-left: 1em;
+  /* margin-left: 1em; */
+}
+
+.battle-log-win-li::before {
+  content: "⭐";
+  margin-right: 0.25em;
+}
+
+.battle-log-victory-li::before {
+  content: "🏆";
+  margin-right: 0.25em;
+}
+
+.battle-log-lose-li::before {
+  content: "💀";
+  margin-right: 0.25em;
 }
 
 .hearts-container {

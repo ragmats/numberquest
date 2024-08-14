@@ -65,6 +65,12 @@ export default function Logbook({ battleLog }) {
                         ? "battle-log-fight-li"
                         : log.type === "guess"
                         ? "battle-log-guess-li"
+                        : log.type === "win"
+                        ? "battle-log-win-li"
+                        : log.type === "lose"
+                        ? "battle-log-lose-li"
+                        : log.type === "victory"
+                        ? "battle-log-victory-li"
                         : "battle-log-other-li"
                     }
                   >

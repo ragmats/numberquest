@@ -9,16 +9,12 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// TODO (possibly fixed now) the "win/lose" narration battle log is repeating - logNarrationLevel() is happening on win/lose levels for some reason now?
-// TODO (possibly fixed now) isEndSubLevel is not correct upon refresh - need to save to localStorage maybe? Include isEndSubLevel, isLastLevel, isPreEndLevel
-// TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
-// ! TODO When page reloads, a broken image icon flashes behind the art
-// ! Reloading on final one-shot or win screens breaks the game, advances to a non-exisitng level 5 or sublevel.
+// ! BUG! Losing life leads to sublevel lose1 = doesn't exist.
+// ! TODO Give final logs special victory/death emojis
 // ! TODO In final battle log, highlight the last 4 events that happen each hit.
 // ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
-// ! TODO HTML tags are showing in battle log. Consider removing the html, also to make splitText work better later
-// ! TODO Make Battle log record more events, like guesses, guess reponses, guess deaths, etc.
-// ! TODO Give final logs special victory/death emojis
+// TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
+// ! TODO When page reloads, a broken image icon flashes behind the art
 // ! TODO Map Close-X is mis-positioned in full screen mode.
 // ! TODO When map is open, put a dimming overlay behind it
 // ! TODO Crete settings menu: change name, end game, kid mode toggle, sound toggle, credits, contact
@@ -623,7 +619,7 @@ function App() {
               text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
                 currentGameLevel.text3 ? currentGameLevel.text3 : ""
               }`,
-              type: "narration",
+              type: subLevel === "lose" ? "lose" : "win",
             },
           ]);
         }
@@ -684,7 +680,7 @@ function App() {
                 text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
                   currentGameLevel.text3 ? currentGameLevel.text3 : ""
                 }`,
-                type: "narration",
+                type: "victory",
               },
             ]);
             // Player got lucky and killed the beast
@@ -694,7 +690,7 @@ function App() {
               ...currentBattleLog,
               {
                 id: logId,
-                text: `You aim for ${player.guesses[turn - 1]}!`,
+                text: `You blindly aim for ${player.guesses[turn - 1]}!`,
                 type: "guess",
               },
               {
@@ -712,7 +708,7 @@ function App() {
                 text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
                   currentGameLevel.text3 ? currentGameLevel.text3 : ""
                 }`,
-                type: "narration",
+                type: "victory",
               },
             ]);
             // Player is is killed by the beast
@@ -740,7 +736,7 @@ function App() {
                 text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
                   currentGameLevel.text3 ? currentGameLevel.text3 : ""
                 }`,
-                type: "narration",
+                type: "lose",
               },
             ]);
           }
@@ -879,9 +875,8 @@ function App() {
         // If current level is a win and not the last level, advance level
         advancePlayerLevel();
       else if (
-        isLastLevel &&
-        (currentGameLevel.subLevel === "win" ||
-          currentGameLevel.subLevel === "lose")
+        (isLastLevel && currentGameLevel.subLevel === "win") ||
+        currentGameLevel.subLevel === "lose"
       ) {
         // Is last level and player has either won or lost, so the game is over
         endGame();
