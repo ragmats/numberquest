@@ -10,8 +10,8 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Non submitted guesses are showing up in quest log.
-// ! TODO Final battle blows are not logging correctly. Need to handle similar to hearts parts.
+// ! TODO When page reloads, a broken image icon flashes behind the art
+// ! Reloading on final one-shot or win screens breaks the game, advances to a non-exisitng level 5 or sublevel.
 // ! TODO In final battle log, highlight the last 4 events that happen each hit.
 // ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
 // ! TODO HTML tags are showing in battle log. Consider removing the html, also to make splitText work better later
@@ -478,7 +478,7 @@ function App() {
       level: 4,
       subLevel: "preWinOneShot",
       text1: `A singular strike!`,
-      text2: `As if spied from on high, you perfectly strike the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, <span class="italic">the beast was done!</span>`,
+      text2: `As if spied from on high, you perfectly strike the now-obvious glowing red ${fellow.number} at the nape of beast’s neck. In an instant, the beast was done!`,
       text3: `All of the beast’s ferocity and fight disappears as its body falls to the ground before you. Everything is suddenly silent. You grab a long, sharp stick...`,
       action: "Nudge the beast to be sure",
       image: `${
@@ -559,9 +559,15 @@ function App() {
     const existingId = battleLog.find((log) => log.id === logId);
     const existingLevel = battleLog.find((log) => log.level === levelSubLevel);
 
-    console.log("guesses: ", player.guesses);
-    console.log("guess: ", guess);
+    const currentGameLevel = gameLevels.find(
+      (level) =>
+        level.level === player.level && level.subLevel === player.subLevel
+    );
+    console.log("currentGameLevel: ", currentGameLevel);
 
+    console.log("guesses: ", player.guesses);
+    // console.log("guess: ", guess);
+    console.log("isPreEndLevel: ", isPreEndLevel);
     // Refactor
 
     // Is not the final level
@@ -569,42 +575,37 @@ function App() {
       //Is a narration subLevel
       if (!isEndSubLevel) {
         if (!existingLevel) {
-          logNarrationLevel();
+          logNarrationLevel(currentGameLevel);
         }
         // Handle win/lose
       } else if (subLevel === "win" || subLevel === "lose") {
         if (!existingId) {
-          gameLevels.forEach((level) => {
-            if (
-              level.level === player.level &&
-              level.subLevel === player.subLevel
-            ) {
-              setBattleLog((currentBattleLog) => [
-                ...currentBattleLog,
-                {
-                  id: logId,
-                  text: `You guessed ${guess}.`,
-                  type: "guess",
-                },
-                {
-                  id: logId,
-                  text: `${level.text1} ${level.text2} ${
-                    level.text3 ? level.text3 : ""
-                  }`,
-                  type: "narration",
-                },
-              ]);
-            }
-          });
+          if (currentGameLevel) {
+            setBattleLog((currentBattleLog) => [
+              ...currentBattleLog,
+              {
+                id: logId,
+                text: `You guess ${guess}.`,
+                type: "guess",
+              },
+              {
+                id: logId,
+                text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
+                  currentGameLevel.text3 ? currentGameLevel.text3 : ""
+                }`,
+                type: "narration",
+              },
+            ]);
+          }
         }
         // Guessing subLevel
       } else {
-        if (guess && !existingId)
+        if (guess && !existingId) {
           setBattleLog((currentBattleLog) => [
             ...currentBattleLog,
             {
               id: logId,
-              text: `You guessed ${guess}.`,
+              text: `You guess ${guess}.`,
               type: "guess",
             },
             {
@@ -613,25 +614,120 @@ function App() {
               type: "response",
             },
           ]);
+        }
       }
-      // Is last level
-    } else {
-      //Is a narration subLevel
-      if (
-        !isEndSubLevel &&
-        !isPreEndLevel &&
-        (subLevel === "win" || subLevel === "lose")
-      ) {
-        logNarrationLevel();
-        // Handle win/lose
-      } else if (subLevel === "win" || subLevel === "lose") {
-        // ! win/lose here
+    }
+
+    // Is last level
+    if (isLastLevel) {
+      console.log("subLevel: ", subLevel);
+      console.log("subLevel === 'preLose': ", subLevel === "preLose");
+
+      //Is a narration subLevel (includes final win/lose subLevels)
+      if (!isEndSubLevel && !isPreEndLevel) {
+        if (!existingLevel) {
+          logNarrationLevel(currentGameLevel);
+        }
         // Handle preEnd level
       } else if (isPreEndLevel) {
-        // ! preEnd here
-        // Final battle subLevel
+        console.log("This is the preEndLevel condition");
+        if (currentGameLevel && !existingId) {
+          console.log("This is the currentGameLevel & !existingId condition");
+          // Player one-shot the beast
+          if (subLevel === "preWinOneShot") {
+            console.log("this is the preWinOneShot condition");
+            setBattleLog((currentBattleLog) => [
+              ...currentBattleLog,
+              {
+                id: logId,
+                text: `You confidently aim at ${fellow.number}...`,
+                type: "guess",
+              },
+              {
+                id: logId,
+                text: "You strike the weak-spot and one-shot The Beast!",
+                type: "fight",
+              },
+              {
+                id: logId,
+                text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
+                type: "health",
+              },
+              {
+                id: logId,
+                text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
+                  currentGameLevel.text3 ? currentGameLevel.text3 : ""
+                }`,
+                type: "narration",
+              },
+            ]);
+            // Player got lucky and killed the beast
+          } else if (subLevel === "preWinLucky") {
+            console.log("this is the preWinLucky condition");
+            setBattleLog((currentBattleLog) => [
+              ...currentBattleLog,
+              {
+                id: logId,
+                text: `You aim for ${player.guesses[turn - 1]}!`,
+                type: "guess",
+              },
+              {
+                id: logId,
+                text: `Your final attack is a lucky thousandth cut. ${announcer.lastDescription}`,
+                type: "fight",
+              },
+              {
+                id: logId,
+                text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
+                type: "health",
+              },
+              {
+                id: logId,
+                text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
+                  currentGameLevel.text3 ? currentGameLevel.text3 : ""
+                }`,
+                type: "narration",
+              },
+            ]);
+            // Player is is killed by the beast
+          } else if (subLevel === "preLose") {
+            console.log("this is the preLose condition");
+            setBattleLog((currentBattleLog) => [
+              ...currentBattleLog,
+              {
+                id: logId,
+                text: `You aim for ${player.guesses[turn - 1]}!`,
+                type: "guess",
+              },
+              {
+                id: logId,
+                text: `Your lack of precision is finally answered: ${announcer.lastDescription}`,
+                type: "fight",
+              },
+              {
+                id: logId,
+                text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
+                type: "health",
+              },
+              {
+                id: logId,
+                text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
+                  currentGameLevel.text3 ? currentGameLevel.text3 : ""
+                }`,
+                type: "narration",
+              },
+            ]);
+          }
+        }
+        // Guessing (fighting) subLevel
       } else {
-        if (!existingId && announcer.description !== "") {
+        if (
+          !existingId &&
+          announcer.description !== "" &&
+          player.health !== 0 &&
+          fellow.health !== 0
+        ) {
+          console.log("this is the guessing/fighting condition");
           setBattleLog((currentBattleLog) => [
             ...currentBattleLog,
             {
@@ -640,131 +736,41 @@ function App() {
               type: "guess",
             },
             { id: logId, text: announcer.description, type: "fight" },
-            { id: logId, text: announcer.suggestion, type: "response" },
             {
               id: logId,
               text: `${player.name}: ${player.health}, The Beast: ${fellow.health}`,
               type: "health",
             },
+            { id: logId, text: announcer.suggestion, type: "suggestion" },
           ]);
         }
       }
     }
-
-    // // Record the level text and final wrong guess
-    // if (!existingLevel) {
-    //   // Player has hearts left
-    //   if (player.lives > 1) {
-    //     gameLevels.forEach((level) => {
-    //       if (
-    //         level.level === player.level &&
-    //         level.subLevel === player.subLevel
-    //       ) {
-    //         setBattleLog((currentBattleLog) => [
-    //           ...currentBattleLog,
-    //           {
-    //             id: logId,
-    //             level: levelSubLevel,
-    //             text: `${level.text1} ${level.text2} ${
-    //               level.text3 ? level.text3 : ""
-    //             }`,
-    //             type: "narration",
-    //           },
-    //         ]);
-    //       }
-    //     });
-    //     // Player has lost last heart
-    //   }
-
-    //   // A
-    //   if (!existingId && player.lives === 1) {
-    //     gameLevels.forEach((level) => {
-    //       if (
-    //         level.level === player.level &&
-    //         level.subLevel === player.subLevel
-    //       ) {
-    //         setBattleLog((currentBattleLog) => [
-    //           ...currentBattleLog,
-    //           {
-    //             id: logId,
-    //             text: `You guessed AAA ${player.guesses[turn - 1]}.`,
-    //             type: "guess",
-    //           },
-    //           {
-    //             id: logId,
-    //             level: levelSubLevel,
-    //             text: `${level.text1} ${level.text2} ${
-    //               level.text3 ? level.text3 : ""
-    //             }`,
-    //             type: "narration",
-    //           },
-    //         ]);
-    //       }
-    //     });
-    //   }
-    // }
-
-    // BB
-    // Add correct guesses to log
-    // if (!isLastLevel && player.guess === fellow.number) {
-    //   setBattleLog((currentBattleLog) => [
-    //     ...currentBattleLog,
-    //     {
-    //       id: logId,
-    //       text: `You guessed BBB ${player.guess}.`,
-    //       type: "guess",
-    //     },
-    //   ]);
-    // }
-
-    // // C
-    // // Add incorrect guesses and fellow responses to log
-    // console.log("player.Guesses: ", player.guesses);
-    // if (
-    //   !existingId &&
-    //   !isLastLevel &&
-    //   player.guesses.length > 0 &&
-    //   fellow.response !== ""
-    // ) {
-    //   console.log("this");
-    //   setBattleLog((currentBattleLog) => [
-    //     ...currentBattleLog,
-    //     {
-    //       id: logId,
-    //       text: `You guessed CCC ${player.guesses[turn - 1]}.`,
-    //       type: "guess",
-    //     },
-    //     {
-    //       id: logId,
-    //       text: fellow.response,
-    //       type: "response",
-    //     },
-    //   ]);
-    // }
   }, [
     player.level,
     player.subLevel,
+    isPreEndLevel,
     player.guesses,
     player.lives,
+    player.health,
+    fellow.health,
     fellow.response,
     announcer.description,
   ]);
 
-  function logNarrationLevel() {
-    gameLevels.forEach((level) => {
-      if (level.level === player.level && level.subLevel === player.subLevel) {
-        setBattleLog((currentBattleLog) => [
-          ...currentBattleLog,
-          {
-            level: `${level.level}-${level.subLevel}`,
-            text: `${level.text1} ${level.text2} ${
-              level.text3 ? level.text3 : ""
-            }`,
-            type: "narration",
-          },
-        ]);
-      }
-    });
+  function logNarrationLevel(currentGameLevel) {
+    if (currentGameLevel) {
+      setBattleLog((currentBattleLog) => [
+        ...currentBattleLog,
+        {
+          level: `${currentGameLevel.level}-${currentGameLevel.subLevel}`,
+          text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
+            currentGameLevel.text3 ? currentGameLevel.text3 : ""
+          }`,
+          type: "narration",
+        },
+      ]);
+    }
   }
 
   // Reset all the game defaults ready for another play through
@@ -838,18 +844,22 @@ function App() {
       (level) =>
         level.level === player.level && level.subLevel === player.subLevel
     );
-    if (currentGameLevel.subLevel === "win" && !isLastLevel)
-      // If current level is a win and not the last level, advance level
-      advancePlayerLevel();
-    else if (
-      (isLastLevel && currentGameLevel.subLevel === "win") ||
-      currentGameLevel.subLevel === "lose"
-    ) {
-      // Is last level and player has either won or lost, so the game is over
-      endGame();
+    if (currentGameLevel) {
+      if (currentGameLevel.subLevel === "win" && !isLastLevel)
+        // If current level is a win and not the last level, advance level
+        advancePlayerLevel();
+      else if (
+        (isLastLevel && currentGameLevel.subLevel === "win") ||
+        currentGameLevel.subLevel === "lose"
+      ) {
+        // Is last level and player has either won or lost, so the game is over
+        endGame();
+      } else {
+        // Otherwise, just advance subLevel
+        advancePlayerSubLevel(currentGameLevel);
+      }
     } else {
-      // Otherwise, just advance subLevel
-      advancePlayerSubLevel(currentGameLevel);
+      endGame();
     }
   }
 
@@ -1119,6 +1129,18 @@ function App() {
       victimize(victim);
       return victim;
     }
+    // Player wins beast (testing)
+    // const roll = Math.floor(Math.random() * 10);
+    // let victim;
+    // if (roll === 0) {
+    //   victim = "player";
+    //   victimize(victim);
+    //   return victim;
+    // } else {
+    //   victim = "beast";
+    //   victimize(victim);
+    //   return victim;
+    // }
   }
 
   function victimize(victim) {
@@ -1481,19 +1503,6 @@ function App() {
           `Continue to do nothing and meet your end surely, ${player.name}!`
         );
       } else if (player.guess === fellow.number) {
-        // Player, on last level, guesses the right number
-        // Set unique battle log entry for this "singular strike" situation
-        setBattleLog((currentBattleLog) => [
-          ...currentBattleLog,
-          {
-            text: `${player.name}: ${player.health}, The Beast: 0`,
-            type: "health",
-          },
-          {
-            text: "You found the weak-spot and one-shot The Beast!",
-            type: "fight",
-          },
-        ]);
         victimize("beast");
         toggleDeath("beast");
       } else {
