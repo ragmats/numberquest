@@ -9,6 +9,8 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// ! TODO restarting on "To the Pit" screen sends the player back one screen... maybe add a "fightHasEnded" state that triggers on death to prevent advancing on reload.
+// ! TODO When the beast is dead at endgame, reloading the game advances the player. When player is dead, it sends you back??
 // ! TODO In final battle log, highlight the last 4 events that happen each hit.
 // ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
 // TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
@@ -112,6 +114,9 @@ function App() {
   const [playerHealthBar, setPlayerHealthBar] = useState(player.health);
   const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
   const [fightHasStarted, setFightHasStarted] = useState(false);
+  const [fightIsInProgress, setFightIsInProgress] = useState(
+    () => localStorage.getItem("isPreEndLevel") === "true"
+  );
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
@@ -152,6 +157,13 @@ function App() {
   useEffect(() => {
     localStorage.setItem("battleLog", JSON.stringify(battleLog));
   }, [battleLog]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "fightIsInProgress",
+      JSON.stringify(fightIsInProgress)
+    );
+  }, [fightIsInProgress]);
 
   // Save screen height and width to state on mount or whenever it changes
   useEffect(() => {
@@ -1131,17 +1143,17 @@ function App() {
       return victim;
     }
     // Player wins beast (testing)
-    // const roll = Math.floor(Math.random() * 10);
-    // let victim;
-    // if (roll === 0) {
-    //   victim = "player";
-    //   victimize(victim);
-    //   return victim;
-    // } else {
-    //   victim = "beast";
-    //   victimize(victim);
-    //   return victim;
-    // }
+    //   const roll = Math.floor(Math.random() * 10);
+    //   let victim;
+    //   if (roll === 0) {
+    //     victim = "player";
+    //     victimize(victim);
+    //     return victim;
+    //   } else {
+    //     victim = "beast";
+    //     victimize(victim);
+    //     return victim;
+    //   }
   }
 
   function victimize(victim) {
@@ -1333,7 +1345,7 @@ function App() {
           break;
         case 2:
         case 3:
-          damage = 15;
+          damage = 10;
           respond(
             "reaction",
             "The beast begins to charge!",
@@ -1350,7 +1362,7 @@ function App() {
         case 4:
         case 5:
         case 6:
-          damage = 17;
+          damage = 12;
           respond(
             "reaction",
             "The beast lands a swipe to your shoulder!",
@@ -1368,7 +1380,7 @@ function App() {
         case 8:
         case 9:
         case 10:
-          damage = 20;
+          damage = 15;
           respond(
             "reaction",
             "The beast conjures a bow with fire arrows!",
@@ -1386,7 +1398,7 @@ function App() {
         case 12:
         case 13:
         case 14:
-          damage = 25;
+          damage = 20;
           respond(
             "reaction",
             "You lose your footing.",
@@ -1403,7 +1415,7 @@ function App() {
         case 15:
         case 16:
         case 17:
-          damage = 27;
+          damage = 22;
           respond(
             "reaction",
             "The beast leaps!",
@@ -1419,7 +1431,7 @@ function App() {
           break;
         case 18:
         case 19:
-          damage = 30;
+          damage = 25;
           respond("reaction", "Whip-crack went his whippy tail!");
           respond(
             "description",
@@ -1427,7 +1439,7 @@ function App() {
           );
           break;
         case 20:
-          damage = 35;
+          damage = 30;
           respond("reaction", "The beast strikes with BOTH claws!");
           respond(
             "description",
@@ -1435,7 +1447,7 @@ function App() {
           );
           break;
         default:
-          damage = 35;
+          damage = 20;
           respond("reaction", "The beast strikes with BOTH claws!");
           respond(
             "description",
@@ -1506,6 +1518,7 @@ function App() {
       } else if (player.guess === fellow.number) {
         victimize("beast");
         toggleDeath("beast");
+        // advancePlayer();
       } else {
         // Player, on last level, guessed the wrong number
         const victim = rollVictim();
@@ -1518,7 +1531,7 @@ function App() {
         ) {
           // If there is a killing blow
           toggleDeath(victim);
-          // advancePlayer();
+          // if (victim === "beast") advancePlayer();
         } else {
           // There is no killing blow
           if (player.guesses.includes(player.guess)) {
