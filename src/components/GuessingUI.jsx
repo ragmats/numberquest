@@ -44,7 +44,7 @@ export default function GuessingUI({
   }, []);
 
   useEffect(() => {
-    console.log({ buttonWidth });
+    // console.log({ buttonWidth });
     setButtonFontSize(buttonWidth / fontFactor);
     setButtonGap(buttonWidth / gapFactor);
     setBtnAnimation("0.25s fade-in ease");

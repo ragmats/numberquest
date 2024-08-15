@@ -9,8 +9,6 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! BUG! Losing life leads to sublevel lose1 = doesn't exist.
-// ! TODO Give final logs special victory/death emojis
 // ! TODO In final battle log, highlight the last 4 events that happen each hit.
 // ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
 // TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
@@ -118,9 +116,9 @@ function App() {
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
 
-  useEffect(() => {
-    console.log("Battle Log: ", battleLog);
-  }, [battleLog]);
+  // useEffect(() => {
+  //   console.log("Battle Log: ", battleLog);
+  // }, [battleLog]);
 
   // Save game states to local storage when they change
   useEffect(() => {
@@ -266,6 +264,7 @@ function App() {
     if (fellow.isDead) {
       console.log("The beast is dead");
       clearAnnouncer();
+      advancePlayer();
     } else if (player.isDead) {
       console.log("The player is dead");
       clearAnnouncer();
@@ -579,24 +578,6 @@ function App() {
         level.level === player.level && level.subLevel === player.subLevel
     );
 
-    // console.log("currentGameLevel: ", currentGameLevel);
-    // console.log("guesses: ", player.guesses);
-    // console.log("guess: ", guess);
-    // console.log("isPreEndLevel: ", isPreEndLevel);
-
-    console.log(isLastLevel);
-    console.log("isEndSubLevel (should be true): ", isEndSubLevel);
-    console.log("isPreEndLevel (should be false): ", isPreEndLevel);
-    console.log(
-      "!isEndSubLevel && !isPreEndLevel (should be false): ",
-      !isEndSubLevel && !isPreEndLevel
-    );
-    console.log("isPreEndLevel (should be false): ", isPreEndLevel);
-    console.log("!existingId: ", !existingId);
-    console.log("announcer.description !== '': ", announcer.description !== "");
-    console.log("player.health !== 0: ", player.health !== 0);
-    console.log("fellow.health !== 0: ", fellow.health !== 0);
-
     // Is not the final level
     if (!isLastLevel) {
       //Is a narration subLevel
@@ -647,17 +628,14 @@ function App() {
     if (isLastLevel) {
       //Is a narration subLevel (includes final win/lose subLevels)
       if (!isEndSubLevel && !isPreEndLevel) {
-        console.log("this still happens");
         if (!existingLevel) {
           logNarrationLevel(currentGameLevel);
         }
         // Handle preEnd level
       } else if (isPreEndLevel) {
-        console.log("This is the preEndLevel condition");
         if (!existingId && currentGameLevel) {
           // Player one-shot the beast
           if (subLevel === "preWinOneShot") {
-            console.log("this is the preWinOneShot condition");
             setBattleLog((currentBattleLog) => [
               ...currentBattleLog,
               {
@@ -685,7 +663,6 @@ function App() {
             ]);
             // Player got lucky and killed the beast
           } else if (subLevel === "preWinLucky") {
-            console.log("this is the preWinLucky condition");
             setBattleLog((currentBattleLog) => [
               ...currentBattleLog,
               {
@@ -713,7 +690,6 @@ function App() {
             ]);
             // Player is is killed by the beast
           } else if (subLevel === "preLose") {
-            console.log("this is the preLose condition");
             setBattleLog((currentBattleLog) => [
               ...currentBattleLog,
               {
@@ -749,7 +725,6 @@ function App() {
           player.health !== 0 &&
           fellow.health !== 0
         ) {
-          console.log("this is the guessing/fighting condition");
           setBattleLog((currentBattleLog) => [
             ...currentBattleLog,
             {
@@ -1200,8 +1175,6 @@ function App() {
     if (victim === "beast") {
       switch (roll) {
         case 1:
-        case 2:
-        case 3:
           damage = 0;
           respond(
             "reaction",
@@ -1216,6 +1189,8 @@ function App() {
             "You throw a powerful fist... it hits nothing."
           );
           break;
+        case 2:
+        case 3:
         case 4:
         case 5:
         case 6:
@@ -1358,7 +1333,7 @@ function App() {
           break;
         case 2:
         case 3:
-          damage = 5;
+          damage = 15;
           respond(
             "reaction",
             "The beast begins to charge!",
@@ -1375,7 +1350,7 @@ function App() {
         case 4:
         case 5:
         case 6:
-          damage = 7;
+          damage = 17;
           respond(
             "reaction",
             "The beast lands a swipe to your shoulder!",
@@ -1393,7 +1368,7 @@ function App() {
         case 8:
         case 9:
         case 10:
-          damage = 10;
+          damage = 20;
           respond(
             "reaction",
             "The beast conjures a bow with fire arrows!",
@@ -1411,7 +1386,7 @@ function App() {
         case 12:
         case 13:
         case 14:
-          damage = 15;
+          damage = 25;
           respond(
             "reaction",
             "You lose your footing.",
@@ -1428,7 +1403,7 @@ function App() {
         case 15:
         case 16:
         case 17:
-          damage = 17;
+          damage = 27;
           respond(
             "reaction",
             "The beast leaps!",
@@ -1444,7 +1419,7 @@ function App() {
           break;
         case 18:
         case 19:
-          damage = 20;
+          damage = 30;
           respond("reaction", "Whip-crack went his whippy tail!");
           respond(
             "description",
@@ -1452,7 +1427,7 @@ function App() {
           );
           break;
         case 20:
-          damage = 25;
+          damage = 35;
           respond("reaction", "The beast strikes with BOTH claws!");
           respond(
             "description",
@@ -1460,7 +1435,7 @@ function App() {
           );
           break;
         default:
-          damage = 25;
+          damage = 35;
           respond("reaction", "The beast strikes with BOTH claws!");
           respond(
             "description",
@@ -1531,7 +1506,6 @@ function App() {
       } else if (player.guess === fellow.number) {
         victimize("beast");
         toggleDeath("beast");
-        advancePlayer();
       } else {
         // Player, on last level, guessed the wrong number
         const victim = rollVictim();
@@ -1544,7 +1518,7 @@ function App() {
         ) {
           // If there is a killing blow
           toggleDeath(victim);
-          advancePlayer();
+          // advancePlayer();
         } else {
           // There is no killing blow
           if (player.guesses.includes(player.guess)) {

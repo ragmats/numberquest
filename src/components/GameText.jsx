@@ -90,24 +90,13 @@ export default function GameText({
           opacity: textAnimation ? 1 : 0,
         }}
       >
-        {/* The following dangerouslySetInnerHTML is always from a known source */}
         {fellow.response || announcer.hasAnnouncement ? (
           <>
             {isLastLevel ? (
               <>
-                {announcer.reaction ? (
-                  <p dangerouslySetInnerHTML={{ __html: announcer.reaction }} />
-                ) : null}
-                {announcer.description ? (
-                  <p
-                    dangerouslySetInnerHTML={{ __html: announcer.description }}
-                  />
-                ) : null}
-                {announcer.suggestion ? (
-                  <p
-                    dangerouslySetInnerHTML={{ __html: announcer.suggestion }}
-                  />
-                ) : null}
+                {announcer.reaction ? <p>{announcer.reaction}</p> : null}
+                {announcer.description ? <p>{announcer.description}</p> : null}
+                {announcer.suggestion ? <p>{announcer.suggestion}</p> : null}
               </>
             ) : (
               <p>{fellow.response}</p>
@@ -118,14 +107,12 @@ export default function GameText({
             {announcer.lastDescription &&
             isPreEndLevel &&
             player.guess !== fellow.number ? (
-              <p dangerouslySetInnerHTML={{ __html: announcer.description }} />
+              <p>{announcer.description}</p>
             ) : (
-              <p dangerouslySetInnerHTML={{ __html: level.text1 }} />
+              <p>{level.text1}</p>
             )}
-            <p dangerouslySetInnerHTML={{ __html: level.text2 }} />
-            {level.text3 ? (
-              <p dangerouslySetInnerHTML={{ __html: level.text3 }} />
-            ) : null}
+            <p>{level.text2}</p>
+            {level.text3 ? <p>{level.text3}</p> : null}
           </>
         )}
       </div>
