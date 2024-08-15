@@ -9,8 +9,6 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO restarting on "To the Pit" screen sends the player back one screen... maybe add a "fightHasEnded" state that triggers on death to prevent advancing on reload.
-// ! TODO When the beast is dead at endgame, reloading the game advances the player. When player is dead, it sends you back??
 // ! TODO In final battle log, highlight the last 4 events that happen each hit.
 // ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
 // TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
@@ -115,7 +113,7 @@ function App() {
   const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
   const [fightHasStarted, setFightHasStarted] = useState(false);
   const [fightIsInProgress, setFightIsInProgress] = useState(
-    () => localStorage.getItem("isPreEndLevel") === "true"
+    () => localStorage.getItem("fightIsInProgress") === "true"
   );
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
@@ -217,6 +215,11 @@ function App() {
     }
   }, [player.subLevel]);
 
+  useEffect(() => {
+    if (player.level === 4 && player.subLevel === 5) setFightIsInProgress(true);
+    else setFightIsInProgress(false);
+  }, [player.level, player.subLevel]);
+
   // Reset defaults when the game ends
   useEffect(() => {
     if (!isPlaying) {
@@ -271,16 +274,18 @@ function App() {
     }
   }, [announcer.description]);
 
-  // Clear announcer and advance the game when either the player or beast dies
+  // Clear announcer and advance the game when either the player or beast dies only once while fight is in progress
   useEffect(() => {
-    if (fellow.isDead) {
-      console.log("The beast is dead");
-      clearAnnouncer();
-      advancePlayer();
-    } else if (player.isDead) {
-      console.log("The player is dead");
-      clearAnnouncer();
-      loseGame();
+    if (fightIsInProgress) {
+      if (fellow.isDead) {
+        console.log("The beast is dead");
+        clearAnnouncer();
+        advancePlayer();
+      } else if (player.isDead) {
+        console.log("The player is dead");
+        clearAnnouncer();
+        loseGame();
+      }
     }
   }, [player.isDead, fellow.isDead]);
 
@@ -1141,19 +1146,8 @@ function App() {
       victim = "player";
       victimize(victim);
       return victim;
+      // return "beast"; // For testing
     }
-    // Player wins beast (testing)
-    //   const roll = Math.floor(Math.random() * 10);
-    //   let victim;
-    //   if (roll === 0) {
-    //     victim = "player";
-    //     victimize(victim);
-    //     return victim;
-    //   } else {
-    //     victim = "beast";
-    //     victimize(victim);
-    //     return victim;
-    //   }
   }
 
   function victimize(victim) {
