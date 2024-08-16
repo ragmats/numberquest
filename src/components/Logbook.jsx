@@ -59,7 +59,7 @@ export default function Logbook({ battleLog }) {
       {showLogbook ? (
         <div onClick={() => toggleShowLogbook()} className="logbook">
           <CloseX handleClose={toggleShowLogbook} />
-          <h3>Quest Log</h3>
+          <h2>Quest Log</h2>
           <div className="battle-log" ref={modalRef}>
             {hasScrollbar && !scrolledToTop ? (
               <div className="battle-log-gradient" />
