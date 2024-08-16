@@ -372,6 +372,7 @@ body {
   overflow-y: auto;
   position: relative;
   /* margin: 1em; */
+  font-size: 1.25em;
   padding: 1em;
 }
 
