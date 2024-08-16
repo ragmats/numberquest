@@ -4,16 +4,25 @@ import CloseX from "./CloseX";
 export default function Logbook({ battleLog }) {
   // Should tell the player level, loops?, guesses, battle log
   const [showLogbook, setShowLogbook] = useState(false);
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+  const [scrolledToTop, setScrolledToTop] = useState(false);
 
   const modalRef = useRef(null);
 
-  // const [reversedBattleLog, setReversedBattleLog] = useState(
-  //   [...battleLog].reverse()
-  // );
-
-  // useEffect(() => {
-  //   setReversedBattleLog(() => [...battleLog].reverse());
-  // }, [battleLog]);
+  useEffect(() => {
+    const battleLogDiv = modalRef.current;
+    if (battleLogDiv) {
+      setHasScrollbar(battleLogDiv.scrollHeight > battleLogDiv.clientHeight);
+      handleScroll();
+      battleLogDiv.addEventListener("scroll", handleScroll);
+      return () => {
+        battleLogDiv.removeEventListener("scroll", handleScroll);
+      };
+    }
+    function handleScroll() {
+      setScrolledToTop(battleLogDiv.scrollTop === 0);
+    }
+  }, [showLogbook]);
 
   useEffect(() => {
     if (showLogbook) {
@@ -52,7 +61,9 @@ export default function Logbook({ battleLog }) {
           <CloseX handleClose={toggleShowLogbook} />
           <h3>Quest Log</h3>
           <div className="battle-log" ref={modalRef}>
-            {/* <div className="battle-log-gradient" /> */}
+            {hasScrollbar && !scrolledToTop ? (
+              <div className="battle-log-gradient" />
+            ) : null}
             <ul className="battle-log-ul">
               {battleLog.map((log, index) => {
                 return (

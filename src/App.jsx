@@ -10,7 +10,6 @@ import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
 // ! TODO In final battle log, highlight the last 4 events that happen each hit.
-// ! TODO Remove gradient when no scroll, and fade away gradient when scrolled to very top
 // TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
 // ! TODO When page reloads, a broken image icon flashes behind the art
 // ! TODO Map Close-X is mis-positioned in full screen mode.
