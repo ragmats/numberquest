@@ -1,8 +1,8 @@
 import { useState } from "react";
 import CloseX from "./CloseX";
-import Logbook from "./Logbook";
+import QuestLog from "./QuestLog";
 
-export default function GameIcons({ player, fellow, isLastLevel, battleLog }) {
+export default function GameIcons({ player, fellow, isLastLevel, questLog }) {
   const [mapIsOpen, setMapIsOpen] = useState(false);
 
   function handleMapClick() {
@@ -29,7 +29,7 @@ export default function GameIcons({ player, fellow, isLastLevel, battleLog }) {
             src={`${import.meta.env.VITE_BASE_URL}img/battlelog-icon.png`}
           />
         </button> */}
-        <Logbook battleLog={battleLog} />
+        <QuestLog questLog={questLog} />
         <button onClick={handleMapClick} className="game-icon-btn">
           <img
             className="game-icon"

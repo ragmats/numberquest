@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 // import "./App.css";
 import TitleScreen from "./components/TitleScreen";
-import EnterName from "./components/EnterName";
+import EnterNamePage from "./components/EnterNamePage";
 import GameImage from "./components/GameImage";
 import GameText from "./components/GameText";
 import GuessingUI from "./components/GuessingUI";
@@ -9,38 +9,32 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO In final battle log, highlight the last 4 events that happen each hit.
-// TODO Change reference to "battleLog" to "questLog". The Logbook component should be QuestLog also.
-// ! TODO When page reloads, a broken image icon flashes behind the art
-// ! TODO Map Close-X is mis-positioned in full screen mode.
-// ! TODO When map is open, put a dimming overlay behind it
+// ! TODO add a character limit to name. Make the name input a component to be re-used.
 // ! TODO Crete settings menu: change name, end game, kid mode toggle, sound toggle, credits, contact
-// ! TODO First image loading needs to be hidden somehow.
 // ! TODO Text areas are too big, and should change when there is not UI
-// ! TODO add a character limit to name
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
-// ! TODO Proof all the text
 // ! TODO Refactor, add function descriptions, and put some functions into separate modules?
-// ! Remove dev text and number answer
+// ! TODO Proof all the text
+// ! Remove dev text and number answer, launch of on website
+// TODO First image loading needs to be hidden somehow.
+// TODO When map is open, put a dimming overlay behind it
+// TODO When page reloads, a broken image icon flashes behind the art
+// TODO Map Close-X is mis-positioned in full screen mode.
+// TODO Consider making quest log close upon any click, not just a click on the modal. Maybe not...
 // TODO Try image transitions as fades?
-// TODO Add a map button that opens a simple map showing the 4 levels - portrait and landscape versions
-// TODO Should logbook be viewable in the regular levels just showing the guesses and losing health?
 // TODO Add some kind of background style to the text part... change based on time of day?
 // TODO Add main text reveal animation...
 // TODO show loading bar on start page? "Loading artork..."
-// TODO Begin and Accept quest button is annoying small
+// TODO Style all action buttons
 // TODO Improve unicode arrows - use svg instead?
 // TODO In final battle, limit the number of guesses... after a certain number... the beast enrages and only delivers crits?!
 // TODO test and balance damage of final battle. Add a heal mechanic?
 // TODO Add a tutorial?
 // TODO Add variations to all the text
-// TODO On final pre-win or pre-lose screens, there should be a sound and focus on the flashing 0-health bar.
 // TODO Emris idea: add in "kid mode" which would switch to his artwork, make the game easier, and change the text to a younger reading level.
-// TODO Emris idea: add a button to reverse game text and artwork, right/left to left/right
-// TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher.
+// TODO the final screen should be "put on the cloak" or "Continue...?" to loop, where the numbers get higher and higher (new game+).
 // TODO When the player chooses "put on the cloak", fade to black and then a final story full-page screen about you are drawn to a path, etc., action is: Wait for a Traveler
-// TODO Is there a better way to record "A singular strike!" in the logbook upon one-shot (in checkGuess())?
-// TODO When player loops, need to handle numbers with commas and other weird spacing issues that will happen
+// TODO When player loops, need to handle large numbers with commas and other weird spacing issues that will happen
 
 function App() {
   const startingLives = 3;
@@ -104,9 +98,9 @@ function App() {
   const [isPreEndLevel, setIsPreEndLevel] = useState(
     () => localStorage.getItem("isPreEndLevel") === "true"
   );
-  const [battleLog, setBattleLog] = useState(() => {
-    const storedBattleLog = localStorage.getItem("battleLog");
-    return storedBattleLog ? JSON.parse(storedBattleLog) : [];
+  const [questLog, setQuestLog] = useState(() => {
+    const storedQuestLog = localStorage.getItem("questLog");
+    return storedQuestLog ? JSON.parse(storedQuestLog) : [];
   });
   const [playerHealthBar, setPlayerHealthBar] = useState(player.health);
   const [beastHealthBar, setBeastHealthBar] = useState(fellow.health);
@@ -119,8 +113,8 @@ function App() {
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
 
   // useEffect(() => {
-  //   console.log("Battle Log: ", battleLog);
-  // }, [battleLog]);
+  //   console.log("questLog: ", questLog);
+  // }, [questLog]);
 
   // Save game states to local storage when they change
   useEffect(() => {
@@ -152,8 +146,8 @@ function App() {
   }, [announcer]);
 
   useEffect(() => {
-    localStorage.setItem("battleLog", JSON.stringify(battleLog));
-  }, [battleLog]);
+    localStorage.setItem("questLog", JSON.stringify(questLog));
+  }, [questLog]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -577,7 +571,7 @@ function App() {
     });
   }, [screenSize]);
 
-  // Add to the battle log whenever there is leve text, a fellow response, or announcer description
+  // Add to the quest log whenever there is leve text, a fellow response, or announcer description
   useEffect(() => {
     // Prevent duplicate entries
     const level = player.level;
@@ -586,8 +580,8 @@ function App() {
     const guess = player.guesses[turn - 1];
     const logId = `${level}-${subLevel}-${turn}`;
     const levelSubLevel = `${level}-${subLevel}`;
-    const existingId = battleLog.find((log) => log.id === logId);
-    const existingLevel = battleLog.find((log) => log.level === levelSubLevel);
+    const existingId = questLog.find((log) => log.id === logId);
+    const existingLevel = questLog.find((log) => log.level === levelSubLevel);
 
     const currentGameLevel = gameLevels.find(
       (level) =>
@@ -604,8 +598,8 @@ function App() {
         // Handle win/lose
       } else if (subLevel === "win" || subLevel === "lose") {
         if (!existingId && currentGameLevel) {
-          setBattleLog((currentBattleLog) => [
-            ...currentBattleLog,
+          setQuestLog((currentQuestLog) => [
+            ...currentQuestLog,
             {
               id: logId,
               text: `You guess ${guess}.`,
@@ -623,8 +617,8 @@ function App() {
         // Guessing subLevel
       } else {
         if (guess && !existingId) {
-          setBattleLog((currentBattleLog) => [
-            ...currentBattleLog,
+          setQuestLog((currentQuestLog) => [
+            ...currentQuestLog,
             {
               id: logId,
               text: `You guess ${guess}.`,
@@ -652,8 +646,8 @@ function App() {
         if (!existingId && currentGameLevel) {
           // Player one-shot the beast
           if (subLevel === "preWinOneShot") {
-            setBattleLog((currentBattleLog) => [
-              ...currentBattleLog,
+            setQuestLog((currentQuestLog) => [
+              ...currentQuestLog,
               {
                 id: logId,
                 text: `You confidently aim at ${fellow.number}...`,
@@ -679,8 +673,8 @@ function App() {
             ]);
             // Player got lucky and killed the beast
           } else if (subLevel === "preWinLucky") {
-            setBattleLog((currentBattleLog) => [
-              ...currentBattleLog,
+            setQuestLog((currentQuestLog) => [
+              ...currentQuestLog,
               {
                 id: logId,
                 text: `You blindly aim for ${player.guesses[turn - 1]}!`,
@@ -706,8 +700,8 @@ function App() {
             ]);
             // Player is is killed by the beast
           } else if (subLevel === "preLose") {
-            setBattleLog((currentBattleLog) => [
-              ...currentBattleLog,
+            setQuestLog((currentQuestLog) => [
+              ...currentQuestLog,
               {
                 id: logId,
                 text: `You aim for ${player.guesses[turn - 1]}!`,
@@ -741,8 +735,8 @@ function App() {
           player.health !== 0 &&
           fellow.health !== 0
         ) {
-          setBattleLog((currentBattleLog) => [
-            ...currentBattleLog,
+          setQuestLog((currentQuestLog) => [
+            ...currentQuestLog,
             {
               id: logId,
               text: `You aim for ${player.guesses[turn - 1]}!`,
@@ -774,8 +768,8 @@ function App() {
 
   function logNarrationLevel(currentGameLevel) {
     if (currentGameLevel) {
-      setBattleLog((currentBattleLog) => [
-        ...currentBattleLog,
+      setQuestLog((currentQuestLog) => [
+        ...currentQuestLog,
         {
           level: `${currentGameLevel.level}-${currentGameLevel.subLevel}`,
           text: `${currentGameLevel.text1} ${currentGameLevel.text2} ${
@@ -827,7 +821,7 @@ function App() {
         hasAnnouncement: false,
       };
     });
-    setBattleLog([]);
+    setQuestLog([]);
     setPlayerHealthBar(playerStartingHealth);
     setBeastHealthBar(fellowStartingHealth);
     setIsEndSubLevel(false);
@@ -1632,7 +1626,7 @@ function App() {
       ) : (
         <>
           {player.level === 0 ? (
-            <EnterName
+            <EnterNamePage
               setPlayer={setPlayer}
               advancePlayerLevel={advancePlayerLevel}
               name={player.name}
@@ -1652,7 +1646,7 @@ function App() {
                 setBeastHealthBar={setBeastHealthBar}
                 fightHasStarted={fightHasStarted}
                 endGame={endGame}
-                battleLog={battleLog}
+                questLog={questLog}
               />
               <div className="game-text-relative-container">
                 {!isLastLevel && isEndSubLevel ? (

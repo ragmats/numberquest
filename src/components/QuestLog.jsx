@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import CloseX from "./CloseX";
 
-export default function Logbook({ battleLog }) {
-  // Should tell the player level, loops?, guesses, battle log
+export default function QuestLog({ questLog }) {
   const [showLogbook, setShowLogbook] = useState(false);
   const [hasScrollbar, setHasScrollbar] = useState(false);
   const [scrolledToTop, setScrolledToTop] = useState(false);
@@ -10,17 +9,22 @@ export default function Logbook({ battleLog }) {
   const modalRef = useRef(null);
 
   useEffect(() => {
-    const battleLogDiv = modalRef.current;
-    if (battleLogDiv) {
-      setHasScrollbar(battleLogDiv.scrollHeight > battleLogDiv.clientHeight);
+    // Assign current DOM element
+    const questLogDiv = modalRef.current;
+    if (questLogDiv) {
+      // Determines if content inside the modal has a scrollbar
+      setHasScrollbar(questLogDiv.scrollHeight > questLogDiv.clientHeight);
       handleScroll();
-      battleLogDiv.addEventListener("scroll", handleScroll);
+      // Run handleScroll whenever user scrolls the modal
+      questLogDiv.addEventListener("scroll", handleScroll);
+      // Cleanup/remove the event listener when component unmounts or useEffect re-triggers
       return () => {
-        battleLogDiv.removeEventListener("scroll", handleScroll);
+        questLogDiv.removeEventListener("scroll", handleScroll);
       };
     }
+    // Check if the modal's scroll position is at the top
     function handleScroll() {
-      setScrolledToTop(battleLogDiv.scrollTop === 0);
+      setScrolledToTop(questLogDiv.scrollTop === 0);
     }
   }, [showLogbook]);
 
@@ -52,37 +56,40 @@ export default function Logbook({ battleLog }) {
       <button onClick={() => toggleShowLogbook()} className="game-icon-btn">
         <img
           className="game-icon"
-          src={`${import.meta.env.VITE_BASE_URL}img/battlelog-icon.png`}
+          src={`${import.meta.env.VITE_BASE_URL}img/questlog-icon.png`}
         />
       </button>
 
       {showLogbook ? (
-        <div onClick={() => toggleShowLogbook()} className="logbook">
+        <div
+          onClick={() => toggleShowLogbook()}
+          className="quest-log-container"
+        >
           <CloseX handleClose={toggleShowLogbook} />
           <h2>Quest Log</h2>
-          <div className="battle-log" ref={modalRef}>
+          <div className="quest-log" ref={modalRef}>
             {hasScrollbar && !scrolledToTop ? (
-              <div className="battle-log-gradient" />
+              <div className="quest-log-gradient" />
             ) : null}
-            <ul className="battle-log-ul">
-              {battleLog.map((log, index) => {
+            <ul className="quest-log-ul">
+              {questLog.map((log, index) => {
                 return (
                   <li
                     key={index}
                     className={
                       log.type === "health"
-                        ? "battle-log-health-li"
+                        ? "quest-log-health-li"
                         : log.type === "fight"
-                        ? "battle-log-fight-li"
+                        ? "quest-log-fight-li"
                         : log.type === "guess"
-                        ? "battle-log-guess-li"
+                        ? "quest-log-guess-li"
                         : log.type === "win"
-                        ? "battle-log-win-li"
+                        ? "quest-log-win-li"
                         : log.type === "lose"
-                        ? "battle-log-lose-li"
+                        ? "quest-log-lose-li"
                         : log.type === "victory"
-                        ? "battle-log-victory-li"
-                        : "battle-log-other-li"
+                        ? "quest-log-victory-li"
+                        : "quest-log-other-li"
                     }
                   >
                     {log.text}
