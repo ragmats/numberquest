@@ -19,12 +19,10 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
     if (showSettingsMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     // Cleanup event listener
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-
     function handleClickOutside(e) {
       if (
         menu &&
@@ -95,7 +93,7 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
         <h3>OPTIONS</h3>
         <div className="settings-buttons-container">
           <button>Change Name</button>
-          <button>End Game</button>
+          <button>Restart Game</button>
           <button disabled>Kid Mode</button>
           <button disabled>Toggle Sound</button>
           <button>Credits</button>

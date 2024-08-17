@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import CloseX from "./CloseX";
 
 export default function QuestLog({ questLog }) {
-  const [showLogbook, setShowLogbook] = useState(false);
+  const [showQuestLog, setShowQuestLog] = useState(false);
   const [hasScrollbar, setHasScrollbar] = useState(false);
   const [scrolledToTop, setScrolledToTop] = useState(false);
 
   const modalRef = useRef(null);
+  const questLogBtnRef = useRef(null);
 
   useEffect(() => {
     // Assign current DOM element
@@ -26,46 +27,64 @@ export default function QuestLog({ questLog }) {
     function handleScroll() {
       setScrolledToTop(questLogDiv.scrollTop === 0);
     }
-  }, [showLogbook]);
+  }, [showQuestLog]);
 
   useEffect(() => {
-    if (showLogbook) {
-      // Scroll to bottom of logbook (most recent entry)
-      if (modalRef.current) {
-        modalRef.current.scrollTo({
-          top: modalRef.current.scrollHeight,
-          behavior: "smooth",
-        });
-      }
-
-      // Close logbook with Escape Key
+    const modal = modalRef.current;
+    if (modal && showQuestLog) {
+      // Scroll to bottom of quest log (most recent entry)
+      modalRef.current.scrollTo({
+        top: modalRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+      // Close quest log with Escape Key
       function closeOnEscape(e) {
-        if (e.key === "Escape") setShowLogbook(!showLogbook);
+        if (e.key === "Escape") setShowQuestLog(false);
       }
       window.addEventListener("keydown", closeOnEscape);
       return () => window.removeEventListener("keydown", closeOnEscape);
     }
-  }, [showLogbook]);
+  }, [showQuestLog]);
 
-  function toggleShowLogbook() {
-    setShowLogbook(!showLogbook);
+  useEffect(() => {
+    const questLogBtn = questLogBtnRef.current;
+    // Add even listener for a click anywhere except the map button
+    if (showQuestLog) {
+      document.addEventListener("mousedown", handleClickAnywhere);
+    }
+    // Cleanup event listener
+    return () => {
+      document.removeEventListener("mousedown", handleClickAnywhere);
+    };
+    function handleClickAnywhere(e) {
+      if (showQuestLog && questLogBtn && !questLogBtn.contains(e.target))
+        setShowQuestLog(false);
+    }
+  }, [showQuestLog]);
+
+  function toggleshowQuestLog() {
+    setShowQuestLog(!showQuestLog);
   }
 
   return (
     <>
-      <button onClick={() => toggleShowLogbook()} className="game-icon-btn">
+      <button
+        ref={questLogBtnRef}
+        onClick={() => toggleshowQuestLog()}
+        className="game-icon-btn"
+      >
         <img
           className="game-icon"
           src={`${import.meta.env.VITE_BASE_URL}img/questlog-icon.png`}
         />
       </button>
 
-      {showLogbook ? (
+      {showQuestLog ? (
         <div
-          onClick={() => toggleShowLogbook()}
+          // onClick={() => toggleshowQuestLog()}
           className="quest-log-container"
         >
-          <CloseX handleClose={toggleShowLogbook} />
+          <CloseX handleClose={toggleshowQuestLog} />
           <h2>Quest Log</h2>
           <div className="quest-log" ref={modalRef}>
             {hasScrollbar && !scrolledToTop ? (
