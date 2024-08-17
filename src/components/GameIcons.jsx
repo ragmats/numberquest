@@ -37,7 +37,7 @@ export default function GameIcons({
         <button
           ref={mapBtnRef}
           onClick={handleMapClick}
-          className="game-icon-btn"
+          className={mapIsOpen ? "game-icon-btn menu-open" : "game-icon-btn"}
         >
           <img
             className="game-icon"

@@ -162,8 +162,9 @@ a {
   cursor: pointer;
 }
 
-.game-icon:hover {
-  filter: brightness(150%);
+.menu-open {
+  filter: drop-shadow(0px 0px 4px white) brightness(125%);
+  /* filter: brightness(150%); */
 }
 
 .map-image-container {

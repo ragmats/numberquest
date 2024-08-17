@@ -71,7 +71,7 @@ export default function QuestLog({ questLog }) {
       <button
         ref={questLogBtnRef}
         onClick={() => toggleshowQuestLog()}
-        className="game-icon-btn"
+        className={showQuestLog ? "game-icon-btn menu-open" : "game-icon-btn"}
       >
         <img
           className="game-icon"

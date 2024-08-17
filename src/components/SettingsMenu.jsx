@@ -68,7 +68,12 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
 
   return (
     <>
-      <button onClick={toggleSettingsMenu} className="game-icon-btn">
+      <button
+        onClick={toggleSettingsMenu}
+        className={
+          showSettingsMenu ? "game-icon-btn menu-open" : "game-icon-btn"
+        }
+      >
         <img
           ref={imgRef}
           className="game-icon"
