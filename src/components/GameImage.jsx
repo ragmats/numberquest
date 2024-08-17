@@ -15,6 +15,8 @@ export default function GameImage({
   fightHasStarted,
   endGame,
   questLog,
+  screenHeight,
+  screenWidth,
 }) {
   const [imgName, setImgName] = useState("1-1.webp");
 
@@ -74,6 +76,8 @@ export default function GameImage({
         fellow={fellow}
         isLastLevel={isLastLevel}
         questLog={questLog}
+        screenHeight={screenHeight}
+        screenWidth={screenWidth}
       />
     </div>
   );

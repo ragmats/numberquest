@@ -9,7 +9,11 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO add a character limit to name. Make the name input a component to be re-used.
+// ! TODO close menu when clicked outside menu
+// ! TODO open change name modal (and close menu)
+// ! TODO open confirmation modal for end game (and close menu)
+// ! TODO open credits modal (and close menu)
+// ! TODO Add icons to menu?
 // ! TODO Crete settings menu: change name, end game, kid mode toggle, sound toggle, credits, contact
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
@@ -1647,6 +1651,8 @@ function App() {
                 fightHasStarted={fightHasStarted}
                 endGame={endGame}
                 questLog={questLog}
+                screenHeight={screenHeight}
+                screenWidth={screenWidth}
               />
               <div className="game-text-relative-container">
                 {!isLastLevel && isEndSubLevel ? (

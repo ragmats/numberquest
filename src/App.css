@@ -174,6 +174,48 @@ a {
   z-index: 2;
 }
 
+.settings-menu-container {
+  /* border: 1px solid black; */
+  display: flex;
+  flex-direction: column;
+  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+  position: fixed;
+  background-color: lightgray;
+  color: black;
+  text-shadow: none;
+  right: 0.5em;
+  padding: 2em;
+  gap: 1em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+}
+
+.settings-buttons-container {
+  /* border: 1px solid red; */
+  display: flex;
+  text-align: left;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.settings-buttons-container button {
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  pointer-events: auto;
+  font-size: 1.15em;
+}
+
+.settings-buttons-container button:enabled {
+  cursor: pointer;
+}
+
+.settings-buttons-container button:hover:enabled {
+  color: red;
+}
+
 .game-text-relative-container {
   /* border: 1px solid green; */
   min-width: 45%;

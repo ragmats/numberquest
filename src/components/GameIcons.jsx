@@ -1,8 +1,16 @@
 import { useState } from "react";
 import CloseX from "./CloseX";
 import QuestLog from "./QuestLog";
+import SettingsMenu from "./SettingsMenu";
 
-export default function GameIcons({ player, fellow, isLastLevel, questLog }) {
+export default function GameIcons({
+  player,
+  fellow,
+  isLastLevel,
+  questLog,
+  screenHeight,
+  screenWidth,
+}) {
   const [mapIsOpen, setMapIsOpen] = useState(false);
 
   function handleMapClick() {
@@ -36,12 +44,7 @@ export default function GameIcons({ player, fellow, isLastLevel, questLog }) {
             src={`${import.meta.env.VITE_BASE_URL}img/map-icon.png`}
           />
         </button>
-        <button className="game-icon-btn">
-          <img
-            className="game-icon"
-            src={`${import.meta.env.VITE_BASE_URL}img/gear-icon.png`}
-          />
-        </button>
+        <SettingsMenu screenHeight={screenHeight} screenWidth={screenWidth} />
       </div>
     </>
   );
