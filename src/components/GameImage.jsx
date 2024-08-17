@@ -73,8 +73,6 @@ export default function GameImage({
       <button onClick={endGame}>Restart</button>
       <GameIcons
         player={player}
-        fellow={fellow}
-        isLastLevel={isLastLevel}
         questLog={questLog}
         screenHeight={screenHeight}
         screenWidth={screenWidth}

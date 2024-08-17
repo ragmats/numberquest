@@ -1,15 +1,13 @@
 import { useState } from "react";
-import CloseX from "./CloseX";
+import MapModal from "./MapModal";
 import QuestLog from "./QuestLog";
 import SettingsMenu from "./SettingsMenu";
 
 export default function GameIcons({
-  player,
-  fellow,
-  isLastLevel,
   questLog,
   screenHeight,
   screenWidth,
+  player,
 }) {
   const [mapIsOpen, setMapIsOpen] = useState(false);
 
@@ -19,17 +17,11 @@ export default function GameIcons({
 
   return (
     <>
-      {mapIsOpen ? (
-        <div onClick={handleMapClick} className="map-image-container">
-          <CloseX handleClose={handleMapClick} />
-          <img
-            className="map-image"
-            src={`${import.meta.env.VITE_BASE_URL}img/map_level${
-              player.level
-            }.svg`}
-          />
-        </div>
-      ) : null}
+      <MapModal
+        handleMapClick={handleMapClick}
+        mapIsOpen={mapIsOpen}
+        player={player}
+      />
       <div className="game-icons-container">
         {/* <button className="game-icon-btn">
           <img

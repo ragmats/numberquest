@@ -190,6 +190,7 @@ a {
   pointer-events: none;
   opacity: 0;
   transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+  z-index: 100;
 }
 
 .settings-buttons-container {
@@ -204,7 +205,6 @@ a {
   border: none;
   background-color: transparent;
   text-align: left;
-  pointer-events: auto;
   font-size: 1.15em;
 }
 

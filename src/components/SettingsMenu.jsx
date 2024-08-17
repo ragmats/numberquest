@@ -9,6 +9,43 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
   const [isPortrait, setIsPortrait] = useState(screenHeight > screenWidth);
 
   const imgRef = useRef(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const gearIcon = imgRef.current;
+    const menu = menuRef.current;
+
+    // Add even listener for a click outside the menu
+    if (showSettingsMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    // Cleanup event listener
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+
+    function handleClickOutside(e) {
+      if (
+        menu &&
+        gearIcon &&
+        !menu.contains(e.target) &&
+        !gearIcon.contains(e.target)
+      )
+        setShowSettingsMenu(false);
+    }
+  }, [showSettingsMenu]);
+
+  useEffect(() => {
+    if (showSettingsMenu) {
+      // Close logbook with Escape Key
+      window.addEventListener("keydown", closeOnEscape);
+      return () => window.removeEventListener("keydown", closeOnEscape);
+    }
+    function closeOnEscape(e) {
+      if (e.key === "Escape") setShowSettingsMenu(false);
+    }
+  }, [showSettingsMenu]);
 
   useEffect(() => {
     const gearIcon = imgRef.current;
@@ -27,14 +64,6 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
     setIconMiddleBottomPosition(screenHeight - iconMiddleTopPosition);
   }, [iconMiddleTopPosition, screenHeight]);
 
-  useEffect(() => {
-    console.log("iconMiddleTopPosition: ", iconMiddleTopPosition);
-  }, [iconMiddleTopPosition]);
-
-  useEffect(() => {
-    console.log("isPortrait: ", isPortrait);
-  }, [isPortrait]);
-
   function toggleSettingsMenu() {
     setShowSettingsMenu(!showSettingsMenu);
   }
@@ -49,11 +78,13 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
         />
       </button>
       <div
+        ref={menuRef}
         className="settings-menu-container"
         style={{
           top: isPortrait ? `${iconMiddleTopPosition}px` : "auto",
           bottom: isPortrait ? "auto" : `${iconMiddleBottomPosition}px`,
           opacity: showSettingsMenu ? 1 : 0,
+          pointerEvents: showSettingsMenu ? "auto" : "none",
           transform: showSettingsMenu
             ? isPortrait
               ? `translateY(${iconHeight - iconHeight / 3}px)`
