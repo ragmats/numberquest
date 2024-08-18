@@ -186,12 +186,16 @@ a {
   color: black;
   text-shadow: none;
   right: 0.5em;
-  padding: 2em;
+  padding: 1em 0;
   gap: 1em;
   pointer-events: none;
   opacity: 0;
   transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
   z-index: 10;
+}
+.settings-menu-container h3 {
+  /* border: 1px solid red; */
+  padding-left: 2em;
 }
 
 .settings-buttons-container {
@@ -207,6 +211,7 @@ a {
   background-color: transparent;
   text-align: left;
   font-size: 1.15em;
+  padding: 0 2em;
 }
 
 .settings-buttons-container button:enabled {
@@ -214,7 +219,8 @@ a {
 }
 
 .settings-buttons-container button:hover:enabled {
-  color: red;
+  /* color: red; */
+  background-color: darkgray;
 }
 
 .restart-confirmation-container {

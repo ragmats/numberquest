@@ -9,17 +9,14 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Pre-load map images, and consider using png instead of SVG if file size is less.
 // ! TODO open change-name modal (and close menu)
-// ! TODO open confirmation modal for end game (and close menu)
 // ! TODO open credits modal (and close menu)
 // ! TODO Add icons to menu?
-// ! TODO Crete settings menu: change name, end game, kid mode toggle, sound toggle, credits, contact
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
 // ! TODO Refactor, add function descriptions, and put some functions into separate modules?
 // ! TODO Proof all the text
-// ! Remove dev text and number answer, launch of on website
+// ! Remove dev text and number answer, launch on website
 // TODO First image loading needs to be hidden somehow.
 // TODO When map is open, put a dimming overlay behind it
 // TODO When page reloads, a broken image icon flashes behind the art
