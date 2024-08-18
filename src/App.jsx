@@ -9,8 +9,8 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO close menu when clicked outside menu
-// ! TODO open change name modal (and close menu)
+// ! TODO Pre-load map images, and consider using png instead of SVG if file size is less.
+// ! TODO open change-name modal (and close menu)
 // ! TODO open confirmation modal for end game (and close menu)
 // ! TODO open credits modal (and close menu)
 // ! TODO Add icons to menu?
@@ -115,6 +115,13 @@ function App() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
+
+  const mapImgPaths = [
+    `${import.meta.env.VITE_BASE_URL}img/map_level1.svg`,
+    `${import.meta.env.VITE_BASE_URL}img/map_level2.svg`,
+    `${import.meta.env.VITE_BASE_URL}img/map_level3.svg`,
+    `${import.meta.env.VITE_BASE_URL}img/map_level4.svg`,
+  ];
 
   // useEffect(() => {
   //   console.log("questLog: ", questLog);
@@ -566,14 +573,21 @@ function App() {
     },
   ];
 
-  // Pre-load all images that are most appropriate for the current screen size
+  // Pre-load all game art images that are most appropriate for the current screen size
   useEffect(() => {
-    // console.log(screenSize);
     gameLevels.forEach((level) => {
       const img = new Image();
       img.src = level.image; // Trigger browser to start loading the image
     });
   }, [screenSize]);
+
+  // Pre-load map images when component first mounts
+  useEffect(() => {
+    mapImgPaths.forEach((mapImgPath) => {
+      const img = new Image();
+      img.src = mapImgPath; // Trigger browser to start loading the image
+    });
+  }, []);
 
   // Add to the quest log whenever there is leve text, a fellow response, or announcer description
   useEffect(() => {
