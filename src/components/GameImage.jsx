@@ -70,12 +70,12 @@ export default function GameImage({
         Player level {player.level}, Player subLevel {player.subLevel}
       </p>
       <p>The number is {fellow.number}.</p>
-      <button onClick={endGame}>Restart</button>
       <GameIcons
         player={player}
         questLog={questLog}
         screenHeight={screenHeight}
         screenWidth={screenWidth}
+        endGame={endGame}
       />
     </div>
   );

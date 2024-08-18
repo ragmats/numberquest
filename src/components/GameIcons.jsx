@@ -8,6 +8,7 @@ export default function GameIcons({
   screenHeight,
   screenWidth,
   player,
+  endGame,
 }) {
   const [mapIsOpen, setMapIsOpen] = useState(false);
 
@@ -44,7 +45,11 @@ export default function GameIcons({
             src={`${import.meta.env.VITE_BASE_URL}img/map-icon.png`}
           />
         </button>
-        <SettingsMenu screenHeight={screenHeight} screenWidth={screenWidth} />
+        <SettingsMenu
+          screenHeight={screenHeight}
+          screenWidth={screenWidth}
+          endGame={endGame}
+        />
       </div>
     </>
   );

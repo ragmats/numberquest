@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import RestartConfirmation from "./RestartConfirmation";
+import restartConfirmation from "./RestartConfirmation";
 
-export default function SettingsMenu({ screenHeight, screenWidth }) {
+export default function SettingsMenu({ screenHeight, screenWidth, endGame }) {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [iconTop, setIconTop] = useState(0);
   const [iconHeight, setIconHeight] = useState(0);
   const [iconMiddleTopPosition, setIconMiddleTopPosition] = useState(0);
   const [iconMiddleBottomPosition, setIconMiddleBottomPosition] = useState(0);
   const [isPortrait, setIsPortrait] = useState(screenHeight > screenWidth);
+  const [showRestartConfirmation, setShowRestartConfirmation] = useState(false);
 
   const imgRef = useRef(null);
   const menuRef = useRef(null);
@@ -66,6 +69,11 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
     setShowSettingsMenu(!showSettingsMenu);
   }
 
+  function handleRestartClick() {
+    setShowSettingsMenu(false);
+    setShowRestartConfirmation(true);
+  }
+
   return (
     <>
       <button
@@ -98,12 +106,18 @@ export default function SettingsMenu({ screenHeight, screenWidth }) {
         <h3>OPTIONS</h3>
         <div className="settings-buttons-container">
           <button>Change Name</button>
-          <button>Restart Game</button>
+          <button onClick={handleRestartClick}>Restart Game</button>
           <button disabled>Kid Mode</button>
           <button disabled>Toggle Sound</button>
-          <button>Credits</button>
+          <button>About</button>
         </div>
       </div>
+      {showRestartConfirmation ? (
+        <RestartConfirmation
+          setShowRestartConfirmation={setShowRestartConfirmation}
+          endGame={endGame}
+        />
+      ) : null}
     </>
   );
 }
