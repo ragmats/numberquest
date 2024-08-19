@@ -223,7 +223,8 @@ a {
   background-color: darkgray;
 }
 
-.restart-confirmation-container {
+.restart-confirmation-container,
+.change-name-container {
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -242,6 +243,15 @@ a {
   width: 250px;
 }
 
+.change-name-container {
+  width: 300px;
+  padding-top: 1.5em;
+}
+
+.change-name-container .error-text {
+  font-size: 0.75em;
+}
+
 .btns-container {
   display: flex;
   width: 100%;
@@ -253,6 +263,13 @@ a {
   font-size: 1em;
   padding: 0.25em;
   width: 50%;
+}
+
+.restart-confirmation-container,
+button {
+  font-size: 1em;
+  padding: 0.25em;
+  /* width: 50%; */
 }
 
 .game-text-relative-container {

@@ -1,20 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function EnterNameForm({ setPlayer, name, submit, buttonText }) {
+  const [tempName, setTempName] = useState(name);
   const [errorText, setErrorText] = useState("");
   const inputRef = useRef(null);
 
   // Show error text if name is too long
   useEffect(() => {
-    if (name.length >= 20)
+    if (tempName.length >= 20)
       setErrorText("Name must be less than 20 characters.");
     else setErrorText("");
-  }, [name]);
+  }, [tempName]);
 
   function handleChange(name) {
-    setPlayer((currentPlayer) => {
-      return { ...currentPlayer, name: name };
-    });
+    setTempName(name);
   }
 
   function handleClick() {
@@ -27,9 +26,14 @@ export default function EnterNameForm({ setPlayer, name, submit, buttonText }) {
   // Only submit name if it meets the length requirements
   function handleSubmit(e) {
     e.preventDefault();
-    if (name.length === 0)
+    if (tempName.length === 0)
       setErrorText("You must enter something... Traveler?");
-    else if (name.length < 20) submit();
+    else if (tempName.length < 20) {
+      setPlayer((currentPlayer) => {
+        return { ...currentPlayer, name: tempName };
+      });
+      submit();
+    }
   }
 
   return (
@@ -39,7 +43,7 @@ export default function EnterNameForm({ setPlayer, name, submit, buttonText }) {
         ref={inputRef}
         onClick={handleClick}
         onChange={(e) => handleChange(e.target.value)}
-        value={name}
+        value={tempName}
       />
       <button>{buttonText}</button>
       <p

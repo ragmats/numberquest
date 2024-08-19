@@ -5,6 +5,7 @@ import HealthBar from "./HealthBar";
 export default function GameImage({
   gameLevels,
   player,
+  setPlayer,
   fellow,
   fellowStartingHealth,
   isEndSubLevel,
@@ -76,6 +77,7 @@ export default function GameImage({
         screenHeight={screenHeight}
         screenWidth={screenWidth}
         endGame={endGame}
+        setPlayer={setPlayer}
       />
     </div>
   );

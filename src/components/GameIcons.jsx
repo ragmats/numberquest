@@ -9,6 +9,7 @@ export default function GameIcons({
   screenWidth,
   player,
   endGame,
+  setPlayer,
 }) {
   const [mapIsOpen, setMapIsOpen] = useState(false);
 
@@ -49,6 +50,8 @@ export default function GameIcons({
           screenHeight={screenHeight}
           screenWidth={screenWidth}
           endGame={endGame}
+          setPlayer={setPlayer}
+          name={player.name}
         />
       </div>
     </>

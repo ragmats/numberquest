@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from "react";
+import ChangeName from "./ChangeName";
 import RestartConfirmation from "./RestartConfirmation";
-import restartConfirmation from "./RestartConfirmation";
 
-export default function SettingsMenu({ screenHeight, screenWidth, endGame }) {
+export default function SettingsMenu({
+  screenHeight,
+  screenWidth,
+  endGame,
+  setPlayer,
+  name,
+}) {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [iconTop, setIconTop] = useState(0);
   const [iconHeight, setIconHeight] = useState(0);
@@ -10,6 +16,7 @@ export default function SettingsMenu({ screenHeight, screenWidth, endGame }) {
   const [iconMiddleBottomPosition, setIconMiddleBottomPosition] = useState(0);
   const [isPortrait, setIsPortrait] = useState(screenHeight > screenWidth);
   const [showRestartConfirmation, setShowRestartConfirmation] = useState(false);
+  const [showChangeName, setShowChangeName] = useState(false);
 
   const imgRef = useRef(null);
   const menuRef = useRef(null);
@@ -69,9 +76,16 @@ export default function SettingsMenu({ screenHeight, screenWidth, endGame }) {
     setShowSettingsMenu(!showSettingsMenu);
   }
 
+  function handleChangeNameClick() {
+    setShowSettingsMenu(false);
+    setShowChangeName(true);
+    setShowRestartConfirmation(false);
+  }
+
   function handleRestartClick() {
     setShowSettingsMenu(false);
     setShowRestartConfirmation(true);
+    setShowChangeName(false);
   }
 
   return (
@@ -105,13 +119,20 @@ export default function SettingsMenu({ screenHeight, screenWidth, endGame }) {
       >
         <h3>OPTIONS</h3>
         <div className="settings-buttons-container">
-          <button>Change Name</button>
+          <button onClick={handleChangeNameClick}>Change Name</button>
           <button onClick={handleRestartClick}>Restart Game</button>
           <button disabled>Kid Mode</button>
           <button disabled>Toggle Sound</button>
           <button>About</button>
         </div>
       </div>
+      {showChangeName ? (
+        <ChangeName
+          setShowChangeName={setShowChangeName}
+          setPlayer={setPlayer}
+          name={name}
+        />
+      ) : null}
       {showRestartConfirmation ? (
         <RestartConfirmation
           setShowRestartConfirmation={setShowRestartConfirmation}

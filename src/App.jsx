@@ -781,6 +781,11 @@ function App() {
     announcer.description,
   ]);
 
+  // Add to the quest log whenever the player changes name
+  useEffect(() => {
+    // Log the name change without duplicates
+  }, [player.name]);
+
   function logNarrationLevel(currentGameLevel) {
     if (currentGameLevel) {
       setQuestLog((currentQuestLog) => [
@@ -1652,6 +1657,7 @@ function App() {
                 // TODO Clean up unused props after game art is put in
                 gameLevels={gameLevels}
                 player={player}
+                setPlayer={setPlayer}
                 fellow={fellow}
                 fellowStartingHealth={fellowStartingHealth}
                 isEndSubLevel={isEndSubLevel}
