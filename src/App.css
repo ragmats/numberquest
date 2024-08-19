@@ -514,40 +514,40 @@ button {
   padding: 1em;
 }
 
+.quest-log-ul li {
+  /* border: 1px solid red; */
+  /* margin-right: 0.25em; */
+}
+
+.quest-log-name-li::before {
+  content: "🌌";
+}
 .quest-log-fight-li::before {
   content: "⚔️";
-  margin-right: 0.5em;
 }
 
 .quest-log-other-li::before {
   content: "💬";
-  margin-right: 0.25em;
 }
 
 .quest-log-guess-li::before {
   content: "❓";
-  margin-right: 0.25em;
 }
 
 .quest-log-health-li::before {
   content: "❤️";
-  margin-right: 0.5em;
-  /* margin-left: 1em; */
 }
 
 .quest-log-win-li::before {
   content: "⭐";
-  margin-right: 0.25em;
 }
 
 .quest-log-victory-li::before {
   content: "🏆";
-  margin-right: 0.25em;
 }
 
 .quest-log-lose-li::before {
   content: "💀";
-  margin-right: 0.25em;
 }
 
 .hearts-container {

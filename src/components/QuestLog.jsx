@@ -96,7 +96,9 @@ export default function QuestLog({ questLog }) {
                   <li
                     key={index}
                     className={
-                      log.type === "health"
+                      log.type === "name"
+                        ? "quest-log-name-li"
+                        : log.type === "health"
                         ? "quest-log-health-li"
                         : log.type === "fight"
                         ? "quest-log-fight-li"

@@ -9,13 +9,13 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO open change-name modal (and close menu)
 // ! TODO open credits modal (and close menu)
 // ! TODO Add icons to menu?
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
 // ! TODO Refactor, add function descriptions, and put some functions into separate modules?
 // ! TODO Proof all the text
+// ! TODO Test everything in incognito
 // ! Remove dev text and number answer, launch on website
 // TODO First image loading needs to be hidden somehow.
 // TODO When map is open, put a dimming overlay behind it
@@ -783,7 +783,31 @@ function App() {
 
   // Add to the quest log whenever the player changes name
   useEffect(() => {
-    // Log the name change without duplicates
+    // Check the last type=name entry and check if it is the same as player.name to prevent duplicats
+    const lastName = [...questLog].reverse().find((log) => log.type === "name");
+
+    // If there is no entry, add the first name entry
+    if (!lastName) {
+      setQuestLog((currentQuestLog) => [
+        ...currentQuestLog,
+        {
+          text: `Welcome, ${player.name}.`,
+          type: "name",
+          name: player.name,
+        },
+      ]);
+    } else {
+      if (questLog.length > 0 && lastName.name !== player.name) {
+        setQuestLog((currentQuestLog) => [
+          ...currentQuestLog,
+          {
+            text: `You are reborn as ${player.name}.`,
+            type: "name",
+            name: player.name,
+          },
+        ]);
+      }
+    }
   }, [player.name]);
 
   function logNarrationLevel(currentGameLevel) {
