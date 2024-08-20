@@ -9,12 +9,16 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// ! TODO Change name modal needs a cancel button
+// ! TODO Icons are too small and gap is too big on my phone?
+// ! TODO Icons are totally messed up on Firefox (huge gaps)
 // ! TODO open credits modal (and close menu)
 // ! TODO Add icons to menu?
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
 // ! TODO Refactor, add function descriptions, and put some functions into separate modules?
 // ! TODO Proof all the text
+// ! TODO Switch to subdomain numberquest.ragmats.com
 // ! TODO Test everything in incognito
 // ! Remove dev text and number answer, launch on website
 // TODO First image loading needs to be hidden somehow.
@@ -789,12 +793,12 @@ function App() {
     // If there is no entry, add the first name entry
     if (!lastName) {
       setQuestLog((currentQuestLog) => [
-        ...currentQuestLog,
         {
           text: `Welcome, ${player.name}.`,
           type: "name",
           name: player.name,
         },
+        ...currentQuestLog,
       ]);
     } else {
       if (questLog.length > 0 && lastName.name !== player.name) {
@@ -808,7 +812,7 @@ function App() {
         ]);
       }
     }
-  }, [player.name]);
+  }, [player.name, player.level]);
 
   function logNarrationLevel(currentGameLevel) {
     if (currentGameLevel) {
