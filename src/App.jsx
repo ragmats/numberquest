@@ -116,11 +116,12 @@ function App() {
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
   const [screenSize, setScreenSize] = useState(null); // sm, med, lg
 
-  const mapImgPaths = [
+  const imgPaths = [
     `${import.meta.env.VITE_BASE_URL}img/map_level1.svg`,
     `${import.meta.env.VITE_BASE_URL}img/map_level2.svg`,
     `${import.meta.env.VITE_BASE_URL}img/map_level3.svg`,
     `${import.meta.env.VITE_BASE_URL}img/map_level4.svg`,
+    `${import.meta.env.VITE_BASE_URL}img/numberquest_logo_p2.png`,
   ];
 
   // useEffect(() => {
@@ -581,11 +582,11 @@ function App() {
     });
   }, [screenSize]);
 
-  // Pre-load map images when component first mounts
+  // Pre-load other images when component first mounts
   useEffect(() => {
-    mapImgPaths.forEach((mapImgPath) => {
+    imgPaths.forEach((imgPath) => {
       const img = new Image();
-      img.src = mapImgPath; // Trigger browser to start loading the image
+      img.src = imgPath; // Trigger browser to start loading the image
     });
   }, []);
 
