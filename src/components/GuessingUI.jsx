@@ -93,10 +93,11 @@ export default function GuessingUI({
           >
             Clear
           </button>
+          <div className="your-guess">{player.guess}</div>
           <button onClick={() => checkGuess()}>{level.action}</button>
         </div>
       ) : null}
-      <div className="your-guess">{player.guess}</div>
+      {/* <div className="your-guess">{player.guess}</div> */}
       <div
         style={{
           gap: `${buttonGap}px`,

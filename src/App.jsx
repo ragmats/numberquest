@@ -9,14 +9,15 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Map is too big on small landscape
+// ! TODO Landscape text on very narrow screens needs a media query (less than 350px?).
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
 // ! TODO Refactor, add function descriptions, and put some functions into separate modules?
 // ! TODO Proof all the text
 // ! TODO Switch to subdomain numberquest.ragmats.com
-// ! TODO Test everything in incognito
+// ! TODO Test everything in incognito, in every browser
 // ! Remove dev text and number answer, launch on website
+// TODO Spacing on name forms is weird because of error text. Make it position absolute like a tooltip?
 // TODO Add icons to menu?
 // TODO Add icons to credits?
 // TODO First image loading needs to be hidden somehow.

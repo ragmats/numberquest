@@ -55,8 +55,8 @@ a:hover {
   width: 100%;
   height: 100%;
   padding: 1em;
-  font-size: 2em;
-  gap: 1em;
+  font-size: 1.5em;
+  gap: 0.75em;
   text-align: center;
 }
 
@@ -362,7 +362,7 @@ a:hover {
   /* flex-direction: column; */
   /* justify-content: center; */
   /* align-items: center; */
-  height: 60%;
+  height: 55%;
   width: 100%;
   /* font-size: 2em; */
   /* font-size: 16px; */
@@ -376,6 +376,22 @@ a:hover {
   padding: 0 2em;
   /* gap: 1em; */
   z-index: -1;
+}
+
+.game-text-non-end {
+  /* border: 1px solid blue; */
+  height: 60%;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -35%);
+}
+
+.game-text-pre-end {
+  /* border: 1px solid red; */
+  height: 50%;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -55%);
 }
 
 .game-text-text {
@@ -432,6 +448,7 @@ a:hover {
 .your-guess {
   /* border: 1px solid red; */
   height: 35px;
+  width: 75px;
   line-height: 1em;
   /* width: 100px; */
   display: flex;
@@ -482,7 +499,7 @@ a:hover {
 .guess-btns button,
 .action-btn button {
   font-size: 1.25em;
-  padding: 0.5em;
+  padding: 0.25em;
 }
 
 .quest-log-container {
@@ -810,14 +827,28 @@ a:hover {
   }
 
   .game-text {
-    /* border: 1px solid purple; */
-    /* height: 73%; */
-    /* font-size: 5.5vw; */
-    /* top: 10%; */
+    /* border: 1px solid green; */
+    height: 60%;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -55%);
     padding: 0 1em;
+  }
+
+  .game-text-non-end {
+    /* border: 1px solid blue; */
     height: 70%;
-    /* top: 50%; */
-    /* transform: translate(-50%, -50%); */
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -35%);
+  }
+
+  .game-text-pre-end {
+    /* border: 1px solid red; */
+    height: 60%;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -55%);
   }
 
   .game-text-text {
@@ -849,8 +880,8 @@ a:hover {
     /* border: 1px solid red; */
     /* height: 100%; */
     /* width: 100px; */
-    height: 1em;
-    font-size: 1.5em;
+    height: 100%;
+    font-size: 2em;
   }
 
   .number-btns-container {
@@ -886,6 +917,32 @@ a:hover {
   }
 }
 
+@media ((orientation: landscape) and (height < 400px)) {
+  .game-text {
+    /* border: 1px solid green; */
+    height: 40%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .game-text-non-end {
+    /* border: 1px solid blue; */
+    height: 50%;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -35%);
+  }
+
+  .game-text-pre-end {
+    /* border: 1px solid red; */
+    height: 50%;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+  }
+}
+
 @media ((orientation: landscape) and (height < 600px) and (width < 1100px)) {
   /* .quest-log-container {
     position: fixed;
@@ -895,6 +952,16 @@ a:hover {
     height: 80%;
     min-width: 85%;
   } */
+
+  .guessing-ui-container {
+    /* border: 1px solid orange; */
+    gap: 0.35em;
+  }
+
+  .your-guess {
+    height: 100%;
+    font-size: 2em;
+  }
 }
 
 @media ((orientation: landscape) and (width < 1000px)) {

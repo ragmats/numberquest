@@ -79,7 +79,17 @@ export default function GameText({
   }, [isEndSubLevel, isPreEndLevel]);
 
   return (
-    <div ref={containerRef} key={crypto.randomUUID()} className="game-text">
+    <div
+      ref={containerRef}
+      key={crypto.randomUUID()}
+      className={
+        isEndSubLevel
+          ? "game-text"
+          : isPreEndLevel
+          ? "game-text game-text-pre-end"
+          : "game-text game-text-non-end"
+      }
+    >
       <div
         ref={textContainerRef}
         className="game-text-text"
