@@ -277,9 +277,16 @@ a:hover {
   max-width: 500px;
   width: 85%;
   max-width: 500px;
+  padding: 0;
+}
+
+.about-content {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding: 1em;
+  align-items: center;
+  gap: 1em;
 }
 
 .about-img {
