@@ -926,7 +926,7 @@ a:hover {
 
 @media ((orientation: landscape) and (height < 400px)) {
   .game-text {
-    /* border: 1px solid green; */
+    border: 1px solid green;
     height: 40%;
     top: 50%;
     left: 50%;
@@ -934,7 +934,7 @@ a:hover {
   }
 
   .game-text-non-end {
-    /* border: 1px solid blue; */
+    border: 1px solid blue;
     height: 50%;
     top: 35%;
     left: 50%;
@@ -942,7 +942,7 @@ a:hover {
   }
 
   .game-text-pre-end {
-    /* border: 1px solid red; */
+    border: 1px solid red;
     height: 50%;
     top: 55%;
     left: 50%;
