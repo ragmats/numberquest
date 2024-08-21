@@ -9,8 +9,7 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Add icons to menu?
-// ! TODO Add icons to credits?
+// ! TODO Map is too big on small landscape
 // ! TODO Text areas are too big, and should change when there is not UI
 // ! TODO All text needs to be bigger on high-rez screens... (tablet view)
 // ! TODO Refactor, add function descriptions, and put some functions into separate modules?
@@ -18,6 +17,8 @@ import Hearts from "./components/Hearts";
 // ! TODO Switch to subdomain numberquest.ragmats.com
 // ! TODO Test everything in incognito
 // ! Remove dev text and number answer, launch on website
+// TODO Add icons to menu?
+// TODO Add icons to credits?
 // TODO First image loading needs to be hidden somehow.
 // TODO When map is open, put a dimming overlay behind it
 // TODO When page reloads, a broken image icon flashes behind the art

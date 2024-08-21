@@ -881,8 +881,8 @@ a:hover {
 
 @media (orientation: landscape) {
   .map-image {
-    height: 95vh;
     width: auto;
+    height: 95svh;
   }
 }
 
