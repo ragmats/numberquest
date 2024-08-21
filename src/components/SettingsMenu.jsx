@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ChangeName from "./ChangeName";
 import RestartConfirmation from "./RestartConfirmation";
+import About from "./About";
 
 export default function SettingsMenu({
   screenHeight,
@@ -17,6 +18,7 @@ export default function SettingsMenu({
   const [isPortrait, setIsPortrait] = useState(screenHeight > screenWidth);
   const [showRestartConfirmation, setShowRestartConfirmation] = useState(false);
   const [showChangeName, setShowChangeName] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
 
   const imgRef = useRef(null);
   const menuRef = useRef(null);
@@ -46,7 +48,7 @@ export default function SettingsMenu({
 
   useEffect(() => {
     if (showSettingsMenu) {
-      // Close logbook with Escape Key
+      // Close with Escape Key
       window.addEventListener("keydown", closeOnEscape);
       return () => window.removeEventListener("keydown", closeOnEscape);
     }
@@ -79,13 +81,16 @@ export default function SettingsMenu({
   function handleChangeNameClick() {
     setShowSettingsMenu(false);
     setShowChangeName(true);
-    setShowRestartConfirmation(false);
   }
 
   function handleRestartClick() {
     setShowSettingsMenu(false);
     setShowRestartConfirmation(true);
-    setShowChangeName(false);
+  }
+
+  function handleAboutClick() {
+    setShowSettingsMenu(false);
+    setShowAbout(true);
   }
 
   return (
@@ -123,11 +128,12 @@ export default function SettingsMenu({
           <button onClick={handleRestartClick}>Restart Game</button>
           <button disabled>Kid Mode</button>
           <button disabled>Toggle Sound</button>
-          <button>About</button>
+          <button onClick={handleAboutClick}>About</button>
         </div>
       </div>
       {showChangeName ? (
         <ChangeName
+          showChangeName={showChangeName}
           setShowChangeName={setShowChangeName}
           setPlayer={setPlayer}
           name={name}
@@ -135,9 +141,13 @@ export default function SettingsMenu({
       ) : null}
       {showRestartConfirmation ? (
         <RestartConfirmation
+          showRestartConfirmation={showRestartConfirmation}
           setShowRestartConfirmation={setShowRestartConfirmation}
           endGame={endGame}
         />
+      ) : null}
+      {showAbout ? (
+        <About showAbout={showAbout} setShowAbout={setShowAbout} />
       ) : null}
     </>
   );

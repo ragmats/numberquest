@@ -26,6 +26,15 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+a {
+  color: slategray;
+  text-decoration: none;
+}
+
+a:hover {
+  color: darkslategray;
+}
+
 .italic {
   font-style: italic;
 }
@@ -228,7 +237,8 @@ a {
 }
 
 .restart-confirmation-container,
-.change-name-container {
+.change-name-container,
+.about-container {
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -250,6 +260,7 @@ a {
 .change-name-container {
   width: 300px;
   padding-top: 1.5em;
+  padding-bottom: 0.5em;
 }
 
 .change-name-container input {
@@ -258,6 +269,45 @@ a {
 
 .change-name-container .error-text {
   font-size: 0.75em;
+}
+
+.about-container {
+  /* border: 1px solid red; */
+  height: 85%;
+  max-width: 500px;
+  width: 85%;
+  max-width: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-img {
+  height: 500px;
+  max-width: 85%;
+}
+
+.about-container-text {
+  font-size: 1.25em;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  /* gap: 1em; */
+  margin: 0 0.5em;
+}
+
+.about-container-text h4 {
+  margin: 1em 0 0.25em 0;
+}
+
+.about-container-text ul {
+  /* border: 1px solid red; */
+  margin-bottom: 0.5em;
+}
+
+.about-container-text li {
+  /* border: 1px solid red; */
+  margin-left: 1.25em;
 }
 
 .btns-container {
