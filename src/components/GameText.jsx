@@ -57,8 +57,8 @@ export default function GameText({
 
       container.removeChild(testElement);
 
-      // At this point, NewFontSize should be 1px over the perfect size
-      setFontSize(newFontSize - 1);
+      // At this point, NewFontSize just over the perfect size - subtract a buffer to be safe
+      setFontSize(newFontSize - 5);
     }
   }
 
