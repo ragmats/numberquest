@@ -9,6 +9,7 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
+// ! TODO Include version number and note about C Codesandbox in about section
 // ! TODO Proof all the text
 // ! TODO Test everything in incognito, in every browser
 // ! Remove dev text and number answer, launch on website
