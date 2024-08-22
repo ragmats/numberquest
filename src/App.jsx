@@ -1314,7 +1314,7 @@ function App() {
             "reaction",
             "The beast gets knocked down!",
             "The beast is down... now is your chance!",
-            "The beast looses its hoofing."
+            "The beast loses its hoofing."
           );
           respond(
             "description",

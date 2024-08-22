@@ -45,8 +45,7 @@ export default function ChangeName({ showAbout, setShowAbout }) {
         />
         <div className="about-container-text">
           <p>
-            Number Quest is a text-based number-counting RPG web application
-            created in React by{" "}
+            Number Quest is a text-based number-counting RPG created in React by{" "}
             <a href="https://www.stevencoy.com" target="_new">
               Steven Coy
             </a>

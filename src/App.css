@@ -295,7 +295,7 @@ a:hover {
 }
 
 .about-container-text {
-  font-size: 1.25em;
+  font-size: 1.15em;
   /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
@@ -947,6 +947,14 @@ a:hover {
     top: 60%;
     left: 50%;
     transform: translate(-50%, -60%);
+  }
+}
+
+@media ((orientation: landscape) and (height < 700px)) {
+  .about-img {
+    height: 70svh;
+    width: auto;
+    max-width: 85%;
   }
 }
 
