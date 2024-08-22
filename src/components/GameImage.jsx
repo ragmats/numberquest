@@ -66,11 +66,11 @@ export default function GameImage({
           turn={player.guesses.length}
         />
       ) : null}
-      <p>Artwork goes here.</p>
+      {/* <p>Artwork goes here.</p>
       <p>
         Player level {player.level}, Player subLevel {player.subLevel}
       </p>
-      <p>The number is {fellow.number}.</p>
+      <p>The number is {fellow.number}.</p> */}
       <GameIcons
         player={player}
         questLog={questLog}

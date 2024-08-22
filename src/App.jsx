@@ -9,14 +9,11 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Landscape text on very narrow screens needs a media query (less than 350px?).
-// ! TODO Text areas are too big, and should change when there is not UI
-// ! TODO All text needs to be bigger on high-rez screens... (tablet view)
-// ! TODO Refactor, add function descriptions, and put some functions into separate modules?
+// ! TODO Fresh cache, quest log says welcome traveler and you are reborn after changing name.
 // ! TODO Proof all the text
-// ! TODO Switch to subdomain numberquest.ragmats.com
 // ! TODO Test everything in incognito, in every browser
 // ! Remove dev text and number answer, launch on website
+// TODO Refactor, add function descriptions, and put some functions into separate modules?
 // TODO Spacing on name forms is weird because of error text. Make it position absolute like a tooltip?
 // TODO Add icons to menu?
 // TODO Add icons to credits?
@@ -791,25 +788,27 @@ function App() {
     const lastName = [...questLog].reverse().find((log) => log.type === "name");
 
     // If there is no entry, add the first name entry
-    if (!lastName) {
-      setQuestLog((currentQuestLog) => [
-        {
-          text: `Welcome, ${player.name}.`,
-          type: "name",
-          name: player.name,
-        },
-        ...currentQuestLog,
-      ]);
-    } else {
-      if (questLog.length > 0 && lastName.name !== player.name) {
+    if (player.level > 0) {
+      if (!lastName) {
         setQuestLog((currentQuestLog) => [
-          ...currentQuestLog,
           {
-            text: `You are reborn as ${player.name}.`,
+            text: `Welcome, ${player.name}.`,
             type: "name",
             name: player.name,
           },
+          ...currentQuestLog,
         ]);
+      } else {
+        if (questLog.length > 0 && lastName.name !== player.name) {
+          setQuestLog((currentQuestLog) => [
+            ...currentQuestLog,
+            {
+              text: `You are reborn as ${player.name}.`,
+              type: "name",
+              name: player.name,
+            },
+          ]);
+        }
       }
     }
   }, [player.name, player.level]);
