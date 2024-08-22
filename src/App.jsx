@@ -9,7 +9,6 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Fresh cache, quest log says welcome traveler and you are reborn after changing name.
 // ! TODO Proof all the text
 // ! TODO Test everything in incognito, in every browser
 // ! Remove dev text and number answer, launch on website
@@ -21,7 +20,6 @@ import Hearts from "./components/Hearts";
 // TODO When map is open, put a dimming overlay behind it
 // TODO When page reloads, a broken image icon flashes behind the art
 // TODO Map Close-X is mis-positioned in full screen mode.
-// TODO Consider making quest log close upon any click, not just a click on the modal. Maybe not...
 // TODO Try image transitions as fades?
 // TODO Add some kind of background style to the text part... change based on time of day?
 // TODO Add main text reveal animation...
@@ -118,6 +116,10 @@ function App() {
     `${import.meta.env.VITE_BASE_URL}img/map_level2.svg`,
     `${import.meta.env.VITE_BASE_URL}img/map_level3.svg`,
     `${import.meta.env.VITE_BASE_URL}img/map_level4.svg`,
+    `${import.meta.env.VITE_BASE_URL}img/heart.png`,
+    `${import.meta.env.VITE_BASE_URL}img/questlog-icon.png`,
+    `${import.meta.env.VITE_BASE_URL}img/map-icon.png`,
+    `${import.meta.env.VITE_BASE_URL}img/gear-icon.png`,
     `${import.meta.env.VITE_BASE_URL}img/numberquest_logo_p2.png`,
   ];
 
@@ -787,8 +789,8 @@ function App() {
     // Check the last type=name entry and check if it is the same as player.name to prevent duplicats
     const lastName = [...questLog].reverse().find((log) => log.type === "name");
 
-    // If there is no entry, add the first name entry
     if (player.level > 0) {
+      // If there is no entry, add the first name entry
       if (!lastName) {
         setQuestLog((currentQuestLog) => [
           {
