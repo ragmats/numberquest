@@ -59,6 +59,10 @@ button {
   background-color: white;
 }
 
+button:disabled {
+  color: gray;
+}
+
 .italic {
   font-style: italic;
 }
