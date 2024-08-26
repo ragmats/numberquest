@@ -24,6 +24,10 @@ export default function SettingsMenu({
   const menuRef = useRef(null);
 
   useEffect(() => {
+    console.log("isPortrait: ", isPortrait);
+  }, [isPortrait]);
+
+  useEffect(() => {
     // console.log("screenHeight: ", screenHeight);
     // console.log("screenWidth: ", screenWidth);
     setShowSettingsMenu(false);
@@ -70,7 +74,7 @@ export default function SettingsMenu({
       setIconHeight(gearIcon.getBoundingClientRect().height);
       setIsPortrait(screenHeight > screenWidth);
     }
-  }, [screenHeight, screenWidth]);
+  }, [screenHeight, screenWidth, isPortrait]);
 
   useEffect(() => {
     setIconMiddleTopPosition(iconTop + iconHeight / 2);
@@ -78,7 +82,13 @@ export default function SettingsMenu({
 
   useEffect(() => {
     setIconMiddleBottomPosition(screenHeight - iconMiddleTopPosition);
-  }, [iconMiddleTopPosition, screenHeight]);
+    console.log("screenHeight: ", screenHeight);
+    console.log("iconMiddleTopPosition: ", iconMiddleTopPosition);
+    console.log(
+      "screenHeight - iconMiddleTopPosition: ",
+      screenHeight - iconMiddleTopPosition
+    );
+  }, [iconMiddleTopPosition, screenHeight, screenWidth]);
 
   function toggleSettingsMenu() {
     setShowSettingsMenu(!showSettingsMenu);
