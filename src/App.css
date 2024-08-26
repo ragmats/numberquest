@@ -4,7 +4,7 @@
 :root {
   /* --health-bar-player-width: 100%; */
   /* --health-bar-beast-width: 100%; */
-  --vh: 100vh;
+  --vh: 100svh;
 }
 
 * {
@@ -108,8 +108,8 @@ button:disabled {
 
 @media (height < 600px) {
   .title-image {
-    /* width: 60svh; */
-    width: calc(var(--vh, 1vh) * 60);
+    width: 60svh;
+    /* width: calc(var(--vh, 1vh) * 60); */
   }
 }
 
@@ -689,8 +689,8 @@ button:disabled {
 
 .heart {
   /* height: 50px; */
-  /* height: 5svh; */
-  height: calc(var(--vh, 1vh) * 5);
+  height: 5svh;
+  /* height: calc(var(--vh, 1vh) * 5); */
 }
 
 .guesses {
@@ -953,8 +953,8 @@ button:disabled {
 @media (orientation: landscape) {
   .map-image {
     width: auto;
-    /* height: 95svh; */
-    height: calc(var(--vh, 1vh) * 95);
+    height: 95svh;
+    /* height: calc(var(--vh, 1vh) * 95); */
   }
 }
 
@@ -986,8 +986,8 @@ button:disabled {
 
 @media ((orientation: landscape) and (height < 700px)) {
   .about-img {
-    /* height: 55svh; */
-    height: calc(var(--vh, 1vh) * 55);
+    height: 55svh;
+    /* height: calc(var(--vh, 1vh) * 55); */
     width: auto;
     max-width: 85%;
   }
