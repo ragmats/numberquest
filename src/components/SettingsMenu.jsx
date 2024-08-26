@@ -24,10 +24,6 @@ export default function SettingsMenu({
   const menuRef = useRef(null);
 
   useEffect(() => {
-    console.log("isPortrait: ", isPortrait);
-  }, [isPortrait]);
-
-  useEffect(() => {
     // console.log("screenHeight: ", screenHeight);
     // console.log("screenWidth: ", screenWidth);
     setShowSettingsMenu(false);
