@@ -26,7 +26,6 @@ export default function SettingsMenu({
   useEffect(() => {
     // console.log("screenHeight: ", screenHeight);
     // console.log("screenWidth: ", screenWidth);
-    setShowSettingsMenu(false);
   }, [screenHeight, screenWidth]);
 
   useEffect(() => {
