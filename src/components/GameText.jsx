@@ -8,6 +8,8 @@ export default function GameText({
   isEndSubLevel,
   isLastLevel,
   isPreEndLevel,
+  screenHeight,
+  screenWidth,
 }) {
   const startingFontSize = 2;
   const maxFontSize = 30;
@@ -74,9 +76,10 @@ export default function GameText({
     return () => window.removeEventListener("resize", getPerfectFontSize);
   }, []);
 
+  // Re-trigger font resize when isEndSubLevel, isPreEndLevel, and height/width changes
   useEffect(() => {
-    getPerfectFontSize(); // re-trigger font resize when isEndSubLevel and isPreEndLevel changes
-  }, [isEndSubLevel, isPreEndLevel]);
+    getPerfectFontSize();
+  }, [isEndSubLevel, isPreEndLevel, screenHeight, screenWidth]);
 
   return (
     <div

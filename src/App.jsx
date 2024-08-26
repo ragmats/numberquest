@@ -13,6 +13,7 @@ import Hearts from "./components/Hearts";
 // ! TODO Proof all the text
 // ! TODO Test everything in incognito, in every browser
 // ! Remove dev text and number answer, launch on website
+// ! BUG Settings Menu does not position correctly after window is maxmized/restored in windows: https://bencentra.com/code/2015/02/27/optimizing-window-resize.html
 // TODO Refactor, add function descriptions, and put some functions into separate modules?
 // TODO Spacing on name forms is weird because of error text. Make it position absolute like a tooltip?
 // TODO Add icons to menu?
@@ -168,20 +169,6 @@ function App() {
     );
   }, [fightIsInProgress]);
 
-  useEffect(() => {
-    function handleHeightChange() {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    }
-
-    window.addEventListener("resize", handleHeightChange);
-    handleHeightChange();
-
-    return () => {
-      window.removeEventListener("resize", handleHeightChange);
-    };
-  }, []);
-
   // Save screen height and width to state on mount or whenever it changes
   useEffect(() => {
     function handleResize() {
@@ -190,7 +177,12 @@ function App() {
     }
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  });
+  }, []);
+
+  useEffect(() => {
+    const vh = screenHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  }, [screenHeight]);
 
   // Set the screen size descriptor based on width and height to load that set of images
   useEffect(() => {
@@ -1763,6 +1755,8 @@ function App() {
                           isEndSubLevel={isEndSubLevel}
                           isLastLevel={isLastLevel}
                           isPreEndLevel={isPreEndLevel}
+                          screenHeight={screenHeight}
+                          screenWidth={screenWidth}
                         />
                         {level.endLevel ? (
                           <GuessingUI
