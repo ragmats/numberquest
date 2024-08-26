@@ -71,7 +71,7 @@ button:disabled {
   /* border: 1px solid red; */
   display: flex;
   width: 100%;
-  height: 100svh;
+  height: 100vh;
 }
 
 .intro-container {
@@ -139,7 +139,7 @@ button:disabled {
   /* width: 100%; */
   /* height: 100%; */
   width: 100vw;
-  height: 100svh;
+  height: 100vh;
 }
 
 .game-image-container {
