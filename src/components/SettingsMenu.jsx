@@ -66,7 +66,11 @@ export default function SettingsMenu({
   useEffect(() => {
     const gearIcon = imgRef.current;
     if (gearIcon) {
-      setIconTop(gearIcon.getBoundingClientRect().top);
+      // Use timeout to ensure iconTop is set after resize happens
+      // Otherwise, window maximize and restore down were causing incorrect values
+      setTimeout(() => {
+        setIconTop(gearIcon.getBoundingClientRect().top);
+      }, 200);
       setIconHeight(gearIcon.getBoundingClientRect().height);
       setIsPortrait(screenHeight > screenWidth);
     }
@@ -74,16 +78,18 @@ export default function SettingsMenu({
 
   useEffect(() => {
     setIconMiddleTopPosition(iconTop + iconHeight / 2);
+    console.log("iconTop: ", iconTop);
+    console.log("iconHeight: ", iconHeight);
   }, [iconTop, iconHeight]);
 
   useEffect(() => {
     setIconMiddleBottomPosition(screenHeight - iconMiddleTopPosition);
-    console.log("screenHeight: ", screenHeight);
-    console.log("iconMiddleTopPosition: ", iconMiddleTopPosition);
-    console.log(
-      "screenHeight - iconMiddleTopPosition: ",
-      screenHeight - iconMiddleTopPosition
-    );
+    // console.log("screenHeight: ", screenHeight);
+    // console.log("iconMiddleTopPosition: ", iconMiddleTopPosition);
+    // console.log(
+    //   "screenHeight - iconMiddleTopPosition: ",
+    //   screenHeight - iconMiddleTopPosition
+    // );
   }, [iconMiddleTopPosition, screenHeight, screenWidth]);
 
   function toggleSettingsMenu() {
