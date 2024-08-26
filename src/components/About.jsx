@@ -44,6 +44,7 @@ export default function ChangeName({ showAbout, setShowAbout }) {
           src={`${import.meta.env.VITE_BASE_URL}img/numberquest_logo_p2.png`}
         />
         <div className="about-container-text">
+          <p className="version-text">Version 1.0</p>
           <p>
             Number Quest is a text-based number-counting RPG created in React by{" "}
             <a href="https://www.stevencoy.com" target="_new">
@@ -135,6 +136,21 @@ export default function ChangeName({ showAbout, setShowAbout }) {
           </ul>
           <h4>Sound and Music</h4>
           <p>Coming soon.</p>
+          <h4>About</h4>
+          <p>
+            Number Quest was first written in 2021 in C (view repl project{" "}
+            <a href="https://replit.com/@stevencoy/NumberQuest" target="_new">
+              here
+            </a>{" "}
+            or screenshot of example output{" "}
+            <a
+              href={`${import.meta.env.VITE_BASE_URL}img/number_quest_C.png`}
+              target="_new"
+            >
+              here
+            </a>
+            ). It was written in React, with a more visual approach, in 2024.
+          </p>
           <h4>Developer Contact</h4>
           <p>
             <a href="mailto:stevencoy@gmail.com" target="_new">

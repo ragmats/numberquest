@@ -9,10 +9,9 @@ import ActionButton from "./components/ActionButton";
 import HealthBar from "./components/HealthBar";
 import Hearts from "./components/Hearts";
 
-// ! TODO Include version number and note about C Codesandbox in about section
 // ! TODO Proof all the text
 // ! TODO Test everything in incognito, in every browser
-// ! Remove dev text and number answer, launch on website
+// ! Launch on website
 // ! BUG Settings Menu does not position correctly after window is maxmized/restored in windows: https://bencentra.com/code/2015/02/27/optimizing-window-resize.html
 // TODO Refactor, add function descriptions, and put some functions into separate modules?
 // TODO Spacing on name forms is weird because of error text. Make it position absolute like a tooltip?

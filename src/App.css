@@ -321,13 +321,21 @@ button:disabled {
   gap: 1em;
 }
 
+.version-text {
+  /* border: 1px solid red; */
+  font-style: italic;
+  text-align: center;
+  font-size: 0.75em;
+  margin-bottom: 1em;
+}
+
 .about-img {
   height: 500px;
   max-width: 85%;
 }
 
 .about-container-text {
-  font-size: 1.15em;
+  font-size: 1.1em;
   /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
