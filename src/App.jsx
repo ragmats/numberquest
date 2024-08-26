@@ -168,6 +168,20 @@ function App() {
     );
   }, [fightIsInProgress]);
 
+  useEffect(() => {
+    function handleHeightChange() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    }
+
+    window.addEventListener("resize", handleHeightChange);
+    handleHeightChange();
+
+    return () => {
+      window.removeEventListener("resize", handleHeightChange);
+    };
+  }, []);
+
   // Save screen height and width to state on mount or whenever it changes
   useEffect(() => {
     function handleResize() {
